@@ -1,9 +1,18 @@
 package com.journeymoments
 
 import android.app.Application
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
+import android.util.Log
 import com.facebook.react.*
 import com.facebook.soloader.SoLoader
+
+import fi.moprim.tmd.sdk.TMD
+import fi.moprim.tmd.sdk.TmdCloudApi
+import fi.moprim.tmd.sdk.TmdCoreConfigurationBuilder
+import fi.moprim.tmd.sdk.model.TmdError
+import fi.moprim.tmd.sdk.model.TmdInitListener
 import java.lang.reflect.InvocationTargetException
 
 class MainApplication : Application(), ReactApplication {
@@ -31,6 +40,40 @@ class MainApplication : Application(), ReactApplication {
         super.onCreate()
         SoLoader.init(this,  /* native exopackage */false)
         initializeFlipper(this, reactNativeHost.reactInstanceManager)
+        initMoprim()
+    }
+
+    private fun initMoprim() {
+        Log.i("XXX", "init" + MainApplication::class.java.simpleName)
+        val builder = TmdCoreConfigurationBuilder(this)
+                .setSdkConfigEndPoint(apiRoot)
+                .setSdkConfigKey(apiKey)
+        // Init the TMD
+        TMD.init(this, builder.build(), object : TmdInitListener {
+            override fun onTmdInitFailed(tmdError: TmdError) {
+                Log.e(
+                        MainApplication::class.java.simpleName,
+                        "Initialisation failed: " + tmdError.name
+                )
+            }
+
+            override fun onTmdInitSuccessful(s: String) {
+                // s is the current installation ID, we'll put the UUID as the same just to demonstrate how to use the method
+                // replace with your own user id in production
+                // TMD.setUUID(s);
+                Log.i(
+                        MainApplication::class.java.simpleName,
+                        "Initialization successful with id: $s"
+                )
+                val intent =
+                        Intent(this@MainApplication, TmdUploadIntentService::class.java)
+                val callbackIntent = PendingIntent.getService(
+                        this@MainApplication, 0, intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                )
+                TmdCloudApi.setUploadCallbackIntent(callbackIntent)
+            }
+        })
     }
 
     companion object {
