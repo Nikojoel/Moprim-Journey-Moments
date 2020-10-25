@@ -3,23 +3,25 @@ package com.journeymoments
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
-import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule
-import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.bridge.*
+import com.google.gson.Gson
 import fi.moprim.tmd.sdk.TMD
+import fi.moprim.tmd.sdk.TmdCloudApi
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers.io
+import java.util.*
 
 
 class MoprimModule(private val context: ReactApplicationContext) : ReactContextBaseJavaModule() {
     private val CHANNEL_ID = "moprim.channel"
     private var notificationManager: NotificationManager? = null
+    private val gson = Gson()
 
 
     @ReactMethod
@@ -40,6 +42,28 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
         Log.i("XXX", "stop moprim")
         TMD.stop(context)
         notificationManager?.cancel(112)
+    }
+
+    @ReactMethod
+    fun getResults(promise: Promise) {
+        Observable
+                .just(1)
+                .observeOn(io())
+                .map {
+                    TmdCloudApi.uploadData(context)
+                    TmdCloudApi.fetchData(context, Date())
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    Log.i("XXX", it.result.toString())
+                    if (it.hasResult()) {
+                        val json = gson.toJson(it.result)
+                        promise.resolve(json)
+                    }
+                    if (it.hasError()) {
+                        promise.reject("ERROR", it.error.toString())
+                    }
+                }
     }
 
     private fun buildNotification(notificationText: String): Notification? {
