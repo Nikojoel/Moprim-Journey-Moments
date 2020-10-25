@@ -7,7 +7,8 @@
  */
 
 import React from 'react';
-import {View, Text} from 'react-native';
+import {View, Button, Text, NativeModules} from 'react-native';
+import MoprimBridge from './modules/Moprim';
 
 import {PERMISSIONS, requestMultiple} from 'react-native-permissions';
 
@@ -22,9 +23,19 @@ requestMultiple([
   );
   console.log('Activity', statuses[PERMISSIONS.ANDROID.ACTIVITY_RECOGNITION]);
 });
+
+const startMoprim = () => {
+  MoprimBridge.start();
+};
+
+const stopMoprim = () => {
+  MoprimBridge.stop();
+};
+
 const App = () => (
   <View>
-    <Text>MOROO</Text>
+    <Button title="start moprim" onPress={() => startMoprim()} />
+    <Button title="stop moprim" onPress={() => stopMoprim()} />
   </View>
 );
 
