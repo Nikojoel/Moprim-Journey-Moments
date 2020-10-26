@@ -1,6 +1,7 @@
 # dotenv
 #
 .env
+api-root.properties
 
 # OSX
 #
