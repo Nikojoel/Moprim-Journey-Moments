@@ -9,6 +9,7 @@
 import React, {useState} from 'react';
 import {View, Button, Text, NativeModules} from 'react-native';
 import MoprimBridge from './modules/Moprim';
+import Login from "./components/Login";
 
 import {PERMISSIONS, requestMultiple} from 'react-native-permissions';
 
@@ -77,6 +78,7 @@ const App = () => {
       />
       <Button title="get results" onPress={() => getMoprim()} />
       <Text>{text}</Text>
+        <Login/>
     </View>
   );
 };
