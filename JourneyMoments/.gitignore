@@ -2,6 +2,7 @@
 #
 .env
 api-root.properties
+google-services.json
 
 # OSX
 #
