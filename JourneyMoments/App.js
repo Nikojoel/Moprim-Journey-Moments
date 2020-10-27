@@ -6,12 +6,12 @@
  * @flow strict-local
  */
 
-import React, {useState} from 'react'
-import {View, Button, Text, NativeModules} from 'react-native'
-import MoprimBridge from './modules/Moprim'
-import Login from "./components/Login"
-import {PERMISSIONS, requestMultiple} from 'react-native-permissions'
-import Upload from "./components/Upload";
+import React, {useState} from 'react';
+import {View, Button, Text, NativeModules} from 'react-native';
+import MoprimBridge from './modules/Moprim';
+import Login from './components/Login';
+import {PERMISSIONS, requestMultiple} from 'react-native-permissions';
+import Upload from './components/Upload';
 
 requestMultiple([
   PERMISSIONS.ANDROID.ACTIVITY_RECOGNITION,
@@ -22,41 +22,41 @@ requestMultiple([
     'Location',
     statuses[PERMISSIONS.ANDROID.ACCESS_BACKGROUND_LOCATION],
   );
-  console.log('Activity', statuses[PERMISSIONS.ANDROID.ACTIVITY_RECOGNITION])
+  console.log('Activity', statuses[PERMISSIONS.ANDROID.ACTIVITY_RECOGNITION]);
 });
 
 const App = () => {
-  const [text, setText] = useState('')
+  const [text, setText] = useState('');
 
   const startMoprim = () => {
-    MoprimBridge.start()
+    MoprimBridge.start();
   };
 
   const stopMoprim = () => {
-    MoprimBridge.stop()
+    MoprimBridge.stop();
   };
 
   const millisToMinutesAndSeconds = (millis) => {
-    const minutes = Math.floor(millis / 60000)
-    const seconds = ((millis % 60000) / 1000).toFixed(0)
-    return minutes + ':' + (seconds < 10 ? '0' : '') + seconds
+    const minutes = Math.floor(millis / 60000);
+    const seconds = ((millis % 60000) / 1000).toFixed(0);
+    return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
   };
 
   const getMoprim = async () => {
     try {
-      const result = await MoprimBridge.getResults()
-      const obj = JSON.parse(result)
-      var text = ''
+      const result = await MoprimBridge.getResults();
+      const obj = JSON.parse(result);
+      var text = '';
 
       obj.forEach((it) => {
         const time = millisToMinutesAndSeconds(
           it.timestampEnd - it.timestampStart,
         );
-        text += `${it.originalActivity} ${time}\n`
+        text += `${it.originalActivity} ${time}\n`;
       });
-      setText(text)
+      setText(text);
     } catch (e) {
-      console.log(e)
+      console.log(e);
     }
   };
 
@@ -65,21 +65,21 @@ const App = () => {
       <Button
         title="start moprim"
         onPress={() => {
-          setText('start')
-          startMoprim()
+          setText('start');
+          startMoprim();
         }}
       />
       <Button
         title="stop moprim"
         onPress={() => {
-          setText('stop')
-          stopMoprim()
+          setText('stop');
+          stopMoprim();
         }}
       />
       <Button title="get results" onPress={() => getMoprim()} />
       <Text>{text}</Text>
-        <Login/>
-        <Upload/>
+      <Login />
+      <Upload />
     </View>
   );
 };
