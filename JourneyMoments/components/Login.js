@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import {Text, View, Button} from 'react-native';
-import auth from '@react-native-firebase/auth';
-import LoginService from "../services/LoginService";
+import React, {useEffect, useState} from 'react'
+import {Text, View, Button} from 'react-native'
+import auth from '@react-native-firebase/auth'
+import LoginService from "../services/LoginService"
 
 const Login = () => {
 
