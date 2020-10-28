@@ -1,7 +1,6 @@
 matrix:
   include:
-      if: branch = main
-       language: android
+      language: android
       android:
         components:
           - tools
@@ -20,7 +19,7 @@ matrix:
         - echo apiRoot=$root >> api-root.properties
       script:
         - ./gradlew assembleRelease && cd ..
-        
+
       language: node_js
       node_js: lts/*
       sudo: true
