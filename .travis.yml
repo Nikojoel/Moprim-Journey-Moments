@@ -1,2 +1,11 @@
-language: android
-dist: trusty
+language: node_js
+node_js:
+ - 11.6.0
+cache: npm
+
+intall:
+  - npm ci
+
+script:
+  - npm test
+  
