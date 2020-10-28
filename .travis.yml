@@ -1,34 +1,23 @@
-matrix:
-  include:
-      if: branch = main
-       language: android
-      android:
-        components:
-          - tools
-          - platform-tools
-          - tools
-          - build-tools-26.0.2
-          - build-tools-27.0.3
-          - android-26
-          - android-27
-          - addon-google_apis-google-26
-      sudo: true
-      before_install:
-        - cd android
-        - touch api-root.properties
-        - echo apiKey=$key >> api-root.properties
-        - echo apiRoot=$root >> api-root.properties
-      script:
-        - ./gradlew assembleRelease && cd ..
-        
-      language: node_js
-      node_js: lts/*
-      sudo: true
-      before_install:
-        - cd JourneyMoments
-      install:
-        - npm ci
-      script:
-        - npx react-native run-android
+language: android
+dist: trusty
+android:
+  components:
+    - tools
+    - platform-tools
+    - tools
+    - build-tools-26.0.
+    - build-tools-27.0.3
+    - android-26
+    - android-27
+    - addon-google_apis-google-26
+    - sys-img-x86-android-26
+    - sys-img-armeabi-v7a-android-17
+  before_install:
+    - cd android
+    - touch api-root.properties
+    - echo apiKey=$key >> api-root.properties
+    - echo apiRoot=$root >> api-root.properties
+  script:
+    - ./gradlew assembleRelease && cd ..
    
      
