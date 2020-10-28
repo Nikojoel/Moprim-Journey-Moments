@@ -60,7 +60,7 @@ const Upload = () => {
   const getFile = async (uri) => {
     //: TODO Get specific file from FireBase
   };
-
+  // testing ci
   return (
     <View>
       <Text>UPLOAD IMAGE</Text>
