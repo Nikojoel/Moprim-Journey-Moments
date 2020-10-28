@@ -11,7 +11,6 @@ matrix:
           - android-26
           - android-27
           - addon-google_apis-google-26
-      sudo: true
       before_install:
         - cd android
         - touch api-root.properties
@@ -19,15 +18,5 @@ matrix:
         - echo apiRoot=$root >> api-root.properties
       script:
         - ./gradlew assembleRelease && cd ..
-  include:
-      language: node_js
-      node_js: lts/*
-      sudo: true
-      before_install:
-        - cd JourneyMoments
-      install:
-        - npm ci
-      script:
-        - npx react-native run-android
    
      
