@@ -40,8 +40,8 @@ const Login = () => {
             <View>
                 <Button
                     title="Login"
-                    onPress={() => {
-                        onAuthLoginUser("doo.daa@example.com", "secret")
+                    onPress={async () => {
+                        await onAuthLoginUser("doo.daa@example.com", "secret")
                     }}/>
             </View>
         );
@@ -52,8 +52,8 @@ const Login = () => {
             <Text>Welcome {user.email}</Text>
             <Button
                 title="Logout"
-                onPress={() => {
-                    onAuthSignOut()
+                onPress={async () => {
+                    await onAuthSignOut()
                 }}/>
         </View>
     );

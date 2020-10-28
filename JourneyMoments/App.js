@@ -7,11 +7,12 @@
  */
 
 import React, {useState} from 'react'
-import {View, Button, Text, NativeModules} from 'react-native'
+import {View, Button, Text, NativeModules, Image} from 'react-native'
 import MoprimBridge from './modules/Moprim'
 import Login from "./components/Login"
 import {PERMISSIONS, requestMultiple} from 'react-native-permissions'
 import Upload from "./components/Upload";
+import DownloadService from "./services/DownloadService";
 
 requestMultiple([
   PERMISSIONS.ANDROID.ACTIVITY_RECOGNITION,
@@ -26,7 +27,8 @@ requestMultiple([
 });
 
 const App = () => {
-  const [text, setText] = useState('')
+  const [text, setText] = useState()
+    const [download, setDownload] = useState()
 
   const startMoprim = () => {
     MoprimBridge.start()
@@ -80,6 +82,18 @@ const App = () => {
       <Text>{text}</Text>
         <Login/>
         <Upload/>
+        <Button
+            title="Download"
+            onPress={async () => {
+                const result = await DownloadService.getUrl("3971")
+                console.log("result: ", result)
+                setDownload(result)
+            }}
+        />
+        <Image
+            source={{uri: download}}
+            style={{width: 250, height: 250}}
+        />
     </View>
   );
 };
