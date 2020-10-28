@@ -56,7 +56,7 @@ const Upload = () => {
       setImage('Uploaded to the bucket');
     });
   };
-  //ci test
+  //ci testi
   const getFile = async (uri) => {
     //: TODO Get specific file from FireBase
   };
