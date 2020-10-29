@@ -5,6 +5,7 @@ import {BackHandler, Button, Image, Text, View} from 'react-native';
 import Login from './Login';
 import Upload from '../components/Upload';
 import DownloadService from '../services/DownloadService';
+import Colors from '../values/Colors';
 
 const Placeholder = () => {
   const [text, setText] = useState();

@@ -42,7 +42,11 @@ const App = () => {
           component={Placeholder}
           options={{headerLeft: null}}
         />
-        <Stack.Screen name="tabs" component={TabNavigator} />
+        <Stack.Screen
+          name="tabs"
+          component={TabNavigator}
+          options={{headerLeft: null, title: 'moroporo'}}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

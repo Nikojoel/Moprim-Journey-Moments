@@ -79,7 +79,11 @@ const Login = ({navigation}) => {
           }}>
           <Text style={styles.loginText}>LOGIN</Text>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={async () => {
+            await onAuthLoginUser('doo.daa@example.com', 'secret');
+            navigation.navigate('tabs');
+          }}>
           <Text style={styles.loginText}>Signup</Text>
         </TouchableOpacity>
       </View>
