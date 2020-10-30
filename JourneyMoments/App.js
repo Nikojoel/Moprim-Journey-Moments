@@ -11,8 +11,9 @@ import {View, Button, Text, NativeModules, Image} from 'react-native'
 import MoprimBridge from './modules/Moprim'
 import Login from "./components/Login"
 import {PERMISSIONS, requestMultiple} from 'react-native-permissions'
-import Upload from "./components/Upload";
-import DownloadService from "./services/DownloadService";
+import Upload from "./components/Upload"
+import DownloadService from "./services/DownloadService"
+import DbService from "./services/DatabaseService";
 
 requestMultiple([
   PERMISSIONS.ANDROID.ACTIVITY_RECOGNITION,
