@@ -5,15 +5,14 @@
  * @format
  * @flow strict-local
  */
-
-import React, {useState} from 'react'
-import {View, Button, Text, NativeModules, Image} from 'react-native'
-import MoprimBridge from './modules/Moprim'
-import Login from "./components/Login"
-import {PERMISSIONS, requestMultiple} from 'react-native-permissions'
-import Upload from "./components/Upload"
-import DownloadService from "./services/DownloadService"
-import DbService from "./services/DatabaseService";
+import 'react-native-gesture-handler';
+import React from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {PERMISSIONS, requestMultiple} from 'react-native-permissions';
+import Placeholder from './screens/placeholder';
+import TabNavigator from './navigation/TabNavigator';
+import Login from './screens/Login';
 
 requestMultiple([
   PERMISSIONS.ANDROID.ACTIVITY_RECOGNITION,
@@ -27,76 +26,25 @@ requestMultiple([
   console.log('Activity', statuses[PERMISSIONS.ANDROID.ACTIVITY_RECOGNITION]);
 });
 
+const Stack = createStackNavigator();
+
 const App = () => {
-
-  const [text, setText] = useState()
-  const [download, setDownload] = useState()
-
-  const startMoprim = () => {
-    MoprimBridge.start();
-  };
-
-  const stopMoprim = () => {
-    MoprimBridge.stop();
-  };
-
-  const millisToMinutesAndSeconds = (millis) => {
-    const minutes = Math.floor(millis / 60000);
-    const seconds = ((millis % 60000) / 1000).toFixed(0);
-    return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
-  };
-
-  const getMoprim = async () => {
-    try {
-      const result = await MoprimBridge.getResults();
-      const obj = JSON.parse(result);
-      var text = '';
-
-      obj.forEach((it) => {
-        const time = millisToMinutesAndSeconds(
-          it.timestampEnd - it.timestampStart,
-        );
-        text += `${it.originalActivity} ${time}\n`;
-      });
-      setText(text);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   return (
-    <View>
-      <Button
-        title="start moprim"
-        onPress={() => {
-          setText('start');
-          startMoprim();
-        }}
-      />
-      <Button
-        title="stop moprim"
-        onPress={() => {
-          setText('stop');
-          stopMoprim();
-        }}
-      />
-      <Button title="get results" onPress={() => getMoprim()} />
-      <Text>{text}</Text>
-        <Login/>
-        <Upload/>
-        <Button
-            title="Download"
-            onPress={async () => {
-                const result = await DownloadService.getUrl("3971")
-                console.log("result: ", result)
-                setDownload(result)
-            }}
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Login"
+          component={Login}
+          options={{headerShown: false}}
         />
-        <Image
-            source={{uri: download}}
-            style={{width: 250, height: 250}}
+        <Stack.Screen
+          name="test"
+          component={Placeholder}
+          options={{headerLeft: null}}
         />
-    </View>
+        <Stack.Screen name="tabs" component={TabNavigator} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 
