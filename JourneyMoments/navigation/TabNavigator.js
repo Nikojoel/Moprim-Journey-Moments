@@ -1,7 +1,8 @@
 import React from 'react'
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import Icon from 'react-native-ionicons'
+import Ionicons from 'react-native-vector-icons/Ionicons'
+import Colors from '../values/Colors'
 import Home from '../screens/Home'
 import Trips from '../screens/Trips'
 import Stats from '../screens/Stats'
@@ -17,17 +18,19 @@ const TabNavigator = () => {
           if (route.name === 'Home') {
             iconName = focused
               ? 'home'
-              : 'home'
-          } else if (route.name === 'Settings') {
-            iconName = focused ? 'ios-list-box' : 'ios-list'
+              : 'home-outline'
+          } else if (route.name === 'Trips') {
+            iconName = focused ? 'planet' : 'planet-outline'
+          } else if (route.name === 'Stats') {
+            iconName = focused ? 'stats-chart' : 'stats-chart-outline'
           }
 
           // You can return any component that you like here!
-          return <Icon name={iconName} size={size} color={color} />
+          return <Ionicons name={iconName} size={size} color={color} />
         },
       })}
       tabBarOptions={{
-        activeTintColor: 'tomato',
+        activeTintColor: Colors.primaryColor,
         inactiveTintColor: 'gray',
       }}
     >

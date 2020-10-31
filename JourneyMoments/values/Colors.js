@@ -4,5 +4,5 @@ const Colors = {
   accent: '#FA292A',
   backgroundGray: '#dddfd4',
   white: '#ffffff',
-};
-module.exports = Colors;
+}
+module.exports = Colors
