@@ -1,9 +1,8 @@
 package com.journeymoments
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
+import android.app.*
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
@@ -12,6 +11,9 @@ import com.facebook.react.bridge.*
 import com.google.gson.Gson
 import fi.moprim.tmd.sdk.TMD
 import fi.moprim.tmd.sdk.TmdCloudApi
+import fi.moprim.tmd.sdk.TmdCoreConfigurationBuilder
+import fi.moprim.tmd.sdk.model.TmdError
+import fi.moprim.tmd.sdk.model.TmdInitListener
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers.io
@@ -66,6 +68,46 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                 }
     }
 
+    @ReactMethod
+    fun initMoprim(id: String) {
+        val builder = TmdCoreConfigurationBuilder(context)
+                .setSdkConfigEndPoint(apiRoot)
+                .setSdkConfigKey(apiKey)
+        // Init the TMD
+
+        TMD.setUUID(id)
+        TMD.init(context.applicationContext as Application, builder.build(), object : TmdInitListener {
+
+            override fun onTmdInitFailed(tmdError: TmdError) {
+                Log.e(
+                        "XXX",
+                        "Initialisation failed: " + tmdError.name
+                )
+            }
+
+            override fun onTmdInitSuccessful(s: String) {
+                // s is the current installation ID, we'll put the UUID as the same just to demonstrate how to use the method
+                // replace with your own user id in production
+                // TMD.setUUID(s);
+                Log.i(
+                        "XXX",
+                        "Initialization successful with id: $id"
+                )
+                start()
+                val intent =
+                        Intent(context, TmdUploadIntentService::class.java)
+                val callbackIntent = PendingIntent.getService(
+                        context, 0, intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                )
+                TmdCloudApi.setUploadCallbackIntent(callbackIntent)
+            }
+        })
+
+
+    }
+
+
     private fun buildNotification(notificationText: String): Notification? {
         // Create notification builder.
         val notificationBuilder: NotificationCompat.Builder = NotificationCompat.Builder(context, CHANNEL_ID)
@@ -99,6 +141,6 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
     }
 
     override fun getName(): String {
-       return "MoprimBridge"
+        return "MoprimBridge"
     }
 }
