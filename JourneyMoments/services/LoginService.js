@@ -2,31 +2,22 @@ import React from 'react';
 import auth from '@react-native-firebase/auth';
 
 const createUser = async (username, password) => {
-  await auth()
-    .createUserWithEmailAndPassword(username, password)
-    .catch((e) => {
-      console.log(`Error in user creation ${e}`);
-    });
-};
+    return await auth()
+        .createUserWithEmailAndPassword(username, password)
+}
 
 const loginUser = async (username, password) => {
-  await auth()
-    .signInWithEmailAndPassword(username, password)
-    .catch((e) => {
-      console.log(`Error in login ${e}`);
-    });
-};
+    return await auth()
+        .signInWithEmailAndPassword(username, password)
+}
 
 const logoutUser = async () => {
-  await auth()
-    .signOut()
-    .catch((e) => {
-      console.log(`Error in logging out ${e}`);
-    });
-};
+    return await auth()
+        .signOut()
+}
 
 export default {
-  logoutUser,
-  loginUser,
-  createUser,
+    logoutUser,
+    loginUser,
+    createUser,
 };
