@@ -9,11 +9,9 @@ const TRAVEL_PATH = "/Chain/"
 // Get all = "/"
 // Get single = "id"
 const dbUserGET = async (id) => {
-    const result = await database()
+    return await database()
         .ref(USER_ID_PATH + id)
         .once("value")
-    console.log("dbUserGET: ", result.toJSON())
-    return result
 }
 
 // Insert single user = Data in JSON
@@ -32,11 +30,11 @@ const dbUserUPDATE = async (id) => {
     const rating = single.val().rating + 1
     console.log("rating: ", single.val().rating)
 
-        await database()
-            .ref(USER_ID_PATH + id)
-            .update({
-                rating: rating
-            })
+    await database()
+        .ref(USER_ID_PATH + id)
+        .update({
+            rating: rating
+        })
     console.log("dbUserUPDATE: ")
 }
 

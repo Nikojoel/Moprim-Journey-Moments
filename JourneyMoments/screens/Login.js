@@ -1,91 +1,159 @@
-import React, { useEffect, useState } from 'react'
+import React, {useState} from 'react'
 import {
   Text,
   View,
-  Button,
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  Button,
 } from 'react-native'
-import auth from '@react-native-firebase/auth'
 import LoginService from '../services/LoginService'
 import Colors from '../values/Colors'
+import DatabaseService from "../services/DatabaseService"
+import Notification from "../components/Notification";
 
-const Login = ({ navigation }) => {
-  // Set an initializing state whilst Firebase connects
-  const [initializing, setInitializing] = useState(true)
-  const [user, setUser] = useState(null)
+const Login = ({navigation}) => {
   const [email, setEmail] = useState('')
   const [pwd, setPwd] = useState('')
+  const [regEmail, regSetEmail] = useState('')
+  const [regPwd, regSetPwd] = useState('')
+  const [name, regSetName] = useState('')
+  const [toggleForm, setForm] = useState(false)
+  const [errorMessage, setErrorMessage] = useState(null)
 
-  // Called whenever auth state changes
-  const onAuthStateChanged = (user) => {
-    console.log(user)
-    setUser(user)
-    if (initializing) {
-      setInitializing(false)
+  const onAuthCreateUser = async (username, password) => {
+    try {
+      const result = await LoginService.createUser(username, password)
+      console.log(result)
+
+      const json = {
+        "username": name,
+        "email": result.user.email,
+        "metadata": {
+          "creationTime": result.user.metadata.creationTime,
+          "lastSignInTime": result.user.metadata.lastSignInTime
+        },
+        "photoURL": "undefined",
+        "id": result.user.uid,
+        "rating": 0
+      }
+      await DatabaseService.dbUserINSERT(json)
+      navigation.navigate('tabs')
+    } catch (e) {
+      console.log(e)
+      setErrorMessage("Error in registering")
     }
   }
 
-  const onAuthCreateUser = async (username, password) => {
-    await LoginService.createUser(username, password)
-  }
-
   const onAuthLoginUser = async (username, password) => {
-    await LoginService.loginUser(username, password)
+    try {
+      await LoginService.loginUser(username, password)
+      navigation.navigate('tabs')
+    } catch (e) {
+      console.log(e)
+      setErrorMessage("Error in login")
+    }
   }
 
   const onAuthSignOut = async () => {
-    await LoginService.logoutUser()
-  }
-
-  // Subscribe
-  useEffect(() => {
-    return auth().onAuthStateChanged(onAuthStateChanged) // unsubscribe on unmount
-  }, [user])
-
-  if (initializing) {
-    return null
+    try {
+      await LoginService.logoutUser()
+    } catch (e) {
+      console.log(e)
+      setErrorMessage("Error in logout")
+    }
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.logo}>JourneyMoments</Text>
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.inputText}
-          placeholder="Email..."
-          placeholderTextColor="#003f5c"
-          onChangeText={(text) => setEmail(text)}
+      <View style={styles.container}>
+        <Notification message={errorMessage}/>
+        <Text style={styles.logo}>JourneyMoments</Text>
+        <Button
+            title="LOGOUT"
+            onPress={async () => {
+              await onAuthSignOut()
+            }}
         />
+        {!toggleForm && <>
+          <Text style={styles.logo}>Login</Text>
+          <View style={styles.inputView}>
+            <TextInput
+                style={styles.inputText}
+                placeholder="Email..."
+                placeholderTextColor="#003f5c"
+                onChangeText={(text) => setEmail(text)}
+            />
+          </View>
+          <View style={styles.inputView}>
+            <TextInput
+                secureTextEntry
+                style={styles.inputText}
+                placeholder="Password..."
+                placeholderTextColor="#003f5c"
+                onChangeText={(text) => setPwd(text)}
+            />
+          </View>
+          <TouchableOpacity>
+            <Text style={styles.forgot}>Forgot Password?</Text>
+            {/* TODO: Able to recover password */}
+          </TouchableOpacity>
+          <TouchableOpacity
+              style={styles.loginBtn}
+              onPress={async () => {
+                await onAuthLoginUser(email, pwd)
+              }}>
+            <Text style={styles.loginText}>LOGIN</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+              onPress={() => {
+                setForm(true)
+              }}>
+            <Text style={styles.loginText}>Not registered?</Text>
+          </TouchableOpacity>
+        </>
+        }
+        {toggleForm && <>
+          <Text style={styles.logo}>Register</Text>
+          <View style={styles.inputView}>
+            <TextInput
+                style={styles.inputText}
+                placeholder="Email..."
+                placeholderTextColor="#003f5c"
+                onChangeText={(text) => regSetEmail(text)}
+            />
+          </View>
+          <View style={styles.inputView}>
+            <TextInput
+                style={styles.inputText}
+                placeholder="Username..."
+                placeholderTextColor="#003f5c"
+                onChangeText={(text) => regSetName(text)}
+            />
+          </View>
+          <View style={styles.inputView}>
+            <TextInput
+                secureTextEntry
+                style={styles.inputText}
+                placeholder="Password..."
+                placeholderTextColor="#003f5c"
+                onChangeText={(text) => regSetPwd(text)}
+            />
+          </View>
+          <TouchableOpacity
+              style={styles.loginBtn}
+              onPress={async () => {
+                await onAuthCreateUser(regEmail, regPwd)
+              }}>
+            <Text style={styles.loginText}>REGISTER</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+              onPress={() => {
+                setForm(false)
+              }}>
+            <Text style={styles.loginText}>Already an user?</Text>
+          </TouchableOpacity>
+        </>}
       </View>
-      <View style={styles.inputView}>
-        <TextInput
-          secureTextEntry
-          style={styles.inputText}
-          placeholder="Password..."
-          placeholderTextColor="#003f5c"
-          onChangeText={(text) => setPwd(text)}
-        />
-      </View>
-      <TouchableOpacity>
-        <Text style={styles.forgot}>Forgot Password?</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.loginBtn}
-        onPress={async () => {
-          await onAuthLoginUser(email, pwd)
-        }}>
-        <Text style={styles.loginText}>LOGIN</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={async () => {
-          await onAuthLoginUser('doo.daa@example.com', 'secret')
-          navigation.navigate('tabs')
-        }}>
-        <Text style={styles.loginText}>Signup</Text>
-      </TouchableOpacity>
-    </View>
   )
 }
 
@@ -135,12 +203,3 @@ const styles = StyleSheet.create({
 })
 
 export default Login
-
-/*<View>
-    <Button
-        title="Login"
-        onPress={async () => {
-            await onAuthLoginUser('doo.daa@example.com', 'secret');
-        }}
-    />
-</View>*/
