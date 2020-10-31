@@ -1,17 +1,19 @@
-import React, {useState} from 'react';
+import React from 'react'
 
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Placeholder from '../screens/placeholder';
-import LoginScreen from '../screens/Login';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import Home from '../screens/Home'
+import Trips from '../screens/Trips'
+import Stats from '../screens/Stats'
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator()
 const TabNavigator = () => {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Feed" component={Placeholder} />
-      <Tab.Screen name="Messages" component={LoginScreen} />
+      <Tab.Screen name="Home" component={Home} />
+      <Tab.Screen name="Trips" component={Trips} />
+      <Tab.Screen name="Stats" component={Stats} />
     </Tab.Navigator>
-  );
-};
+  )
+}
 
-export default TabNavigator;
+export default TabNavigator
