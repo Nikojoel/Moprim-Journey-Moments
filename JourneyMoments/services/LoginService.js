@@ -16,8 +16,13 @@ const logoutUser = async () => {
         .signOut()
 }
 
+const getCurrentUser = () => {
+    return auth().currentUser;
+}
+
 export default {
     logoutUser,
     loginUser,
     createUser,
+    getCurrentUser
 };
