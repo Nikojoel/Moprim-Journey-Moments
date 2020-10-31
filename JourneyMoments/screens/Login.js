@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {
   Text,
   View,
@@ -20,6 +20,11 @@ const Login = ({navigation}) => {
   const [name, regSetName] = useState('')
   const [toggleForm, setForm] = useState(false)
   const [errorMessage, setErrorMessage] = useState(null)
+
+  useEffect(() => {
+    const user = LoginService.getCurrentUser()
+    if (user) navigation.navigate('tabs')
+  }, [])
 
   const onAuthCreateUser = async (username, password) => {
     try {
@@ -100,7 +105,11 @@ const Login = ({navigation}) => {
           <TouchableOpacity
               style={styles.loginBtn}
               onPress={async () => {
-                await onAuthLoginUser(email, pwd)
+                if (email.length > 1 && pwd.length > 1) {
+                  await onAuthLoginUser(email, pwd)
+                } else {
+                  setErrorMessage("Bad input")
+                }
               }}>
             <Text style={styles.loginText}>LOGIN</Text>
           </TouchableOpacity>
@@ -142,7 +151,11 @@ const Login = ({navigation}) => {
           <TouchableOpacity
               style={styles.loginBtn}
               onPress={async () => {
-                await onAuthCreateUser(regEmail, regPwd)
+                if (regEmail.length > 1 && regPwd.length > 1) {
+                  await onAuthCreateUser(regEmail, regPwd)
+                } else {
+                  setErrorMessage("Bad input")
+                }
               }}>
             <Text style={styles.loginText}>REGISTER</Text>
           </TouchableOpacity>
