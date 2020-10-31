@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Button,
 } from 'react-native'
+import MoprimBridge from '../modules/Moprim';
 import LoginService from '../services/LoginService'
 import Colors from '../values/Colors'
 import DatabaseService from "../services/DatabaseService"
@@ -23,7 +24,11 @@ const Login = ({navigation}) => {
 
   useEffect(() => {
     const user = LoginService.getCurrentUser()
-    if (user) navigation.navigate('tabs')
+    if (user) {
+      console.log(user.uid)
+      MoprimBridge.initMoprim(user.uid)
+      navigation.navigate('tabs')
+    }
   }, [])
 
   const onAuthCreateUser = async (username, password) => {
