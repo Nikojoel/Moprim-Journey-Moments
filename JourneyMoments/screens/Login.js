@@ -34,7 +34,7 @@ const Login = ({navigation}) => {
   const onAuthCreateUser = async (username, password) => {
     try {
       const result = await LoginService.createUser(username, password)
-      console.log(result)
+      MoprimBridge.initMoprim(result.user.uid)
 
       const json = {
         "username": name,
@@ -57,7 +57,8 @@ const Login = ({navigation}) => {
 
   const onAuthLoginUser = async (username, password) => {
     try {
-      await LoginService.loginUser(username, password)
+      const user = await LoginService.loginUser(username, password)
+      MoprimBridge.initMoprim(user.user.uid)
       navigation.navigate('tabs')
     } catch (e) {
       console.log(e)

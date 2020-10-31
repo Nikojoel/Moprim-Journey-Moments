@@ -67,7 +67,7 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                     }
                 }
     }
-    
+
     @ReactMethod
     fun initMoprim(id: String) {
         val builder = TmdCoreConfigurationBuilder(context)
@@ -93,6 +93,7 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                         "XXX",
                         "Initialization successful with id: $id"
                 )
+                start()
                 val intent =
                         Intent(context, TmdUploadIntentService::class.java)
                 val callbackIntent = PendingIntent.getService(
@@ -140,6 +141,6 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
     }
 
     override fun getName(): String {
-       return "MoprimBridge"
+        return "MoprimBridge"
     }
 }
