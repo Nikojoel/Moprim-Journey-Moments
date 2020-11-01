@@ -54,10 +54,10 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
     }
 
     @ReactMethod
-    fun getResults(promise: Promise) {
-        val result = mutableListOf<String>()
+    fun getResults(day: Int, promise: Promise) {
+        Log.i("XXX", day.toString())
         Observable
-                .range(0,6)
+                .just(day)
                 .observeOn(io())
                 .map {
                     convertToDate(LocalDateTime.now().minusDays(it.toLong()))?.let { date -> TmdCloudApi.fetchData(context, date) }
@@ -66,7 +66,6 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                 .subscribe {
                     if (it != null) {
                         Log.i("XXX", it.result.toString())
-
                         if (it.hasResult()) {
                             val json = gson.toJson(it.result)
                             promise.resolve(json)

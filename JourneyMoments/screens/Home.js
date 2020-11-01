@@ -6,10 +6,9 @@ import MoprimBridge from '../modules/Moprim'
 const Home = () => {
   const [text, setText] = useState('')
 
-  const getMoprim = async () => {
-
+  const getMoprim = async (it) => {
     try {
-      const result = await MoprimBridge.getResults()
+      const result = await MoprimBridge.getResults(it)
       const obj = JSON.parse(result)
       var tempString = ''
       console.log(result)
@@ -21,9 +20,11 @@ const Home = () => {
         tempString += `${it.originalActivity} ${time}\n`
       })
       setText(tempString)
+
     } catch (e) {
       console.log(e)
     }
+
   }
 
   const millisToMinutesAndSeconds = (millis) => {
@@ -36,11 +37,14 @@ const Home = () => {
       <Text>Home</Text>
       <Button onPress={() => MoprimBridge.uploadMoprim()} title='upload'/>
       <Button onPress={() => {
-        getMoprim()
-        console.log(text)}
+        [...Array(7).keys()].forEach(it => {
+          getMoprim(it)
+        })
+      }
       } title='get'/>
     </View>
   )
 }
+
 
 export default Home
