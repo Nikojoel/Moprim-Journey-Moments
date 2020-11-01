@@ -24,6 +24,7 @@ const Home = () => {
     const seconds = ((millis % 60000) / 1000).toFixed(0)
     return minutes + ':' + (seconds < 10 ? '0' : '') + seconds
   }
+
   return (
     <View>
       <Text>Home</Text>
@@ -35,9 +36,9 @@ const Home = () => {
       }
       } title='get'/>
       <Button onPress={() => console.log(result.length)} title='size'/>
+
     </View>
   )
 }
-
 
 export default Home
