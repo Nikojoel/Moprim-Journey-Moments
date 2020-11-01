@@ -73,14 +73,6 @@ const Placeholder = () => {
       <Text>{text}</Text>
       <Login />
       <Upload />
-      <Button
-        title="Download"
-        onPress={async () => {
-          const result = await DownloadService.getUrl('3971');
-          console.log('result: ', result);
-          setDownload(result);
-        }}
-      />
       <Image source={{uri: download}} style={{width: 250, height: 250}} />
     </View>
   );
