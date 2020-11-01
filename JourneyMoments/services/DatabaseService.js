@@ -1,6 +1,5 @@
 import React from 'react'
 import database from '@react-native-firebase/database'
-import LoginService from "./LoginService";
 
 const USER_ROUTE = "/Users/"
 const USER_ID_ROUTE = "/Users"
