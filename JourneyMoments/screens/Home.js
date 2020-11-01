@@ -5,26 +5,18 @@ import MoprimBridge from '../modules/Moprim'
 
 const Home = () => {
   const [text, setText] = useState('')
+  const [result, setResult] = useState([])
 
   const getMoprim = async (it) => {
     try {
-      const result = await MoprimBridge.getResults(it)
+      const result = await MoprimBridge.getFakeResults(it)
       const obj = JSON.parse(result)
-      var tempString = ''
-      console.log(result)
-
       obj.forEach((it) => {
-        const time = millisToMinutesAndSeconds(
-          it.timestampEnd - it.timestampStart,
-        )
-        tempString += `${it.originalActivity} ${time}\n`
+        setResult(arr => [...arr, it])
       })
-      setText(tempString)
-
     } catch (e) {
       console.log(e)
     }
-
   }
 
   const millisToMinutesAndSeconds = (millis) => {
@@ -42,6 +34,7 @@ const Home = () => {
         })
       }
       } title='get'/>
+      <Button onPress={() => console.log(result.length)} title='size'/>
     </View>
   )
 }
