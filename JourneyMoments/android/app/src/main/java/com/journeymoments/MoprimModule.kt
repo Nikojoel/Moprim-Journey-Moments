@@ -7,7 +7,10 @@ import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
-import com.facebook.react.bridge.*
+import com.facebook.react.bridge.Promise
+import com.facebook.react.bridge.ReactApplicationContext
+import com.facebook.react.bridge.ReactContextBaseJavaModule
+import com.facebook.react.bridge.ReactMethod
 import com.google.gson.Gson
 import fi.moprim.tmd.sdk.TMD
 import fi.moprim.tmd.sdk.TmdCloudApi
@@ -16,7 +19,11 @@ import fi.moprim.tmd.sdk.model.TmdError
 import fi.moprim.tmd.sdk.model.TmdInitListener
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers.io
+import java.sql.Timestamp
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.*
 
 
@@ -48,23 +55,36 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
 
     @ReactMethod
     fun getResults(promise: Promise) {
+        val result = mutableListOf<String>()
         Observable
-                .just(1)
+                .range(0,6)
                 .observeOn(io())
                 .map {
-                    TmdCloudApi.uploadData(context)
-                    TmdCloudApi.fetchData(context, Date())
+                    convertToDate(LocalDateTime.now().minusDays(it.toLong()))?.let { date -> TmdCloudApi.fetchData(context, date) }
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    Log.i("XXX", it.result.toString())
-                    if (it.hasResult()) {
-                        val json = gson.toJson(it.result)
-                        promise.resolve(json)
+                    if (it != null) {
+                        Log.i("XXX", it.result.toString())
+
+                        if (it.hasResult()) {
+                            val json = gson.toJson(it.result)
+                            promise.resolve(json)
+                        }
+                        if (it.hasError()) {
+                            promise.reject("ERROR", it.error.toString())
+                        }
                     }
-                    if (it.hasError()) {
-                        promise.reject("ERROR", it.error.toString())
-                    }
+                }
+    }
+
+    @ReactMethod
+    fun uploadMoprim() {
+        Observable
+                .just(Unit)
+                .observeOn(io())
+                .subscribe {
+                    TmdCloudApi.uploadData(context)
                 }
     }
 
@@ -105,6 +125,12 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
         })
 
 
+    }
+
+    fun convertToDate(dateToConvert: LocalDateTime): Date? {
+        return Date
+                .from(dateToConvert.atZone(ZoneId.systemDefault())
+                        .toInstant())
     }
 
 
