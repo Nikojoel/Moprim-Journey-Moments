@@ -44,6 +44,7 @@ const Home = () => {
             }
             } title='get data'/>
             <Button onPress={() => console.log(result.length)} title='size'/>
+            <Upload/>
         </View>
     )
 }
