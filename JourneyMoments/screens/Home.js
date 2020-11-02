@@ -44,11 +44,6 @@ const Home = () => {
             }
             } title='get data'/>
             <Button onPress={() => console.log(result.length)} title='size'/>
-            <Button title="Get user moprim" onPress={async () => {
-                const r = await DatabaseService.dbMoprimGET(userId)
-                console.log(r)
-            }}/>
-            <Upload/>
         </View>
     )
 }
