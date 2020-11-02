@@ -1,11 +1,13 @@
 import React from 'react'
 import database from '@react-native-firebase/database'
 
-const USER_ROUTE = "/Users/"
-const USER_ID_ROUTE = "/Users"
+const USER_ROUTE = "/User/"
+const USER_ID_ROUTE = "/User"
 const TRAVEL_ROUTE = "/Moprim/"
 const MEDIA_ROUTE = "/Media/"
 const MEDIA_ID_ROUTE = "/Media"
+const COMMENT_ID_ROUTE = "/Comment"
+const COMMENT_ROUTE = "/Comment/"
 
 // Get all = "/"
 // Get single = "id"
@@ -90,6 +92,39 @@ const dbMediaMoprimGET = async (moprimId) => {
         .once("value")
 }
 
+// Get all = "/"
+// Get single = "id"
+const dbAllCommentGET = async (id) => {
+    return await database()
+        .ref(COMMENT_ID_ROUTE + id)
+        .once("value")
+}
+
+// Get all user comments
+const dbCommentUserGET = async (userId) => {
+    return await database()
+        .ref(COMMENT_ROUTE)
+        .orderByChild("userId")
+        .equalTo(userId)
+        .once("value")
+}
+
+// Get all travel chain comments
+const dbCommentMoprimGET = async (moprimId) => {
+    return await database()
+        .ref(COMMENT_ROUTE)
+        .orderByChild("moprimId")
+        .equalTo(moprimId)
+        .once("value")
+}
+
+// Insert comment data, data in JSON
+const dbCommentINSERT = async (data) => {
+    return await database()
+        .ref(COMMENT_ROUTE + data.id)
+        .set(data)
+}
+
 export default {
     dbUserGET,
     dbUserINSERT,
@@ -100,5 +135,9 @@ export default {
     dbMediaINSERT,
     dbAllMediaGET,
     dbMediaGET,
-    dbMediaMoprimGET
+    dbMediaMoprimGET,
+    dbAllCommentGET,
+    dbCommentUserGET,
+    dbCommentINSERT,
+    dbCommentMoprimGET
 }
