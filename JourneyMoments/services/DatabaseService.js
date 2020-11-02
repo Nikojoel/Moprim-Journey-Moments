@@ -4,7 +4,8 @@ import database from '@react-native-firebase/database'
 const USER_ROUTE = "/Users/"
 const USER_ID_ROUTE = "/Users"
 const TRAVEL_ROUTE = "/Moprim/"
-const MEDIA_PATH = "/Media/"
+const MEDIA_ROUTE = "/Media/"
+const MEDIA_ID_ROUTE = "/Media"
 
 // Get all = "/"
 // Get single = "id"
@@ -49,18 +50,44 @@ const dbMoprimGET = async (userId) => {
         .once("value")
 }
 
-// Insert travel data
+// Insert travel data, data in JSON
 const dbMoprimINSERT = async (data) => {
     return await database()
         .ref(TRAVEL_ROUTE + data.id)
         .set(data)
 }
 
-// Insert media data
+// Insert media data, data in JSON
 const dbMediaINSERT = async (data) => {
     return await database()
-        .ref(MEDIA_PATH + data.id)
+        .ref(MEDIA_ROUTE + data.id)
         .set(data)
+}
+
+// Get all = "/"
+// Get single = "id"
+const dbAllMediaGET = async (id) => {
+    return await database()
+        .ref(MEDIA_ID_ROUTE + id)
+        .once("value")
+}
+
+// Get all user media
+const dbMediaGET = async (userId) => {
+    return await database()
+        .ref(MEDIA_ROUTE)
+        .orderByChild("userId")
+        .equalTo(userId)
+        .once("value")
+}
+
+// Get media for specific travel chain
+const dbMediaMoprimGET = async (moprimId) => {
+    return await database()
+        .ref(MEDIA_ROUTE)
+        .orderByChild("moprimId")
+        .equalTo(moprimId)
+        .once("value")
 }
 
 export default {
@@ -71,4 +98,7 @@ export default {
     dbMoprimINSERT,
     dbMoprimGET,
     dbMediaINSERT,
+    dbAllMediaGET,
+    dbMediaGET,
+    dbMediaMoprimGET
 }
