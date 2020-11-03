@@ -20,6 +20,12 @@ const Home = () => {
                 it.id = Helper.generateUUID()
                 it.originalActivity = Helper.generateRandom()
                 it.userId = userId
+                it.rating = {
+                    "speed": 0,
+                    "cleanness": 0,
+                    "comfort": 0
+                }
+                console.log(it)
                 DatabaseService.dbMoprimINSERT(it)
             })
         } catch (e) {

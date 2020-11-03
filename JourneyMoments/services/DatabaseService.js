@@ -4,13 +4,14 @@ import database from '@react-native-firebase/database'
 const USER_ROUTE = "/User/"
 const USER_ID_ROUTE = "/User"
 const TRAVEL_ROUTE = "/Moprim/"
+const TRAVEL_ID_ROUTE = "/Moprim"
 const MEDIA_ROUTE = "/Media/"
 const MEDIA_ID_ROUTE = "/Media"
 const COMMENT_ID_ROUTE = "/Comment"
 const COMMENT_ROUTE = "/Comment/"
 
 // Get all = "/"
-// Get single = "id"
+// Get single = "/id"
 const dbUserGET = async (id) => {
     return await database()
         .ref(USER_ID_ROUTE + id)
@@ -36,10 +37,10 @@ const dbUserUPDATE = async (userId) => {
 }
 
 // Get all = "/"
-// Get single = "id"
+// Get single = "/id"
 const dbAllMoprimGET = async (id) => {
     return await database()
-        .ref(TRAVEL_ROUTE + id)
+        .ref(TRAVEL_ID_ROUTE + id)
         .once("value")
 }
 
@@ -59,6 +60,28 @@ const dbMoprimINSERT = async (data) => {
         .set(data)
 }
 
+// Update travel rating
+const dbMoprimUPDATE = async (id, data) => {
+    return await database()
+        .ref(TRAVEL_ROUTE + id)
+        .update({
+            rating: {
+                speed: data.speed,
+                cleanness: data.cleanness,
+                comfort: data.comfort
+            }
+        })
+}
+
+// Get rating average
+const dbMoprimAVERAGE = async (id) => {
+    const rating = await database()
+        .ref(TRAVEL_ROUTE + id)
+        .child("rating")
+        .once("value")
+    return (rating.child("cleanness").val() + rating.child("comfort").val() + rating.child("speed").val()) / 3
+}
+
 // Insert media data, data in JSON
 const dbMediaINSERT = async (data) => {
     return await database()
@@ -67,7 +90,7 @@ const dbMediaINSERT = async (data) => {
 }
 
 // Get all = "/"
-// Get single = "id"
+// Get single = "/id"
 const dbAllMediaGET = async (id) => {
     return await database()
         .ref(MEDIA_ID_ROUTE + id)
@@ -93,7 +116,7 @@ const dbMediaMoprimGET = async (moprimId) => {
 }
 
 // Get all = "/"
-// Get single = "id"
+// Get single = "/id"
 const dbAllCommentGET = async (id) => {
     return await database()
         .ref(COMMENT_ID_ROUTE + id)
@@ -132,6 +155,8 @@ export default {
     dbAllMoprimGET,
     dbMoprimINSERT,
     dbMoprimGET,
+    dbMoprimUPDATE,
+    dbMoprimAVERAGE,
     dbMediaINSERT,
     dbAllMediaGET,
     dbMediaGET,
