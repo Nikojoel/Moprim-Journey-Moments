@@ -30,8 +30,21 @@ const generateUUID = () => {
     });
 }
 
+const millisToMinutesAndSeconds = (millis) => {
+    const minutes = Math.floor(millis / 60000)
+    const seconds = ((millis % 60000) / 1000).toFixed(0)
+    return minutes + 'm' + (seconds < 10 ? '0' : '') + seconds + 's'
+}
+
+const unixToTime = (millis) => {
+    const date = new Date(millis).toLocaleTimeString().split(":")
+    return date[0] + ":" + date[1]
+}
+
 export default {
     generateUUID,
-    generateRandom
+    generateRandom,
+    millisToMinutesAndSeconds,
+    unixToTime
 }
 
