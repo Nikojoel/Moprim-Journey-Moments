@@ -25,7 +25,6 @@ const Login = ({navigation}) => {
   useEffect(() => {
     const user = LoginService.getCurrentUser()
     if (user) {
-      console.log(user.uid)
       MoprimBridge.initMoprim(user.uid)
       navigation.navigate('tabs')
     }
