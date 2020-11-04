@@ -42,6 +42,7 @@ const Home = () => {
                     "cleanness": 0,
                     "comfort": 0
                 }
+                it.date = Helper.unixToSimpleDate(parseInt(it.timestampStart))
                 console.log(it)
                 DatabaseService.dbMoprimINSERT(it)
             })
@@ -63,6 +64,12 @@ const Home = () => {
             } title='get data'/>
             <Button onPress={() => console.log(result.length)} title='size'/>
             <Upload/>
+            <Button onPress={() => {
+                console.log(Helper.unixToSimpleDate(1603384439635))
+            }} title="testset"/>
+            <Button onPress={async () => {
+                console.log(await DatabaseService.dbMoprimGET(userId))
+            }} title="dbGET"/>
         </View>
     )
 }
