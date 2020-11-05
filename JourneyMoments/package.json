@@ -21,6 +21,7 @@
     "@react-navigation/stack": "^5.11.0",
     "dotenv": "^8.2.0",
     "image-picker": "^0.3.1",
+    "native-base": "^2.13.14",
     "react": "16.13.1",
     "react-native": "^0.63.3",
     "react-native-bottom-action-sheet": "^2.0.1",
