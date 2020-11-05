@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {View, Text, Button, ScrollView, SafeAreaView, StyleSheet} from 'react-native'
+import {View, Text, Button, ScrollView, SafeAreaView, StyleSheet, FlatList} from 'react-native'
 import LoginService from "../services/LoginService"
 import FootPrint from "../components/FootPrint"
 import DatabaseService from "../services/DatabaseService"
@@ -37,10 +37,9 @@ const Stats = () => {
     }
 
     if (loading) {
-        return (
-            <ProgressBar/>
-        )
+        return <ProgressBar/>
     }
+
     return (
         <SafeAreaView>
             <Text>Stats</Text>

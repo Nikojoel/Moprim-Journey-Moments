@@ -49,12 +49,17 @@ const unixToSimpleDate = (unix) => {
     return new Date(unix).toLocaleDateString()
 }
 
+const parseJSON = (data) => {
+    return JSON.parse(JSON.stringify(data))
+}
+
 export default {
     generateUUID,
     generateRandom,
     millisToMinutesAndSeconds,
     unixToTime,
     unixToDate,
-    unixToSimpleDate
+    unixToSimpleDate,
+    parseJSON
 }
 
