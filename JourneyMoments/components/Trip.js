@@ -7,8 +7,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 const Trip = ({data}) => {
 
     const [icon, setIcon] = useState('')
-    const timeSpent = Helper.millisToMinutesAndSeconds(1603385367839 - 1603384439635)
-    const startTime = Helper.unixToTime(1603384439635)
+    const timeSpent = Helper.millisToMinutesAndSeconds(data.timestampEnd - data.timestampStart)
+    const startTime = Helper.unixToTime(parseInt(data.timestampStart))
 
     useEffect(() => {
         const transport = data.originalActivity
@@ -38,11 +38,11 @@ const Trip = ({data}) => {
 
     return (
         <View>
-            <Text>{data.originalActivity}</Text>
-            <Text>{data.distance + "m"}</Text>
-            <Text>{data.co2 + "g"}</Text>
-            <Text>{timeSpent}</Text>
-            <Text>{startTime}</Text>
+            <Text>transport method {data.originalActivity}</Text>
+            <Text>distance {data.distance + "m"}</Text>
+            <Text>co2 {data.co2 + "g"}</Text>
+            <Text>time spent {timeSpent}</Text>
+            <Text>start time {startTime}</Text>
             <Icon name={icon} size={25} color='#000000'/>
         </View>
     )
