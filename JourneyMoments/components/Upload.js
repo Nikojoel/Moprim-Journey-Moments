@@ -8,9 +8,8 @@ import RNBottomActionSheet from 'react-native-bottom-action-sheet'
 import Icon from 'react-native-vector-icons'
 import {ProgressBar} from '@react-native-community/progress-bar-android'
 
-const cameraIcon = <Icon family={'FontAwesome'} name={'camera'} color={'#000000'} size={30} />
-const videoIcon = <Icon family={'FontAwesome'} name={'video-camera'} color={'#000000'} size={30} />
-
+//const cameraIcon = <Icon family={'FontAwesome'} name={'camera'} color={'#000000'} size={30} />
+//const videoIcon = <Icon family={'FontAwesome'} name={'video-camera'} color={'#000000'} size={30} />
 
 const Upload = () => {
     const [image, setImage] = useState(null)
@@ -33,8 +32,8 @@ const Upload = () => {
         sheetView.Show({
             title: "Choose format",
             items: [
-                { title: "Image", value: "image", subTitle: "Image description", icon: cameraIcon},
-                { title: "Video", value: "video", subTitle: "Video Description", icon: videoIcon},
+                { title: "Image", value: "image", subTitle: "Image description"},
+                { title: "Video", value: "video", subTitle: "Video Description"},
             ],
             theme: "light",
             selection: 3,

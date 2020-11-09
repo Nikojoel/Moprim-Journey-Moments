@@ -25,7 +25,6 @@ const Login = ({navigation}) => {
   useEffect(() => {
     const user = LoginService.getCurrentUser()
     if (user) {
-      console.log(user.uid)
       MoprimBridge.initMoprim(user.uid)
       navigation.navigate('tabs')
     }
@@ -66,25 +65,10 @@ const Login = ({navigation}) => {
     }
   }
 
-  const onAuthSignOut = async () => {
-    try {
-      await LoginService.logoutUser()
-    } catch (e) {
-      console.log(e)
-      setErrorMessage("Error in logout")
-    }
-  }
-
   return (
       <View style={styles.container}>
         <Notification message={errorMessage}/>
         <Text style={styles.logo}>JourneyMoments</Text>
-        <Button
-            title="LOGOUT"
-            onPress={async () => {
-              await onAuthSignOut()
-            }}
-        />
         {!toggleForm && <>
           <Text style={styles.logo}>Login</Text>
           <View style={styles.inputView}>

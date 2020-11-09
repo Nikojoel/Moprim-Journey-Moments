@@ -41,10 +41,25 @@ const unixToTime = (millis) => {
     return date[0] + ":" + date[1]
 }
 
+const unixToDate = (unix) => {
+    return new Date(unix).toLocaleString()
+}
+
+const unixToSimpleDate = (unix) => {
+    return new Date(unix).toLocaleDateString()
+}
+
+const parseJSON = (data) => {
+    return JSON.parse(JSON.stringify(data))
+}
+
 export default {
     generateUUID,
     generateRandom,
     millisToMinutesAndSeconds,
-    unixToTime
+    unixToTime,
+    unixToDate,
+    unixToSimpleDate,
+    parseJSON
 }
 
