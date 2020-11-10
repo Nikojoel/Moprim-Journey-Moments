@@ -5,16 +5,14 @@
  * @format
  * @flow strict-local
  */
-import 'react-native-gesture-handler';
-import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
-import {PERMISSIONS, requestMultiple} from 'react-native-permissions';
-import Placeholder from './screens/placeholder';
-import TabNavigator from './navigation/TabNavigator';
-import Login from './screens/Login';
+import 'react-native-gesture-handler'
+import React from 'react'
+import {NavigationContainer} from '@react-navigation/native'
+import {createStackNavigator} from '@react-navigation/stack'
+import {PERMISSIONS, requestMultiple} from 'react-native-permissions'
+import TabNavigator from './navigation/TabNavigator'
+import Login from './screens/Login'
 import Profile from './screens/Profile'
-import {Text, Button} from 'react-native'
 
 requestMultiple([
   PERMISSIONS.ANDROID.ACTIVITY_RECOGNITION,
@@ -25,7 +23,7 @@ requestMultiple([
     'Location',
     statuses[PERMISSIONS.ANDROID.ACCESS_BACKGROUND_LOCATION],
   );
-  console.log('Activity', statuses[PERMISSIONS.ANDROID.ACTIVITY_RECOGNITION]);
+  console.log('Activity', statuses[PERMISSIONS.ANDROID.ACTIVITY_RECOGNITION])
 });
 
 const Stack = createStackNavigator();

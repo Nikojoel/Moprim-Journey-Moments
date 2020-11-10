@@ -8,6 +8,7 @@ import Upload from "../components/Upload";
 import Trip from "../components/Trip";
 import HomeFeed from "../components/HomeFeed";
 import {SafeAreaView} from "react-native-safe-area-context";
+import Map from "../components/Map";
 
 const data = {
     co2: "20.3",
@@ -16,7 +17,8 @@ const data = {
     id: "a84ef16f-6171-4d06-b450-17f1d012eeea",
     metadata: "null",
     originalActivity: "motorized/road/bus",
-    polyline: "szgnJmgkvCUOIb@]Pa@?m@AS@Ow@YcAEkAGg@KgAEgA@qAE...",
+    polyline:
+        "szgnJmgkvCUOIb@]Pa@?m@AS@Ow@YcAEkAGg@KgAEgA@qAEgAUaA@w@_@Ja@Re@Pg@k@[UGs@Cy@Eu@Iw@Iq@Es@Gq@Im@Oq@a@AWTOf@Hp@ZIBf@DhABnAPxAR`A^SXYT^B~@CrARO^c@^EXQd@[d@GRh@Fh@Bp@D~@GjAOj@T[j@KXHZDZOa@GIu@SY",
     speed: "0.0012497252759091752",
     syncedWithCloud: "true",
     timestampDownload: "1603387823109",
