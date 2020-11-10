@@ -13,6 +13,7 @@ const HomeFeed = ({data, extra}) => {
                 renderItem={HomeFeedItem}
                 keyExtractor={item => item.id}
                 extraData={extra}
+
             />
         </SafeAreaView>
     )

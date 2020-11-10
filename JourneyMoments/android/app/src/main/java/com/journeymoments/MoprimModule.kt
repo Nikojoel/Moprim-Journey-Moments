@@ -111,41 +111,40 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
 
     @ReactMethod
     fun initMoprim(id: String) {
-        val builder = TmdCoreConfigurationBuilder(context)
-                .setSdkConfigEndPoint(apiRoot)
-                .setSdkConfigKey(apiKey)
-        // Init the TMD
+        if (!TMD.isInitialized()) {
+            val builder = TmdCoreConfigurationBuilder(context)
+                    .setSdkConfigEndPoint(apiRoot)
+                    .setSdkConfigKey(apiKey)
+            // Init the TMD
+            TMD.setUUID(id)
+            TMD.init(context.applicationContext as Application, builder.build(), object : TmdInitListener {
 
-        TMD.setUUID(id)
-        TMD.init(context.applicationContext as Application, builder.build(), object : TmdInitListener {
+                override fun onTmdInitFailed(tmdError: TmdError) {
+                    Log.e(
+                            "XXX",
+                            "Initialisation failed: " + tmdError.name
+                    )
+                }
 
-            override fun onTmdInitFailed(tmdError: TmdError) {
-                Log.e(
-                        "XXX",
-                        "Initialisation failed: " + tmdError.name
-                )
-            }
-
-            override fun onTmdInitSuccessful(s: String) {
-                // s is the current installation ID, we'll put the UUID as the same just to demonstrate how to use the method
-                // replace with your own user id in production
-                // TMD.setUUID(s);
-                Log.i(
-                        "XXX",
-                        "Initialization successful with id: $id"
-                )
-                start()
-                val intent =
-                        Intent(context, TmdUploadIntentService::class.java)
-                val callbackIntent = PendingIntent.getService(
-                        context, 0, intent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                )
-                TmdCloudApi.setUploadCallbackIntent(callbackIntent)
-            }
-        })
-
-
+                override fun onTmdInitSuccessful(s: String) {
+                    // s is the current installation ID, we'll put the UUID as the same just to demonstrate how to use the method
+                    // replace with your own user id in production
+                    // TMD.setUUID(s);
+                    Log.i(
+                            "XXX",
+                            "Initialization successful with id: $id"
+                    )
+                    start()
+                    val intent =
+                            Intent(context, TmdUploadIntentService::class.java)
+                    val callbackIntent = PendingIntent.getService(
+                            context, 0, intent,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                    )
+                    TmdCloudApi.setUploadCallbackIntent(callbackIntent)
+                }
+            })
+        }
     }
 
     fun convertToDate(dateToConvert: LocalDateTime): Date? {
