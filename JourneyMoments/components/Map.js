@@ -1,10 +1,12 @@
-import React, {useState, useEffect} from 'react'
-import MapboxGL from "@react-native-mapbox-gl/maps";
+import React from 'react'
+import MapboxGL from "@react-native-mapbox-gl/maps"
 import {View, StyleSheet, Button, Text} from "react-native"
-import {ProgressBar} from "@react-native-community/progress-bar-android";
-const Decoder = require('@mapbox/polyline')
+import Icon from 'react-native-vector-icons/FontAwesome5'
+import API_KEY from '../Keys'
+import Helper from "../helpers/Helper";
 
-MapboxGL.setAccessToken("pk.eyJ1Ijoibmlra2VsaSIsImEiOiJja2hhaWI5amsxNzlwMzNydG83cWR5MngxIn0.9XY913z2vHAUedKktXeWRg")
+const Decoder = require('@mapbox/polyline')
+MapboxGL.setAccessToken(API_KEY)
 MapboxGL.setConnected(true)
 
 const styles = StyleSheet.create({
@@ -12,47 +14,45 @@ const styles = StyleSheet.create({
         backgroundColor: "#F5FCFF"
     },
     container: {
-        height: 300,
-        width: 300,
+        height: "100%",
+        width: "100%",
         backgroundColor: "tomato"
     },
     map: {
         flex: 1
-    }
+    },
+    point: {
+        height: 20,
+        width: 20,
+        backgroundColor: '#00cccc',
+        borderRadius: 50,
+        borderColor: '#ffffff',
+        borderWidth: 2
+    },
 })
 
-const Map = () => {
-    const [coords, setCoords] = useState([])
-    const [initial ,setInitial] = useState([])
-    const [loading, setLoading] = useState(true)
-    const init = [60.17466, 24.80263]
-    const initFin = [24.80263, 60.17466]
-
-    useEffect(() => {
-        const decode = async () => {
-            setCoords(await Decoder.decode("szgnJmgkvCUOIb@]Pa@?m@AS@Ow@YcAEkAGg@KgAEgA@qAEgAUaA@w@_@Ja@Re@Pg@k@[UGs@Cy@Eu@Iw@Iq@Es@Gq@Im@Oq@a@AWTOf@Hp@ZIBf@DhABnAPxAR`A^SXYT^B~@CrARO^c@^EXQd@[d@GRh@Fh@Bp@D~@GjAOj@T[j@KXHZDZOa@GIu@SY"))
-            setInitial(coords[0])
-            console.log("Initial:", initial)
-            console.log("Decoded:", coords)
-            setLoading(false)
-        }
-        decode()
-    }, [])
-
-    if (loading) {
-        return <ProgressBar/>
-    }
+const Map = ({data}) => {
+    const coords = Decoder.decode(data.polyline)
+    const initial = coords[0]
+    const last = coords[coords.length - 1]
 
     return (
         <View style={styles.page}>
             <View style={styles.container}>
                 <MapboxGL.MapView style={styles.map}>
                     <MapboxGL.Camera
-                        zoomLevel={6}
-                        centerCoordinate={[init[1], init[0]]}
+                        zoomLevel={8}
+                        centerCoordinate={[initial[1], initial[0]]}
                     />
+                    <MapboxGL.PointAnnotation coordinate={[last[1], last[0]]} id={Helper.generateUUID()}>
+                            <Icon name={"flag-checkered"} size={30} color={"black"}/>
+                    </MapboxGL.PointAnnotation>
+                    <MapboxGL.PointAnnotation coordinate={[initial[1], initial[0]]} id={Helper.generateUUID()}/>
                     {coords
-                        .map(it => <MapboxGL.PointAnnotation coordinate={[it[1], it[0]]} key={it}/>)
+                        .map(it =>
+                            <MapboxGL.PointAnnotation coordinate={[it[1], it[0]]} key={it} id={Helper.generateUUID()}>
+                                <View style={styles.point}/>
+                            </MapboxGL.PointAnnotation>)
                     }
                 </MapboxGL.MapView>
             </View>

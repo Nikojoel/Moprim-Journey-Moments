@@ -3,6 +3,7 @@
 .env
 api-root.properties
 google-services.json
+Keys.js
 
 # OSX
 #
