@@ -97,9 +97,16 @@ const Home = () => {
     }, [])
 
     return (
-        <SafeAreaView style={{flex: 1}}>
-            <ScrollView>
-                <Text>Home</Text>
+        <SafeAreaView style={{flex: 1}}>     
+                <HomeFeed data={commentedTrips} extra={commentedTrips} />
+        </SafeAreaView>
+    )
+}
+
+export default Home
+
+/*
+<Text>Home</Text>
                 <Button onPress={() => MoprimBridge.uploadMoprim()} title='upload'/>
                 <Trip data={data}/>
                 <Button onPress={() => {
@@ -116,10 +123,5 @@ const Home = () => {
                 <Button onPress={async () => {
                     console.log(await DatabaseService.dbMoprimGET(userId))
                 }} title="dbGET"/>
-                <HomeFeed data={commentedTrips} extra={commentedTrips} />
-            </ScrollView>
-        </SafeAreaView>
-    )
-}
 
-export default Home
+*/

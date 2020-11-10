@@ -1,3 +1,5 @@
+import Colors from "../values/Colors"
+
 const generateRandom = () => {
     const data = [
         "null",
@@ -21,6 +23,27 @@ const generateRandom = () => {
     const random = Math.floor(Math.random() * 16) + 1
     console.log(data[random])
     return data[random]
+}
+
+const transportIcon = (type) => {
+    switch (type) {
+        case 'null': return {icon: 'alert', color: Colors.motor} 
+        case 'unknown': return {icon:'help', color:Colors.motor}
+        case 'stationary': return {icon:'bed', color:Colors.nonMotor}
+        case 'non-motorized': return {icon:'walk',color:Colors.nonMotor}
+        case 'non-motorized/bicycle': return {icon:'bicycle', color:Colors.nonMotor}
+        case 'non-motorized/pedestrian/walk': return {icon:'walk', color:Colors.nonMotor}
+        case 'non-motorized/pedestrian/run': return {icon:'walk', color:Colors.nonMotor}
+        case 'motorized': return {icon:'car', color:Colors.motor}
+        case 'motorized/road': return {icon:'car', color:Colors.motor}
+        case 'motorized/road/car': return {icon:'car', color:Colors.motor}
+        case 'motorized/road/bus': return {icon:'bus', color:Colors.motor}
+        case 'motorized/rail': return {icon:'train', color:Colors.rail}
+        case 'motorized/rail/tram': return {icon:'train', color:Colors.rail}
+        case 'motorized/rail/train': return {icon:'train', color:Colors.rail}
+        case 'motorized/rail/metro"': return {icon:'train', color:Colors.rail}
+        case 'motorized/air/plane': return {icon:'plane', color:Colors.plane}
+    }
 }
 
 const generateUUID = () => {
@@ -60,6 +83,7 @@ export default {
     unixToTime,
     unixToDate,
     unixToSimpleDate,
-    parseJSON
+    parseJSON,
+    transportIcon
 }
 
