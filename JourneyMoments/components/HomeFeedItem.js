@@ -6,7 +6,8 @@ import Helper from "../helpers/Helper";
 const HomeFeedItem = ({ item }) => {
 
     const { icon, color } = Helper.transportIcon(item.originalActivity)
-   
+    const time = Helper.unixToTime(parseInt(item.timestampStart))
+
     return (
         <ListItem noBorder>
             <Content >
@@ -16,17 +17,18 @@ const HomeFeedItem = ({ item }) => {
                             <Icon name={icon} style={styles.mainIcon} />
                             <Body>
                                 <Text>{item.date}</Text>
+                                <Text>{time}</Text>
                                 <Text note>{item.distance}m</Text>
                             </Body>
                         </Left>
                     </CardItem>
                     <CardItem style={container(0,3,3,8,color)}>
                             <Icon name='speedometer' style={styles.ratingIcon}/>
-                            <Text style={styles.ratingText}>{item.rating.speed}</Text>    
+                            <Text style={styles.ratingText}>{item.rating.speed}</Text>
                             <Icon name='brush' style={styles.ratingIcon}/>
                             <Text style={styles.ratingText}>{item.rating.cleanness}</Text>
                             <Icon name='cloud' style={styles.ratingIcon}/>
-                            <Text style={styles.ratingText}>{item.rating.comfort}</Text>         
+                            <Text style={styles.ratingText}>{item.rating.comfort}</Text>
                     </CardItem>
                 </Card>
             </Content>
@@ -56,9 +58,9 @@ const styles = StyleSheet.create({
     },
     ratingText: {
         flex:1,
-        textAlign: 'left'    
+        textAlign: 'left'
     }
-    
+
   });
 
 

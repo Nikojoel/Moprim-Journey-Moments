@@ -1,11 +1,15 @@
-import React from "react";
-import { FlatList, SafeAreaView, StatusBar } from "react-native";
+import React from "react"
+import { FlatList, SafeAreaView, StatusBar } from "react-native"
 import { Text, ListItem, Left, Body, Icon, Right, Title } from "native-base"
-import HomeFeedItem from "./HomeFeedItem";
+import HomeFeedItem from "./HomeFeedItem"
 
 
 const HomeFeed = ({data, extra}) => {
-
+    if (!data) {
+        return (
+            <Text>Nada</Text>
+        )
+    }
     return (
         <SafeAreaView>
             <FlatList
@@ -13,7 +17,6 @@ const HomeFeed = ({data, extra}) => {
                 renderItem={HomeFeedItem}
                 keyExtractor={item => item.id}
                 extraData={extra}
-
             />
         </SafeAreaView>
     )

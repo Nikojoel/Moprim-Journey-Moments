@@ -27,7 +27,7 @@ const generateRandom = () => {
 
 const transportIcon = (type) => {
     switch (type) {
-        case 'null': return {icon: 'alert', color: Colors.motor} 
+        case 'null': return {icon: 'alert', color: Colors.motor}
         case 'unknown': return {icon:'help', color:Colors.motor}
         case 'stationary': return {icon:'bed', color:Colors.nonMotor}
         case 'non-motorized': return {icon:'walk',color:Colors.nonMotor}
@@ -61,6 +61,7 @@ const millisToMinutesAndSeconds = (millis) => {
 
 const unixToTime = (millis) => {
     const date = new Date(millis).toLocaleTimeString().split(":")
+    console.log(date)
     return date[0] + ":" + date[1]
 }
 
@@ -76,6 +77,19 @@ const parseJSON = (data) => {
     return JSON.parse(JSON.stringify(data))
 }
 
+const iterateData = (obj) => {
+    if (obj === undefined) return undefined
+    if (obj === null)  return null
+    const array = []
+    const keys = Object.values(obj)[0].childKeys
+    keys.forEach(key => {
+        const temp = []
+        temp.push(Object.values(obj)[0].value[key])
+        array.push(temp)
+    })
+    return array
+}
+
 export default {
     generateUUID,
     generateRandom,
@@ -84,6 +98,7 @@ export default {
     unixToDate,
     unixToSimpleDate,
     parseJSON,
-    transportIcon
+    transportIcon,
+    iterateData
 }
 

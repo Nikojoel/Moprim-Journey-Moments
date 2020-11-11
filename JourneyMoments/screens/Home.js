@@ -9,6 +9,7 @@ import Trip from "../components/Trip";
 import HomeFeed from "../components/HomeFeed";
 import {SafeAreaView} from "react-native-safe-area-context";
 import Map from "../components/Map";
+import {ProgressBar} from "@react-native-community/progress-bar-android";
 
 const data = {
     co2: "20.3",
@@ -32,6 +33,7 @@ const Home = () => {
     const [result, setResult] = useState([])
     const [commentedTrips, setCommentedTrips] = useState([])
     const userId = LoginService.getCurrentUser().uid
+    const [loading, setLoading] = useState(true)
 
     const getMoprim = async (it) => {
         try {
@@ -49,8 +51,8 @@ const Home = () => {
                     "comfort": 0
                 }
                 it.date = Helper.unixToSimpleDate(parseInt(it.timestampStart))
-                //console.log(it)
-                //DatabaseService.dbMoprimINSERT(it)
+                console.log(it)
+                DatabaseService.dbMoprimINSERT(it)
             })
         } catch (e) {
             console.log(e)
@@ -68,6 +70,7 @@ const Home = () => {
             morpimID.forEach(it => {
                 getMorprimData(it)
             })
+            setLoading(false)
         } catch (e) {
             console.log(e)
         }
@@ -96,8 +99,10 @@ const Home = () => {
         getCommentedTrips()
     }, [])
 
+    if (loading) return (<ProgressBar/>)
+
     return (
-        <SafeAreaView style={{flex: 1}}>     
+        <SafeAreaView style={{flex: 1}}>
                 <HomeFeed data={commentedTrips} extra={commentedTrips} />
         </SafeAreaView>
     )

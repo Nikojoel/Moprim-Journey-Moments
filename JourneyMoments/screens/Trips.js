@@ -1,30 +1,44 @@
-import React from 'react'
-import { View, Text } from 'react-native'
-import Map from "../components/Map";
-
-const data123 = {
-    co2: "20.3",
-    correctedActivity: "null",
-    distance: "1160.0",
-    id: "a84ef16f-6171-4d06-b450-17f1d012eeea",
-    metadata: "null",
-    originalActivity: "motorized/road/bus",
-    polyline:
-        "szgnJmgkvCUOIb@]Pa@?m@AS@Ow@YcAEkAGg@KgAEgA@qAEgAUaA@w@_@Ja@Re@Pg@k@[UGs@Cy@Eu@Iw@Iq@Es@Gq@Im@Oq@a@AWTOf@Hp@ZIBf@DhABnAPxAR`A^SXYT^B~@CrARO^c@^EXQd@[d@GRh@Fh@Bp@D~@GjAOj@T[j@KXHZDZOa@GIu@SY",
-    speed: "0.0012497252759091752",
-    syncedWithCloud: "true",
-    timestampDownload: "1603387823109",
-    timestampEnd: "1603385367839",
-    timestampStart: "1603384439635",
-    userId: "XmQUTrAnu4ZPTSTN6vCnOs5nTqh2"
-}
+import React, {useEffect, useState} from 'react'
+import HomeFeed from "../components/HomeFeed"
+import {SafeAreaView} from "react-native-safe-area-context"
+import {ProgressBar} from "@react-native-community/progress-bar-android"
+import LoginService from "../services/LoginService"
+import DatabaseService from "../services/DatabaseService"
+import Helper from "../helpers/Helper"
+import Home from "./Home";
 
 const Trips = () => {
-  return (
-    <View>
-        <Map data={data123}/>
-    </View>
-  )
+    const [loading, setLoading] = useState(true)
+    const [data, setData] = useState([])
+    const id = LoginService.getCurrentUser().uid
+
+    const getMorprimData = async (id) => {
+        const data = await DatabaseService.dbAllMoprimGET('/' + id)
+        const json = JSON.parse(JSON.stringify(data))
+        setData(arr => [...arr, json])
+    }
+
+    const getTrips = async (userId) => {
+        const result = await DatabaseService.dbMoprimGET(userId)
+        const json = Helper.parseJSON(result)
+        const keys = Object.keys(json)
+        keys.forEach(it => {
+            getMorprimData(it)
+        })
+        setLoading(false)
+    }
+
+    useEffect(() => {
+        getTrips(id)
+    }, [])
+
+    if (loading) return (<ProgressBar/>)
+
+    return (
+        <SafeAreaView style={{flex: 1}}>
+            <HomeFeed data={data} extra={data}/>
+        </SafeAreaView>
+    )
 }
 
 export default Trips
