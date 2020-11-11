@@ -13,6 +13,7 @@ import {PERMISSIONS, requestMultiple} from 'react-native-permissions'
 import TabNavigator from './navigation/TabNavigator'
 import Login from './screens/Login'
 import Profile from './screens/Profile'
+import Single from "./screens/Single";
 
 requestMultiple([
   PERMISSIONS.ANDROID.ACTIVITY_RECOGNITION,
@@ -43,10 +44,16 @@ const App = () => {
           options={{headerLeft: null, title: 'Profile'}}
         />
         <Stack.Screen
+            name="Single"
+            component={Single}
+            options={{headerShown: false, title: 'Single'}}
+        />
+        <Stack.Screen
           name="tabs"
           component={TabNavigator}
-          options={{headerLeft: null, title: 'moroporo'}}
+          options={{headerLeft: null, title: 'Main'}}
         />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

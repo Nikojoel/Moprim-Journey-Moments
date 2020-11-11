@@ -7,36 +7,39 @@ import DatabaseService from "../services/DatabaseService"
 import Helper from "../helpers/Helper"
 import Home from "./Home";
 
-const Trips = () => {
+const Trips = ({navigation}) => {
     const [loading, setLoading] = useState(true)
     const [data, setData] = useState([])
     const id = LoginService.getCurrentUser().uid
 
-    const getMorprimData = async (id) => {
-        const data = await DatabaseService.dbAllMoprimGET('/' + id)
-        const json = JSON.parse(JSON.stringify(data))
-        setData(arr => [...arr, json])
-    }
-
     const getTrips = async (userId) => {
         const result = await DatabaseService.dbMoprimGET(userId)
-        const json = Helper.parseJSON(result)
-        const keys = Object.keys(json)
-        keys.forEach(it => {
-            getMorprimData(it)
-        })
+        const response = iterateData(result)
+        setData(response)
+        console.log(data)
         setLoading(false)
+    }
+
+    const iterateData = (obj) => {
+        if (obj === undefined) return undefined
+        if (obj === null)  return null
+        const array = []
+        const keys = Object.values(obj)[0].childKeys
+        keys.forEach(key => {
+            array.push(Object.values(obj)[0].value[key])
+        })
+        return array
     }
 
     useEffect(() => {
         getTrips(id)
     }, [])
 
-    if (loading) return (<ProgressBar/>)
+    if (loading) return <ProgressBar/>
 
     return (
         <SafeAreaView style={{flex: 1}}>
-            <HomeFeed data={data} extra={data}/>
+            <HomeFeed data={data} extra={data} navigation={navigation}/>
         </SafeAreaView>
     )
 }

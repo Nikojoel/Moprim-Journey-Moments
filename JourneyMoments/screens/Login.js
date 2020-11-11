@@ -12,6 +12,7 @@ import LoginService from '../services/LoginService'
 import Colors from '../values/Colors'
 import DatabaseService from "../services/DatabaseService"
 import Notification from "../components/Notification";
+import {ProgressBar} from "@react-native-community/progress-bar-android";
 
 const Login = ({navigation}) => {
   const [email, setEmail] = useState('')
@@ -21,9 +22,9 @@ const Login = ({navigation}) => {
   const [name, regSetName] = useState('')
   const [toggleForm, setForm] = useState(false)
   const [errorMessage, setErrorMessage] = useState(null)
+  const user = LoginService.getCurrentUser()
 
   useEffect(() => {
-    const user = LoginService.getCurrentUser()
     if (user) {
       MoprimBridge.initMoprim(user.uid)
       navigation.navigate('tabs')
@@ -64,6 +65,7 @@ const Login = ({navigation}) => {
       setErrorMessage("Error in login")
     }
   }
+  if (user) return <ProgressBar/>
 
   return (
       <View style={styles.container}>
