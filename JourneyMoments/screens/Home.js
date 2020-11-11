@@ -28,7 +28,7 @@ const data = {
     userId: "XmQUTrAnu4ZPTSTN6vCnOs5nTqh2"
 }
 
-const Home = () => {
+const Home = ({navigation}) => {
     const [text, setText] = useState('')
     const [result, setResult] = useState([])
     const [commentedTrips, setCommentedTrips] = useState([])
@@ -99,11 +99,11 @@ const Home = () => {
         getCommentedTrips()
     }, [])
 
-    if (loading) return (<ProgressBar/>)
+    if (loading) return <ProgressBar/>
 
     return (
         <SafeAreaView style={{flex: 1}}>
-                <HomeFeed data={commentedTrips} extra={commentedTrips} />
+                <HomeFeed data={commentedTrips} extra={commentedTrips} navigation={navigation} />
         </SafeAreaView>
     )
 }

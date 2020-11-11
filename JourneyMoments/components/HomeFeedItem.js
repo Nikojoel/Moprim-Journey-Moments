@@ -3,13 +3,13 @@ import { FlatList, StyleSheet } from "react-native";
 import { Container, ListItem, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right } from 'native-base';
 import Helper from "../helpers/Helper";
 
-const HomeFeedItem = ({ item }) => {
+const HomeFeedItem = ({item, navigation}) => {
 
     const { icon, color } = Helper.transportIcon(item.originalActivity)
     const time = Helper.unixToTime(parseInt(item.timestampStart))
 
     return (
-        <ListItem noBorder>
+        <ListItem noBorder onPress={() => navigation.navigate("Single", {item})}>
             <Content >
                 <Card>
                     <CardItem style={container(3,3,3,0,color)} >
