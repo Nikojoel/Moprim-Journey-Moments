@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {View, Text, Button, ScrollView, SafeAreaView, StyleSheet, FlatList} from 'react-native'
+import {Text, Button, ScrollView, SafeAreaView, StyleSheet,BackHandler} from 'react-native'
 import LoginService from "../services/LoginService"
 import FootPrint from "../components/FootPrint"
 import DatabaseService from "../services/DatabaseService"
@@ -18,6 +18,13 @@ const Stats = () => {
             iterateData(db)
         }
         getMoprimData(userId)
+        BackHandler.addEventListener('hardwareBackPress', () => {
+            return true
+        })
+        return () =>
+            BackHandler.removeEventListener('hardwareBackPress', () => {
+                return true
+            })
 
     }, [])
 
@@ -43,9 +50,6 @@ const Stats = () => {
     return (
         <SafeAreaView>
             <Text>Stats</Text>
-            <Button onPress={async () => {
-                await getData(userId)
-            }} title="Refresh"/>
             <ScrollView style={styles.scrollArea}>
                 {arr
                     .map(it => <FootPrint data={it[0]} key={it[0].id}/>)

@@ -6,6 +6,7 @@ import LoginService from "../services/LoginService"
 import DatabaseService from "../services/DatabaseService"
 import Helper from "../helpers/Helper"
 import Home from "./Home";
+import {BackHandler} from "react-native";
 
 const Trips = ({navigation}) => {
     const [loading, setLoading] = useState(true)
@@ -33,6 +34,14 @@ const Trips = ({navigation}) => {
 
     useEffect(() => {
         getTrips(id)
+
+        BackHandler.addEventListener('hardwareBackPress', () => {
+            return true
+        })
+        return () =>
+            BackHandler.removeEventListener('hardwareBackPress', () => {
+                return true
+            })
     }, [])
 
     if (loading) return <ProgressBar/>

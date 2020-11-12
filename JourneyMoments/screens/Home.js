@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {View, Text, Button, ScrollView} from 'react-native'
+import {BackHandler} from 'react-native'
 import MoprimBridge from '../modules/Moprim'
 import DatabaseService from "../services/DatabaseService"
 import Helper from "../helpers/Helper";
@@ -97,6 +97,13 @@ const Home = ({navigation}) => {
 
     useEffect(() => {
         getCommentedTrips()
+        BackHandler.addEventListener('hardwareBackPress', () => {
+            return true
+        })
+        return () =>
+            BackHandler.removeEventListener('hardwareBackPress', () => {
+                return true
+            })
     }, [])
 
     if (loading) return <ProgressBar/>

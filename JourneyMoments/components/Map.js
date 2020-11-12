@@ -1,6 +1,6 @@
 import React from 'react'
 import MapboxGL from "@react-native-mapbox-gl/maps"
-import {View, StyleSheet, Button, Text} from "react-native"
+import {View, StyleSheet} from "react-native"
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import API_KEY from '../Keys'
 import Helper from "../helpers/Helper";
