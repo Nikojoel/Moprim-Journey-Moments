@@ -52,7 +52,13 @@ const Single = ({route, navigation}) => {
                 text: text,
                 userId: id
             }
-            await DatabaseService.dbCommentINSERT(json)
+            try {
+                await DatabaseService.dbCommentINSERT(json)
+                await DatabaseService.dbUserUPDATE(id)
+            } catch (e) {
+                console.log(e)
+                setError("Error in database, try again")
+            }
         }
     }
 
