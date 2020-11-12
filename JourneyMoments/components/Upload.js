@@ -79,7 +79,12 @@ const Upload = ({moprimId}) => {
                 "url": url,
                 "userId": userId
             }
-            await DatabaseService.dbMediaINSERT(data)
+            try {
+                await DatabaseService.dbMediaINSERT(data)
+                await DatabaseService.dbUserUPDATE(userId)
+            } catch (e) {
+                console.log(e)
+            }
         }
     }
 
