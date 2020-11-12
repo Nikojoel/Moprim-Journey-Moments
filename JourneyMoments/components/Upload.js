@@ -11,7 +11,7 @@ import {ProgressBar} from '@react-native-community/progress-bar-android'
 //const cameraIcon = <Icon family={'FontAwesome'} name={'camera'} color={'#000000'} size={30} />
 //const videoIcon = <Icon family={'FontAwesome'} name={'video-camera'} color={'#000000'} size={30} />
 
-const Upload = () => {
+const Upload = ({moprimId}) => {
     const [image, setImage] = useState(null)
     const [uploading, setUploading] = useState(false)
     const userId = LoginService.getCurrentUser().uid
@@ -75,7 +75,7 @@ const Upload = () => {
 
             const data = {
                 "id": UUID,
-                "moprimId": "test",
+                "moprimId": moprimId,
                 "url": url,
                 "userId": userId
             }

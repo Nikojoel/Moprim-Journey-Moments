@@ -18,6 +18,7 @@ const Single = ({route, navigation}) => {
     const [error, setError] = useState(null)
 
     const data = Helper.parseJSON(route.params.item)
+    const moprimId = data.id
     console.log("asdasd", data)
 
     const {icon, color} = Helper.transportIcon(data.originalActivity)
@@ -72,7 +73,7 @@ const Single = ({route, navigation}) => {
             <View style={styles.map}>
                 <Map data={data}/>
             </View>
-            <Upload/>
+            <Upload moprimId={moprimId}/>
             <Notification message={error}/>
             <CommentField handleSend={handleSend}/>
         </Content>
