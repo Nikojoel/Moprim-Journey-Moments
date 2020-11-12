@@ -1,19 +1,26 @@
 import React, {useState, useEffect} from 'react'
 import Helper from "../helpers/Helper"
 import Map from "../components/Map"
+import Upload from "../components/Upload"
+import CommentField from "../components/CommentField";
 import {Content, Icon, Text, H2} from "native-base"
 import DatabaseService from "../services/DatabaseService"
 import {ProgressBar} from "@react-native-community/progress-bar-android"
-import {StyleSheet, View} from "react-native"
+import {BackHandler, StyleSheet, View} from "react-native"
+import Notification from "../components/Notification";
+import Login from "./Login";
+import LoginService from "../services/LoginService";
 
-const Single = ({route}) => {
+const Single = ({route, navigation}) => {
+    const id = LoginService.getCurrentUser().uid
     const [user, setUser] = useState([])
     const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
 
-    const data = route.params.item
-    console.log("asdasd",data)
+    const data = Helper.parseJSON(route.params.item)
+    console.log("asdasd", data)
 
-    const { icon, color } = Helper.transportIcon(data.originalActivity)
+    const {icon, color} = Helper.transportIcon(data.originalActivity)
     const timeSpent = Helper.millisToMinutesAndSeconds(parseInt(data.timestampEnd) - parseInt(data.timestampStart))
     const startTime = Helper.unixToTime(parseInt(data.timestampStart))
 
@@ -28,7 +35,25 @@ const Single = ({route}) => {
 
     useEffect(() => {
         //getUser(data.userId)
+        BackHandler.addEventListener('hardwareBackPress', () => {
+            navigation.navigate("Home")
+        })
     }, [])
+
+    const handleSend = async (text) => {
+        console.log("send comment with text:", text)
+        console.log("data", data)
+        if (text === "") setError("Can't be empty")
+        else {
+            const json = {
+                id: Helper.generateUUID(),
+                moprimId: data.id,
+                text: text,
+                userId: id
+            }
+            await DatabaseService.dbCommentINSERT(json)
+        }
+    }
 
     return (
         <Content>
@@ -47,7 +72,9 @@ const Single = ({route}) => {
             <View style={styles.map}>
                 <Map data={data}/>
             </View>
-
+            <Upload/>
+            <Notification message={error}/>
+            <CommentField handleSend={handleSend}/>
         </Content>
 
     )

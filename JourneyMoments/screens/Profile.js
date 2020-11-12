@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {Text, View, Button} from 'react-native'
+import {Text, View, Button, BackHandler} from 'react-native'
 import LoginService from "../services/LoginService"
 import DatabaseService from "../services/DatabaseService"
 import {ProgressBar} from '@react-native-community/progress-bar-android'
@@ -18,6 +18,9 @@ const Profile = ({navigation}) => {
             setLoading(false)
         }
         getProfile(id)
+        BackHandler.addEventListener('hardwareBackPress', () => {
+            navigation.navigate("Home")
+        })
     }, [])
 
     if (loading) {
