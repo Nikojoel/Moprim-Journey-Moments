@@ -5,14 +5,13 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  Button,
+  Button, BackHandler,
 } from 'react-native'
-import MoprimBridge from '../modules/Moprim';
+import MoprimBridge from '../modules/Moprim'
 import LoginService from '../services/LoginService'
 import Colors from '../values/Colors'
 import DatabaseService from "../services/DatabaseService"
-import Notification from "../components/Notification";
-import {ProgressBar} from "@react-native-community/progress-bar-android";
+import Notification from "../components/Notification"
 
 const Login = ({navigation}) => {
   const [email, setEmail] = useState('')
@@ -29,6 +28,13 @@ const Login = ({navigation}) => {
       MoprimBridge.initMoprim(user.uid)
       navigation.navigate('tabs')
     }
+    BackHandler.addEventListener('hardwareBackPress', () => {
+      return true
+    })
+    return () =>
+        BackHandler.removeEventListener('hardwareBackPress', () => {
+          return true
+        })
   }, [])
 
   const onAuthCreateUser = async (username, password) => {
@@ -65,7 +71,7 @@ const Login = ({navigation}) => {
       setErrorMessage("Error in login")
     }
   }
-  if (user) return <ProgressBar/>
+
 
   return (
       <View style={styles.container}>
