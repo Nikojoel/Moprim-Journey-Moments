@@ -10,6 +10,7 @@ import HomeFeed from "../components/HomeFeed";
 import {SafeAreaView} from "react-native-safe-area-context";
 import Map from "../components/Map";
 import {ProgressBar} from "@react-native-community/progress-bar-android";
+import Stars from "../components/StarRating";
 
 const data = {
     co2: "20.3",
