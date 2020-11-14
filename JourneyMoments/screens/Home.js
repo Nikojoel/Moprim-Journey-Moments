@@ -64,12 +64,16 @@ const Home = ({navigation}) => {
         try {
             const comments = await DatabaseService.dbAllCommentGET('/')
             const commentsArray = iterateData(comments)
-            const morpimID = []
+            const morpimID = new Set()
+            const promises = []
             commentsArray.forEach(it => {
-                morpimID.push(it[0].moprimId)
+                morpimID.add(it.moprimId)
             })
             morpimID.forEach(it => {
-                getMorprimData(it)
+                promises.push(getMorprimData(it))
+            })
+            Promise.all(promises).then((values) => {
+                setCommentedTrips(values)
             })
             setLoading(false)
         } catch (e) {
@@ -80,7 +84,10 @@ const Home = ({navigation}) => {
     const getMorprimData = async (id) => {
         const data = await DatabaseService.dbAllMoprimGET('/' + id)
         const json = JSON.parse(JSON.stringify(data))
-        setCommentedTrips(arr => [...arr, json])
+        const user = await DatabaseService.dbUserGET('/' + json.userId)
+        const userjson = JSON.parse(JSON.stringify(user))
+        json.user = userjson
+        return json
     }
 
     const iterateData = (obj) => {
@@ -89,12 +96,11 @@ const Home = ({navigation}) => {
         const array = []
         const keys = Object.values(obj)[0].childKeys
         keys.forEach(key => {
-            const temp = []
-            temp.push(Object.values(obj)[0].value[key])
-            array.push(temp)
+            array.push(Object.values(obj)[0].value[key])
         })
         return array
     }
+
 
     useEffect(() => {
         getCommentedTrips()

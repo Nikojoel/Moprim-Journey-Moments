@@ -19,18 +19,22 @@ import fi.moprim.tmd.sdk.model.TmdError
 import fi.moprim.tmd.sdk.model.TmdInitListener
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers.io
 import java.sql.Timestamp
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class MoprimModule(private val context: ReactApplicationContext) : ReactContextBaseJavaModule() {
     private val CHANNEL_ID = "moprim.channel"
     private var notificationManager: NotificationManager? = null
     private val gson = Gson()
+    private val unsubOnStop = CompositeDisposable()
 
 
     @ReactMethod
@@ -44,6 +48,17 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
         notificationManager = createNotificationChannel()
         val notification = buildNotification("moprim is running")
         TMD.startForeground(context, 112, notification)
+        Observable
+                .interval(2, TimeUnit.MINUTES)
+                .observeOn(io())
+                .map {
+                    TmdCloudApi.uploadData(context);
+                }
+                .subscribe {
+                    Log.i("XXX", it.toString())
+                }
+                .addTo(unsubOnStop)
+
     }
 
     @ReactMethod
@@ -51,11 +66,25 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
         Log.i("XXX", "stop moprim")
         TMD.stop(context)
         notificationManager?.cancel(112)
+        unsubOnStop.clear()
+    }
+
+    @ReactMethod
+    fun getUserStats(day: Int, promise: Promise) {
+        Observable
+                .just(Unit)
+                .observeOn(io())
+                .map {
+                    TmdCloudApi.fetchStats(context, day)
+                }
+                .subscribe {
+                      if(it.hasResult()) promise.resolve(gson.toJson(it.result))
+                }
+                .addTo(unsubOnStop)
     }
 
     @ReactMethod
     fun getResults(day: Int, promise: Promise) {
-        Log.i("XXX", day.toString())
         Observable
                 .just(day)
                 .observeOn(io())
@@ -65,7 +94,6 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     if (it != null) {
-                        Log.i("XXX", it.result.toString())
                         if (it.hasResult()) {
                             val json = gson.toJson(it.result)
                             promise.resolve(json)
@@ -75,6 +103,7 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                         }
                     }
                 }
+                .addTo(unsubOnStop)
     }
     @ReactMethod
     fun getFakeResults(day: Int, promise: Promise) {
@@ -107,6 +136,7 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                 .subscribe {
                     TmdCloudApi.uploadData(context)
                 }
+                .addTo(unsubOnStop)
     }
 
     @ReactMethod
