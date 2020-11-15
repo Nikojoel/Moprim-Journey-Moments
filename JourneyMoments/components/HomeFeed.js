@@ -16,6 +16,7 @@ const HomeFeed = ({data, extra, navigation}) => {
                 }
                 keyExtractor={item => item.id}
                 extraData={extra}
+                numColumns={2}
             />
         </SafeAreaView>
     )
