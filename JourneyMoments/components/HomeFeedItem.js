@@ -7,38 +7,30 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 
 const HomeFeedItem = ({ item, navigation }) => {
 
-    const { icon, color } = Helper.transportIcon(item.originalActivity)
+    const { icon, color } = Helper.transportIcon(item.activity)
     const time = Helper.unixToTime(parseInt(item.timestampStart))
 
     return (
-        <View noBorder style={styles.container} onPress={() => navigation.navigate("Single", { item })}>
+        <View noBorder style={container(color)} onPress={() => navigation.navigate("Single", { item })}>
             <TouchableOpacity  onPress={() => navigation.navigate("Single", { item })}>
             <View style={{flexDirection: 'row'}}>
-                <Icon name={icon} style={styles.mainIcon} />
-                <Text >{item.user.username}</Text>
+                <Icon name={icon} style={styles.mainIcon} />           
             </View>
-            
             <Text>{item.date}</Text>
             <Text>{time}</Text>
             <Text note>{item.distance}m</Text>
-            <Icon name='speedometer' style={styles.ratingIcon} />
-            <Text style={styles.ratingText}>{item.rating.speed}</Text>
-            <Icon name='brush' style={styles.ratingIcon} />
-            <Text style={styles.ratingText}>{item.rating.cleanness}</Text>
-            <Icon name='cloud' style={styles.ratingIcon} />
-            <Text style={styles.ratingText}>{item.rating.comfort}</Text>
             </TouchableOpacity>
         </View>
     )
 }
 
-const container = (t, s, e, b, color) => {
+const container = (color) => {
     return {
-        borderTopWidth: t,
-        borderStartWidth: s,
-        borderEndWidth: e,
-        borderBottomWidth: b,
-        borderColor: color
+        backgroundColor: color,
+        flexDirection: 'column',
+        padding: 10,
+        flex: 1,
+        margin: 2
     }
 }
 

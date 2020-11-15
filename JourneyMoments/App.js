@@ -14,6 +14,7 @@ import TabNavigator from './navigation/TabNavigator'
 import Login from './screens/Login'
 import Profile from './screens/Profile'
 import Single from "./screens/Single";
+import MoprimBridge from './modules/Moprim'
 
 requestMultiple([
   PERMISSIONS.ANDROID.ACTIVITY_RECOGNITION,
@@ -26,6 +27,21 @@ requestMultiple([
   );
   console.log('Activity', statuses[PERMISSIONS.ANDROID.ACTIVITY_RECOGNITION])
 });
+
+const uploadDataPolling = async (days) => {
+  try {
+    Promise.all([...Array(days).keys()].map(key => {return MoprimBridge.getResults(key)})).then(result => {
+      console.log(result)
+    })
+    /*const data = await MoprimBridge.getResults(days)
+    console.log(data) */
+  } catch (e) {
+    console.log(e)
+  };
+}
+
+uploadDataPolling(10)
+//setInterval(uploadDataPolling(0), 5000)
 
 const Stack = createStackNavigator();
 

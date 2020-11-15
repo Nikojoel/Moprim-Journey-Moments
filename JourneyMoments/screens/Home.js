@@ -65,14 +65,10 @@ const Home = ({navigation}) => {
             const comments = await DatabaseService.dbAllCommentGET('/')
             const commentsArray = iterateData(comments)
             const morpimID = new Set()
-            const promises = []
             commentsArray.forEach(it => {
                 morpimID.add(it.moprimId)
             })
-            morpimID.forEach(it => {
-                promises.push(getMorprimData(it))
-            })
-            Promise.all(promises).then((values) => {
+            Promise.all([...morpimID].map((id) => { return getMorprimData(id)})).then((values) => {
                 setCommentedTrips(values)
             })
             setLoading(false)

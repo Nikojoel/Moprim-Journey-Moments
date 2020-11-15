@@ -24,7 +24,7 @@ const Single = ({route, navigation}) => {
     const moprimId = data.id
     const userId = data.userId
 
-    const {icon, color} = Helper.transportIcon(data.originalActivity)
+    const {icon, color} = Helper.transportIcon(data.activity)
     const timeSpent = Helper.millisToMinutesAndSeconds(parseInt(data.timestampEnd) - parseInt(data.timestampStart))
     const startTime = Helper.unixToTime(parseInt(data.timestampStart))
 
@@ -89,9 +89,7 @@ const Single = ({route, navigation}) => {
             <Text>Speed: {data.speed}</Text>
             <Icon name={icon} size={30} color={color}/>
             <H2>Current Rating</H2>
-            <Text>Speed: {data.rating.speed}/5</Text>
-            <Text>Cleanness: {data.rating.cleanness}/5</Text>
-            <Text>Comfort: {data.rating.comfort}/5</Text>
+            
             <H2>User</H2>
             <Text>Name: {user.username}</Text>
             <Text>Rating: {user.rating}</Text>
@@ -125,3 +123,9 @@ const styles = StyleSheet.create({
     }
 })
 export default Single
+
+/**
+ <Text>Speed: {data.rating.speed}/5</Text>
+            <Text>Cleanness: {data.rating.cleanness}/5</Text>
+            <Text>Comfort: {data.rating.comfort}/5</Text>
+ */

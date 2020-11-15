@@ -11,10 +11,13 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import fi.moprim.tmd.sdk.TMD
 import fi.moprim.tmd.sdk.TmdCloudApi
 import fi.moprim.tmd.sdk.TmdCoreConfigurationBuilder
+import fi.moprim.tmd.sdk.model.TmdActivity
 import fi.moprim.tmd.sdk.model.TmdError
 import fi.moprim.tmd.sdk.model.TmdInitListener
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -23,6 +26,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers.io
+import io.reactivex.rxjava3.subjects.PublishSubject
 import java.sql.Timestamp
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -33,8 +37,10 @@ import java.util.concurrent.TimeUnit
 class MoprimModule(private val context: ReactApplicationContext) : ReactContextBaseJavaModule() {
     private val CHANNEL_ID = "moprim.channel"
     private var notificationManager: NotificationManager? = null
+    private val uploadToDbSubject = PublishSubject.create<Unit>()
     private val gson = Gson()
     private val unsubOnStop = CompositeDisposable()
+    private val db = Firebase.database.reference
 
 
     @ReactMethod
@@ -44,22 +50,70 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
 
     @ReactMethod
     fun start() {
-        Log.i("XXX", "create channel")
         notificationManager = createNotificationChannel()
         val notification = buildNotification("moprim is running")
         TMD.startForeground(context, 112, notification)
         Observable
-                .interval(2, TimeUnit.MINUTES)
+                .interval(60, TimeUnit.SECONDS)
                 .observeOn(io())
                 .map {
                     TmdCloudApi.uploadData(context);
                 }
                 .subscribe {
-                    Log.i("XXX", it.toString())
+                    uploadToDbSubject.onNext(Unit)
+                }
+                .addTo(unsubOnStop)
+
+        uploadToDbSubject
+                .observeOn(io())
+                .map {
+                    val set = mutableSetOf<MutableList<TmdActivity>>()
+                    for (index in 0..3) {
+                        val data = convertToDate(LocalDateTime.now().minusDays(index.toLong()))?.let { date -> TmdCloudApi.fetchData(context, date) }
+                        if (data != null && data.result.isNotEmpty()) {
+                            set.add(data.result)
+                        }
+                    }
+                    set
+                }
+                .subscribe { set ->
+                    set.forEach { list ->
+                        list.forEach {activity ->
+                            db.child("Moprim").child(activity.id.toString()).setValue(CustomMoprimActivity(
+                                    activity,
+                                    activity.activity,
+                                    activity.id,
+                                    activity.timestampStart,
+                                    activity.timestampEnd,
+                                    activity.co2,
+                                    activity.distance,
+                                    activity.speed,
+                                    activity.polyline,
+                                    activity.origin,
+                                    activity.destination,
+                                    TMD.getUUID()
+                            ))
+                        }
+                    }
                 }
                 .addTo(unsubOnStop)
 
     }
+
+    data class CustomMoprimActivity(
+            val TmdActivity: TmdActivity,
+            val activity: String,
+            val id: Long,
+            val timestampStart: Long,
+            val timestampEnd: Long,
+            val co2: Double,
+            val distance: Double,
+            val speed: Double,
+            val polyline: String,
+            val origin: String,
+            val destination: String,
+            val userId: String
+    )
 
     @ReactMethod
     fun stop() {
@@ -85,25 +139,28 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
 
     @ReactMethod
     fun getResults(day: Int, promise: Promise) {
-        Observable
-                .just(day)
-                .observeOn(io())
-                .map {
-                    convertToDate(LocalDateTime.now().minusDays(it.toLong()))?.let { date -> TmdCloudApi.fetchData(context, date) }
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    if (it != null) {
-                        if (it.hasResult()) {
-                            val json = gson.toJson(it.result)
-                            promise.resolve(json)
-                        }
-                        if (it.hasError()) {
-                            promise.reject("ERROR", it.error.toString())
+        if(TMD.isInitialized()) {
+            Observable
+                    .just(day)
+                    .observeOn(io())
+                    .map {
+                        convertToDate(LocalDateTime.now().minusDays(it.toLong()))?.let { date -> TmdCloudApi.fetchData(context, date) }
+                    }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        if (it != null) {
+                            if (it.hasResult()) {
+                                val json = gson.toJson(it.result)
+                                Log.i("XXX", json.isNullOrBlank().toString())
+                                promise.resolve(json)
+                            }
+                            if (it.hasError()) {
+                                promise.reject("ERROR", it.error.toString())
+                            }
                         }
                     }
-                }
-                .addTo(unsubOnStop)
+                    .addTo(unsubOnStop)
+        }
     }
     @ReactMethod
     fun getFakeResults(day: Int, promise: Promise) {
