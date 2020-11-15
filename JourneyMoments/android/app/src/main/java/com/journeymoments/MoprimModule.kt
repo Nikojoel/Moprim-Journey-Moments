@@ -17,17 +17,16 @@ import com.google.gson.Gson
 import fi.moprim.tmd.sdk.TMD
 import fi.moprim.tmd.sdk.TmdCloudApi
 import fi.moprim.tmd.sdk.TmdCoreConfigurationBuilder
-import fi.moprim.tmd.sdk.model.TmdActivity
 import fi.moprim.tmd.sdk.model.TmdError
 import fi.moprim.tmd.sdk.model.TmdInitListener
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
-import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers.io
 import io.reactivex.rxjava3.subjects.PublishSubject
-import java.sql.Timestamp
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
@@ -41,7 +40,6 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
     private val gson = Gson()
     private val unsubOnStop = CompositeDisposable()
     private val db = Firebase.database.reference
-
 
     @ReactMethod
     fun show(message: String?) {
@@ -67,53 +65,51 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
         uploadToDbSubject
                 .observeOn(io())
                 .map {
-                    val set = mutableSetOf<MutableList<TmdActivity>>()
+                    val set = mutableSetOf<Chain>()
                     for (index in 0..3) {
-                        val data = convertToDate(LocalDateTime.now().minusDays(index.toLong()))?.let { date -> TmdCloudApi.fetchData(context, date) }
+                        val convertedDate = convertToDate(LocalDateTime.now().minusDays(index.toLong()))
+                        val data = convertedDate?.let { date -> TmdCloudApi.fetchData(context, date) }
                         if (data != null && data.result.isNotEmpty()) {
-                            set.add(data.result)
+                            set.add(Chain(data.result, convertedDate))
                         }
                     }
                     set
                 }
                 .subscribe { set ->
-                    set.forEach { list ->
-                        list.forEach {activity ->
-                            db.child("Moprim").child(activity.id.toString()).setValue(CustomMoprimActivity(
-                                    activity,
-                                    activity.activity,
-                                    activity.id,
-                                    activity.timestampStart,
-                                    activity.timestampEnd,
-                                    activity.co2,
-                                    activity.distance,
-                                    activity.speed,
-                                    activity.polyline,
-                                    activity.origin,
-                                    activity.destination,
-                                    TMD.getUUID()
-                            ))
+                    set.forEach { chain ->
+                        var totalCo2: Double = 0.0
+                        var totalDistance: Double = 0.0
+                        var idSet = mutableSetOf<String>()
+                        val userId = TMD.getUUID()
+                        chain.activities.forEach { activity ->
+                            idSet.add(userId + activity.id)
+                            totalCo2 += activity.co2
+                            totalDistance += activity.distance
+                            db.child("Moprim")
+                                    .child(userId + activity.id.toString())
+                                    .setValue(
+                                            CustomMoprimActivity(
+                                                    activity,
+                                                    activity.activity,
+                                                    activity.id,
+                                                    activity.timestampStart,
+                                                    activity.timestampEnd,
+                                                    activity.co2,
+                                                    activity.distance,
+                                                    activity.speed,
+                                                    activity.polyline,
+                                                    activity.origin,
+                                                    activity.destination,
+                                                    TMD.getUUID()
+                                            ))
                         }
+                        db.child("Travelchain")
+                                .child(SimpleDateFormat("MM_dd_yyyy", Locale.ENGLISH).format(chain.date.time))
+                                .setValue(TravelChain(idSet.toMutableList(), totalCo2, totalDistance, userId))
                     }
                 }
                 .addTo(unsubOnStop)
-
     }
-
-    data class CustomMoprimActivity(
-            val TmdActivity: TmdActivity,
-            val activity: String,
-            val id: Long,
-            val timestampStart: Long,
-            val timestampEnd: Long,
-            val co2: Double,
-            val distance: Double,
-            val speed: Double,
-            val polyline: String,
-            val origin: String,
-            val destination: String,
-            val userId: String
-    )
 
     @ReactMethod
     fun stop() {
@@ -132,14 +128,14 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                     TmdCloudApi.fetchStats(context, day)
                 }
                 .subscribe {
-                      if(it.hasResult()) promise.resolve(gson.toJson(it.result))
+                    if (it.hasResult()) promise.resolve(gson.toJson(it.result))
                 }
                 .addTo(unsubOnStop)
     }
 
     @ReactMethod
     fun getResults(day: Int, promise: Promise) {
-        if(TMD.isInitialized()) {
+        if (TMD.isInitialized()) {
             Observable
                     .just(day)
                     .observeOn(io())
@@ -162,6 +158,7 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                     .addTo(unsubOnStop)
         }
     }
+
     @ReactMethod
     fun getFakeResults(day: Int, promise: Promise) {
         Observable
