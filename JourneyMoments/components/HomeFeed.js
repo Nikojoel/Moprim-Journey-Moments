@@ -6,7 +6,6 @@ import Home from "../screens/Home";
 
 
 const HomeFeed = ({data, extra, navigation}) => {
-    if (!data) return <Text>Nada</Text>
     return (
         <SafeAreaView>
             <FlatList

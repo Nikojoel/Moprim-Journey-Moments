@@ -80,7 +80,7 @@ const Home = ({navigation}) => {
     const getMorprimData = async (id) => {
         const data = await DatabaseService.dbAllMoprimGET('/' + id)
         const json = JSON.parse(JSON.stringify(data))
-        if (json != null && json.userId != null) { 
+        if (json != null && json.userId != null) {
             const user = await DatabaseService.dbUserGET('/' + json.userId)
             const userjson = JSON.parse(JSON.stringify(user))
             json.user = userjson
