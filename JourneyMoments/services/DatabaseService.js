@@ -36,6 +36,15 @@ const dbUserUPDATE = async (userId) => {
         })
 }
 
+// Insert user profile photo
+const dbUserPhotoINSERT = async (id, url) => {
+    return await database()
+        .ref(USER_ID_ROUTE + id)
+        .update({
+            photoURL: url
+        })
+}
+
 // Get all = "/"
 // Get single = "/id"
 const dbAllMoprimGET = async (id) => {
@@ -164,5 +173,6 @@ export default {
     dbAllCommentGET,
     dbCommentUserGET,
     dbCommentINSERT,
-    dbCommentMoprimGET
+    dbCommentMoprimGET,
+    dbUserPhotoINSERT,
 }
