@@ -104,7 +104,7 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                                             ))
                         }
                         db.child("Travelchain")
-                                .child(SimpleDateFormat("MM_dd_yyyy", Locale.ENGLISH).format(chain.date.time))
+                                .child(userId + "_" + SimpleDateFormat("MM_dd_yyyy", Locale.ENGLISH).format(chain.date.time))
                                 .setValue(TravelChain(idSet.toMutableList(), totalCo2, totalDistance, userId))
                     }
                 }
