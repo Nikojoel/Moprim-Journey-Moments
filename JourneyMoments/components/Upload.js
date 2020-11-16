@@ -11,7 +11,7 @@ import {ProgressBar} from '@react-native-community/progress-bar-android'
 //const cameraIcon = <Icon family={'FontAwesome'} name={'camera'} color={'#000000'} size={30} />
 //const videoIcon = <Icon family={'FontAwesome'} name={'video-camera'} color={'#000000'} size={30} />
 
-const Upload = () => {
+const Upload = ({moprimId}) => {
     const [image, setImage] = useState(null)
     const [uploading, setUploading] = useState(false)
     const userId = LoginService.getCurrentUser().uid
@@ -34,6 +34,7 @@ const Upload = () => {
             items: [
                 { title: "Image", value: "image", subTitle: "Image description"},
                 { title: "Video", value: "video", subTitle: "Video Description"},
+                { title: "Gallery", value: "image", subTitle: "Gallery description"},
             ],
             theme: "light",
             selection: 3,
@@ -41,15 +42,18 @@ const Upload = () => {
                 if (index === 0) {
                     console.log("image")
                     launchCamera(imageOptions)
-                } else {
+                } else if (index === 1) {
                     console.log("video")
                     launchCamera(videoOptions)
+                } else {
+                    console.log("gallery")
+                    launchFiles(imageOptions)
                 }
             }
         })
     }
 
-    const launchCamera = (options) => {
+    const launchCamera = async (options) => {
         ImagePicker.launchCamera(options, (response => {
             if (response.didCancel) {
                 console.log('cancel')
@@ -58,6 +62,21 @@ const Upload = () => {
             } else {
                 console.log('success, uri:', response.uri)
                 setImage(response.uri)
+                uploadFile(response.uri)
+            }
+        }))
+    }
+
+    const launchFiles = async (options) => {
+        ImagePicker.launchImageLibrary(options, (response => {
+            if (response.didCancel) {
+                console.log('cancel')
+            } else if (response.error) {
+                console.log('error')
+            } else {
+                console.log('success, uri:', response.uri)
+                setImage(response.uri)
+                uploadFile(response.uri)
             }
         }))
     }
@@ -75,11 +94,17 @@ const Upload = () => {
 
             const data = {
                 "id": UUID,
-                "moprimId": "test",
+                "moprimId": moprimId,
                 "url": url,
                 "userId": userId
             }
-            await DatabaseService.dbMediaINSERT(data)
+
+            try {
+                await DatabaseService.dbMediaINSERT(data)
+                await DatabaseService.dbUserUPDATE(userId)
+            } catch (e) {
+                console.log(e)
+            }
         }
     }
 

@@ -1,3 +1,5 @@
+import Colors from "../values/Colors"
+
 const generateRandom = () => {
     const data = [
         "null",
@@ -23,6 +25,27 @@ const generateRandom = () => {
     return data[random]
 }
 
+const transportIcon = (type) => {
+    switch (type) {
+        case 'null': return {icon: 'alert', color: Colors.motor}
+        case 'unknown': return {icon:'help', color:Colors.motor}
+        case 'stationary': return {icon:'bed', color:Colors.nonMotor}
+        case 'non-motorized': return {icon:'walk',color:Colors.nonMotor}
+        case 'non-motorized/bicycle': return {icon:'bicycle', color:Colors.nonMotor}
+        case 'non-motorized/pedestrian/walk': return {icon:'walk', color:Colors.nonMotor}
+        case 'non-motorized/pedestrian/run': return {icon:'walk', color:Colors.nonMotor}
+        case 'motorized': return {icon:'car', color:Colors.motor}
+        case 'motorized/road': return {icon:'car', color:Colors.motor}
+        case 'motorized/road/car': return {icon:'car', color:Colors.motor}
+        case 'motorized/road/bus': return {icon:'bus', color:Colors.motor}
+        case 'motorized/rail': return {icon:'train', color:Colors.rail}
+        case 'motorized/rail/tram': return {icon:'train', color:Colors.rail}
+        case 'motorized/rail/train': return {icon:'train', color:Colors.rail}
+        case 'motorized/rail/metro"': return {icon:'train', color:Colors.rail}
+        case 'motorized/air/plane': return {icon:'plane', color:Colors.plane}
+    }
+}
+
 const generateUUID = () => {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
         const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8)
@@ -38,6 +61,7 @@ const millisToMinutesAndSeconds = (millis) => {
 
 const unixToTime = (millis) => {
     const date = new Date(millis).toLocaleTimeString().split(":")
+    console.log(date)
     return date[0] + ":" + date[1]
 }
 
@@ -53,6 +77,19 @@ const parseJSON = (data) => {
     return JSON.parse(JSON.stringify(data))
 }
 
+const iterateData = (obj) => {
+    if (obj === undefined) return undefined
+    if (obj === null)  return null
+    const array = []
+    const keys = Object.values(obj)[0].childKeys
+    keys.forEach(key => {
+        const temp = []
+        temp.push(Object.values(obj)[0].value[key])
+        array.push(temp)
+    })
+    return array
+}
+
 export default {
     generateUUID,
     generateRandom,
@@ -60,6 +97,8 @@ export default {
     unixToTime,
     unixToDate,
     unixToSimpleDate,
-    parseJSON
+    parseJSON,
+    transportIcon,
+    iterateData
 }
 

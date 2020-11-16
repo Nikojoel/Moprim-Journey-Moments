@@ -11,6 +11,8 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import fi.moprim.tmd.sdk.TMD
 import fi.moprim.tmd.sdk.TmdCloudApi
@@ -19,19 +21,25 @@ import fi.moprim.tmd.sdk.model.TmdError
 import fi.moprim.tmd.sdk.model.TmdInitListener
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.schedulers.Schedulers.io
-import java.sql.Timestamp
+import io.reactivex.rxjava3.subjects.PublishSubject
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class MoprimModule(private val context: ReactApplicationContext) : ReactContextBaseJavaModule() {
     private val CHANNEL_ID = "moprim.channel"
     private var notificationManager: NotificationManager? = null
+    private val uploadToDbSubject = PublishSubject.create<Unit>()
     private val gson = Gson()
-
+    private val unsubOnStop = CompositeDisposable()
+    private val db = Firebase.database.reference
 
     @ReactMethod
     fun show(message: String?) {
@@ -40,10 +48,67 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
 
     @ReactMethod
     fun start() {
-        Log.i("XXX", "create channel")
         notificationManager = createNotificationChannel()
         val notification = buildNotification("moprim is running")
         TMD.startForeground(context, 112, notification)
+        Observable
+                .interval(60, TimeUnit.SECONDS)
+                .observeOn(io())
+                .map {
+                    TmdCloudApi.uploadData(context);
+                }
+                .subscribe {
+                    uploadToDbSubject.onNext(Unit)
+                }
+                .addTo(unsubOnStop)
+
+        uploadToDbSubject
+                .observeOn(io())
+                .map {
+                    val set = mutableSetOf<Chain>()
+                    for (index in 0..3) {
+                        val convertedDate = convertToDate(LocalDateTime.now().minusDays(index.toLong()))
+                        val data = convertedDate?.let { date -> TmdCloudApi.fetchData(context, date) }
+                        if (data != null && data.result.isNotEmpty()) {
+                            set.add(Chain(data.result, convertedDate))
+                        }
+                    }
+                    set
+                }
+                .subscribe { set ->
+                    set.forEach { chain ->
+                        var totalCo2: Double = 0.0
+                        var totalDistance: Double = 0.0
+                        var idSet = mutableSetOf<String>()
+                        val userId = TMD.getUUID()
+                        chain.activities.forEach { activity ->
+                            idSet.add(userId + activity.id)
+                            totalCo2 += activity.co2
+                            totalDistance += activity.distance
+                            db.child("Moprim")
+                                    .child(userId + activity.id.toString())
+                                    .setValue(
+                                            CustomMoprimActivity(
+                                                    activity,
+                                                    activity.activity,
+                                                    activity.id,
+                                                    activity.timestampStart,
+                                                    activity.timestampEnd,
+                                                    activity.co2,
+                                                    activity.distance,
+                                                    activity.speed,
+                                                    activity.polyline,
+                                                    activity.origin,
+                                                    activity.destination,
+                                                    TMD.getUUID()
+                                            ))
+                        }
+                        db.child("Travelchain")
+                                .child(SimpleDateFormat("MM_dd_yyyy", Locale.ENGLISH).format(chain.date.time))
+                                .setValue(TravelChain(idSet.toMutableList(), totalCo2, totalDistance, userId))
+                    }
+                }
+                .addTo(unsubOnStop)
     }
 
     @ReactMethod
@@ -51,31 +116,49 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
         Log.i("XXX", "stop moprim")
         TMD.stop(context)
         notificationManager?.cancel(112)
+        unsubOnStop.clear()
+    }
+
+    @ReactMethod
+    fun getUserStats(day: Int, promise: Promise) {
+        Observable
+                .just(Unit)
+                .observeOn(io())
+                .map {
+                    TmdCloudApi.fetchStats(context, day)
+                }
+                .subscribe {
+                    if (it.hasResult()) promise.resolve(gson.toJson(it.result))
+                }
+                .addTo(unsubOnStop)
     }
 
     @ReactMethod
     fun getResults(day: Int, promise: Promise) {
-        Log.i("XXX", day.toString())
-        Observable
-                .just(day)
-                .observeOn(io())
-                .map {
-                    convertToDate(LocalDateTime.now().minusDays(it.toLong()))?.let { date -> TmdCloudApi.fetchData(context, date) }
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    if (it != null) {
-                        Log.i("XXX", it.result.toString())
-                        if (it.hasResult()) {
-                            val json = gson.toJson(it.result)
-                            promise.resolve(json)
-                        }
-                        if (it.hasError()) {
-                            promise.reject("ERROR", it.error.toString())
+        if (TMD.isInitialized()) {
+            Observable
+                    .just(day)
+                    .observeOn(io())
+                    .map {
+                        convertToDate(LocalDateTime.now().minusDays(it.toLong()))?.let { date -> TmdCloudApi.fetchData(context, date) }
+                    }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        if (it != null) {
+                            if (it.hasResult()) {
+                                val json = gson.toJson(it.result)
+                                Log.i("XXX", json.isNullOrBlank().toString())
+                                promise.resolve(json)
+                            }
+                            if (it.hasError()) {
+                                promise.reject("ERROR", it.error.toString())
+                            }
                         }
                     }
-                }
+                    .addTo(unsubOnStop)
+        }
     }
+
     @ReactMethod
     fun getFakeResults(day: Int, promise: Promise) {
         Observable
@@ -107,45 +190,45 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                 .subscribe {
                     TmdCloudApi.uploadData(context)
                 }
+                .addTo(unsubOnStop)
     }
 
     @ReactMethod
     fun initMoprim(id: String) {
-        val builder = TmdCoreConfigurationBuilder(context)
-                .setSdkConfigEndPoint(apiRoot)
-                .setSdkConfigKey(apiKey)
-        // Init the TMD
+        if (!TMD.isInitialized()) {
+            val builder = TmdCoreConfigurationBuilder(context)
+                    .setSdkConfigEndPoint(apiRoot)
+                    .setSdkConfigKey(apiKey)
+            // Init the TMD
+            TMD.setUUID(id)
+            TMD.init(context.applicationContext as Application, builder.build(), object : TmdInitListener {
 
-        TMD.setUUID(id)
-        TMD.init(context.applicationContext as Application, builder.build(), object : TmdInitListener {
+                override fun onTmdInitFailed(tmdError: TmdError) {
+                    Log.e(
+                            "XXX",
+                            "Initialisation failed: " + tmdError.name
+                    )
+                }
 
-            override fun onTmdInitFailed(tmdError: TmdError) {
-                Log.e(
-                        "XXX",
-                        "Initialisation failed: " + tmdError.name
-                )
-            }
-
-            override fun onTmdInitSuccessful(s: String) {
-                // s is the current installation ID, we'll put the UUID as the same just to demonstrate how to use the method
-                // replace with your own user id in production
-                // TMD.setUUID(s);
-                Log.i(
-                        "XXX",
-                        "Initialization successful with id: $id"
-                )
-                start()
-                val intent =
-                        Intent(context, TmdUploadIntentService::class.java)
-                val callbackIntent = PendingIntent.getService(
-                        context, 0, intent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                )
-                TmdCloudApi.setUploadCallbackIntent(callbackIntent)
-            }
-        })
-
-
+                override fun onTmdInitSuccessful(s: String) {
+                    // s is the current installation ID, we'll put the UUID as the same just to demonstrate how to use the method
+                    // replace with your own user id in production
+                    // TMD.setUUID(s);
+                    Log.i(
+                            "XXX",
+                            "Initialization successful with id: $id"
+                    )
+                    start()
+                    val intent =
+                            Intent(context, TmdUploadIntentService::class.java)
+                    val callbackIntent = PendingIntent.getService(
+                            context, 0, intent,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                    )
+                    TmdCloudApi.setUploadCallbackIntent(callbackIntent)
+                }
+            })
+        }
     }
 
     fun convertToDate(dateToConvert: LocalDateTime): Date? {

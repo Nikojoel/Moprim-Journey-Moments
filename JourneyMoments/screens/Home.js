@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {View, Text, Button, ScrollView} from 'react-native'
+import {BackHandler} from 'react-native'
 import MoprimBridge from '../modules/Moprim'
 import DatabaseService from "../services/DatabaseService"
 import Helper from "../helpers/Helper";
@@ -8,6 +8,9 @@ import Upload from "../components/Upload";
 import Trip from "../components/Trip";
 import HomeFeed from "../components/HomeFeed";
 import {SafeAreaView} from "react-native-safe-area-context";
+import Map from "../components/Map";
+import {ProgressBar} from "@react-native-community/progress-bar-android";
+import Stars from "../components/StarRating";
 
 const data = {
     co2: "20.3",
@@ -16,7 +19,8 @@ const data = {
     id: "a84ef16f-6171-4d06-b450-17f1d012eeea",
     metadata: "null",
     originalActivity: "motorized/road/bus",
-    polyline: "szgnJmgkvCUOIb@]Pa@?m@AS@Ow@YcAEkAGg@KgAEgA@qAE...",
+    polyline:
+        "szgnJmgkvCUOIb@]Pa@?m@AS@Ow@YcAEkAGg@KgAEgA@qAEgAUaA@w@_@Ja@Re@Pg@k@[UGs@Cy@Eu@Iw@Iq@Es@Gq@Im@Oq@a@AWTOf@Hp@ZIBf@DhABnAPxAR`A^SXYT^B~@CrARO^c@^EXQd@[d@GRh@Fh@Bp@D~@GjAOj@T[j@KXHZDZOa@GIu@SY",
     speed: "0.0012497252759091752",
     syncedWithCloud: "true",
     timestampDownload: "1603387823109",
@@ -25,11 +29,12 @@ const data = {
     userId: "XmQUTrAnu4ZPTSTN6vCnOs5nTqh2"
 }
 
-const Home = () => {
+const Home = ({navigation}) => {
     const [text, setText] = useState('')
     const [result, setResult] = useState([])
     const [commentedTrips, setCommentedTrips] = useState([])
     const userId = LoginService.getCurrentUser().uid
+    const [loading, setLoading] = useState(true)
 
     const getMoprim = async (it) => {
         try {
@@ -47,8 +52,8 @@ const Home = () => {
                     "comfort": 0
                 }
                 it.date = Helper.unixToSimpleDate(parseInt(it.timestampStart))
-                //console.log(it)
-                //DatabaseService.dbMoprimINSERT(it)
+                console.log(it)
+                DatabaseService.dbMoprimINSERT(it)
             })
         } catch (e) {
             console.log(e)
@@ -59,13 +64,14 @@ const Home = () => {
         try {
             const comments = await DatabaseService.dbAllCommentGET('/')
             const commentsArray = iterateData(comments)
-            const morpimID = []
+            const morpimID = new Set()
             commentsArray.forEach(it => {
-                morpimID.push(it[0].moprimId)
+                morpimID.add(it.moprimId)
             })
-            morpimID.forEach(it => {
-                getMorprimData(it)
+            Promise.all([...morpimID].map((id) => { return getMorprimData(id)})).then((values) => {
+                setCommentedTrips(values)
             })
+            setLoading(false)
         } catch (e) {
             console.log(e)
         }
@@ -74,7 +80,12 @@ const Home = () => {
     const getMorprimData = async (id) => {
         const data = await DatabaseService.dbAllMoprimGET('/' + id)
         const json = JSON.parse(JSON.stringify(data))
-        setCommentedTrips(arr => [...arr, json])
+        if (json != null && json.userId != null) { 
+            const user = await DatabaseService.dbUserGET('/' + json.userId)
+            const userjson = JSON.parse(JSON.stringify(user))
+            json.user = userjson
+        }
+        return json
     }
 
     const iterateData = (obj) => {
@@ -83,21 +94,36 @@ const Home = () => {
         const array = []
         const keys = Object.values(obj)[0].childKeys
         keys.forEach(key => {
-            const temp = []
-            temp.push(Object.values(obj)[0].value[key])
-            array.push(temp)
+            array.push(Object.values(obj)[0].value[key])
         })
         return array
     }
 
+
     useEffect(() => {
         getCommentedTrips()
+        BackHandler.addEventListener('hardwareBackPress', () => {
+            return true
+        })
+        return () =>
+            BackHandler.removeEventListener('hardwareBackPress', () => {
+                return true
+            })
     }, [])
+
+    if (loading) return <ProgressBar/>
 
     return (
         <SafeAreaView style={{flex: 1}}>
-            <ScrollView>
-                <Text>Home</Text>
+                <HomeFeed data={commentedTrips} extra={commentedTrips} navigation={navigation} />
+        </SafeAreaView>
+    )
+}
+
+export default Home
+
+/*
+<Text>Home</Text>
                 <Button onPress={() => MoprimBridge.uploadMoprim()} title='upload'/>
                 <Trip data={data}/>
                 <Button onPress={() => {
@@ -114,10 +140,5 @@ const Home = () => {
                 <Button onPress={async () => {
                     console.log(await DatabaseService.dbMoprimGET(userId))
                 }} title="dbGET"/>
-                <HomeFeed data={commentedTrips} extra={commentedTrips} />
-            </ScrollView>
-        </SafeAreaView>
-    )
-}
 
-export default Home
+*/

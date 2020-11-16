@@ -44,9 +44,9 @@ const TabNavigator = ({navigation}) => {
         inactiveTintColor: 'gray',
       }}
     >
-      <Tab.Screen name="Home" component={Home} />
+      <Tab.Screen name="Home" component={Home} navigation={navigation} />
       <Tab.Screen name="Trips" component={Trips} />
-      <Tab.Screen name="Stats" component={Stats} />
+      <Tab.Screen name="Stats" component={Stats} navigation={navigation}/>
     </Tab.Navigator>
   )
 }

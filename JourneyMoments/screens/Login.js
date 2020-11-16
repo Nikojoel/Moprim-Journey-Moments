@@ -5,13 +5,13 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  Button,
+  Button, BackHandler,
 } from 'react-native'
-import MoprimBridge from '../modules/Moprim';
+import MoprimBridge from '../modules/Moprim'
 import LoginService from '../services/LoginService'
 import Colors from '../values/Colors'
 import DatabaseService from "../services/DatabaseService"
-import Notification from "../components/Notification";
+import Notification from "../components/Notification"
 
 const Login = ({navigation}) => {
   const [email, setEmail] = useState('')
@@ -21,13 +21,20 @@ const Login = ({navigation}) => {
   const [name, regSetName] = useState('')
   const [toggleForm, setForm] = useState(false)
   const [errorMessage, setErrorMessage] = useState(null)
+  const user = LoginService.getCurrentUser()
 
   useEffect(() => {
-    const user = LoginService.getCurrentUser()
     if (user) {
       MoprimBridge.initMoprim(user.uid)
       navigation.navigate('tabs')
     }
+    BackHandler.addEventListener('hardwareBackPress', () => {
+      return true
+    })
+    return () =>
+        BackHandler.removeEventListener('hardwareBackPress', () => {
+          return true
+        })
   }, [])
 
   const onAuthCreateUser = async (username, password) => {
@@ -64,6 +71,7 @@ const Login = ({navigation}) => {
       setErrorMessage("Error in login")
     }
   }
+
 
   return (
       <View style={styles.container}>
