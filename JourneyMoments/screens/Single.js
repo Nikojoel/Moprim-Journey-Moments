@@ -89,7 +89,7 @@ const Single = ({route, navigation}) => {
             <Text>Speed: {data.speed}</Text>
             <Icon name={icon} size={30} color={color}/>
             <H2>Current Rating</H2>
-            
+
             <H2>User</H2>
             <Text>Name: {user.username}</Text>
             <Text>Rating: {user.rating}</Text>
@@ -97,6 +97,7 @@ const Single = ({route, navigation}) => {
             <View style={styles.map}>
                 <Map data={data}/>
             </View>
+            <Notification message={error}/>
             <Button title={btn} onPress={() => {
                 if (toggle) {
                     setToggle(false)
@@ -107,10 +108,11 @@ const Single = ({route, navigation}) => {
                 }
             }}/>
             {!toggle && <>
-                <Upload moprimId={moprimId}/>
-                <Notification message={error}/>
                 <CommentField handleSend={handleSend}/>
-                <Stars handleStars={handleStars}/>
+                {userId === id && <>
+                    <Upload moprimId={moprimId}/>
+                    <Stars handleStars={handleStars}/>
+                </>}
             </>}
         </Content>
 
