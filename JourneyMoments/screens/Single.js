@@ -1,20 +1,21 @@
-import React, {useState, useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import Helper from "../helpers/Helper"
 import Map from "../components/Map"
 import Upload from "../components/Upload"
 import CommentField from "../components/CommentField";
-import {Content, Icon, Text, H2} from "native-base"
+import {Content, H2, Icon, Text} from "native-base"
 import DatabaseService from "../services/DatabaseService"
 import {ProgressBar} from "@react-native-community/progress-bar-android"
-import {BackHandler, StyleSheet, View, Button} from "react-native"
+import {BackHandler, Button, ScrollView, StyleSheet, View} from "react-native"
 import Notification from "../components/Notification";
-import Login from "./Login";
 import LoginService from "../services/LoginService";
 import Stars from "../components/StarRating";
+import Comment from "../components/Comment";
 
 const Single = ({route, navigation}) => {
     const id = LoginService.getCurrentUser().uid
     const [user, setUser] = useState([])
+    const [comments, setComments] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
     const [toggle, setToggle] = useState(true)
@@ -31,12 +32,13 @@ const Single = ({route, navigation}) => {
     const getUser = async (userId) => {
         const result = await DatabaseService.dbUserGET("/" + userId)
         setUser(Helper.parseJSON(result))
-        console.log(user)
+        //console.log(user)
         setLoading(false)
     }
 
     useEffect(() => {
         getUser(userId)
+        getComments(userId + moprimId)
         BackHandler.addEventListener('hardwareBackPress', () => {
             navigation.navigate("Home")
         })
@@ -78,6 +80,23 @@ const Single = ({route, navigation}) => {
         }
     }
 
+    const iterateData = (obj) => {
+        if (obj === undefined) return undefined
+        if (obj === null)  return null
+        const array = []
+        const keys = Object.values(obj)[0].childKeys
+        keys.forEach(key => {
+            array.push(Object.values(obj)[0].value[key])
+        })
+        return array
+    }
+
+    const getComments = async (moprimId) => {
+        const result = await DatabaseService.dbCommentMoprimGET(moprimId)
+        const parsed = iterateData(result)
+        setComments(parsed)
+    }
+
     if (loading) return <ProgressBar/>
 
     return (
@@ -97,6 +116,13 @@ const Single = ({route, navigation}) => {
             <View style={styles.map}>
                 <Map data={data}/>
             </View>
+            <ScrollView>
+                {comments && <>
+                    {comments
+                        .map(it => <Comment data={it}/>)
+                    }
+                </>}
+            </ScrollView>
             <Notification message={error}/>
             <Button title={btn} onPress={() => {
                 if (toggle) {
