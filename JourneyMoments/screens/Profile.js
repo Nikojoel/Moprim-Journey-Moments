@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {Text, View, Button, BackHandler} from 'react-native'
+import {Text, View, Button, BackHandler, Image} from 'react-native'
 import LoginService from "../services/LoginService"
 import DatabaseService from "../services/DatabaseService"
 import {ProgressBar} from '@react-native-community/progress-bar-android'
@@ -35,6 +35,7 @@ const Profile = ({navigation}) => {
         <Text>creationTime: {data.metadata.creationTime}</Text>
         <Text>lastSignInTime: {data.metadata.lastSignInTime}</Text>
         <Text>photo: {data.photoURL}</Text>
+        <Image source={{uri: data.photoURL}} style={{width: 250, height: 250}}/>
         <Text>rating: {data.rating}</Text>
         <Button title="Logout" onPress={async () => {
             await LoginService.logoutUser()

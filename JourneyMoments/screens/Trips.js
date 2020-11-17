@@ -8,27 +8,16 @@ import Helper from "../helpers/Helper"
 import Home from "./Home";
 import {BackHandler, Button} from "react-native"
 import {H2} from "native-base"
+import InnerChainItem from "../components/InnerChainItem";
 
 const Trips = ({navigation}) => {
-    const [loading, setLoading] = useState(true)
     const [listLoading, setList] = useState(false)
-    const [data, setData] = useState(null)
+    const [data, setData] = useState([])
     const [func, setFunc] = useState(null)
 
     const id = LoginService.getCurrentUser().uid
     const dd = new Date()
-    const currentDate = `${dd.getMonth() + 1}_${dd.getDate()}_${dd.getFullYear()}`
-
-    const getMorprimData = async (id) => {
-        const data = await DatabaseService.dbAllMoprimGET('/' + id)
-        const json = JSON.parse(JSON.stringify(data))
-        if (json != null && json.userId != null) {
-            const user = await DatabaseService.dbUserGET('/' + json.userId)
-            const userjson = JSON.parse(JSON.stringify(user))
-            json.user = userjson
-        }
-        return json
-    }
+    const currentDateWithId = `${id}_${dd.getMonth() + 1}_${dd.getDate()}_${dd.getFullYear()}`
 
     const iterateData = (obj) => {
         if (obj === undefined) return undefined
@@ -36,12 +25,16 @@ const Trips = ({navigation}) => {
         const array = []
         const keys = Object.values(obj)[0].childKeys
         keys.forEach(key => {
-            array.push(Object.values(obj)[0].value[key])
+            array.push({
+                key: key,
+                value: Object.values(obj)[0].value[key]
+            })
         })
         return array
     }
 
     const selectDays = (days) => {
+        setList(true)
         const date = new Date()
         if (days === 7) {
             date.setDate(date.getDate() - 7)
@@ -57,39 +50,41 @@ const Trips = ({navigation}) => {
         if (d.toString().length === 1) {
             d = `0${date.getDate()}`
         }
-        return `${m}_${d}_${y}`
+        return `${id}_${m}_${d}_${y}`
     }
 
     const getTravelChain = async (start, end) => {
         setList(true)
         const result = await DatabaseService.dbTravelChainDateGET(start, end)
-        console.log("result", result)
         const parse = iterateData(result)
-        const ids = []
+        const arr = []
         parse.forEach(it => {
-            ids.push(...it.id)
+            arr.push({
+                key: it.key,
+                moprim: it.value.id,
+                totalCo2: it.value.totalCo2,
+                totalDistance: it.value.totalDistance
+            })
         })
-        Promise.all([...ids].map((id) => { return getMorprimData(id)})).then((values) => {
-            setData(values)
-            console.log("data after set:", data)
-            setList(false)
-        })
-
+        setData(arr)
+        setList(false)
     }
 
     const getAllTravelChains = async (id) => {
+        setList(true)
         const result = await DatabaseService.dbUserTravelChainGET(id)
-        console.log("getAllTravelChains:", result)
         const parse = iterateData(result)
-        const ids = []
+        const arr = []
         parse.forEach(it => {
-            ids.push(...it.id)
+            arr.push({
+                key: it.key,
+                moprim: it.value.id,
+                totalCo2: it.value.totalCo2,
+                totalDistance: it.value.totalDistance
+            })
         })
-        Promise.all([...ids].map((id) => { return getMorprimData(id)})).then((values) => {
-            setData(values)
-            console.log("data after set:", data)
-            setList(false)
-        })
+        setData(arr)
+        setList(false)
     }
 
     useEffect(() => {
@@ -105,30 +100,30 @@ const Trips = ({navigation}) => {
     return (
         <SafeAreaView style={{flex: 1}}>
             <Button title="Today" onPress={async () => {
-                await getTravelChain(currentDate, currentDate)
+                await getTravelChain(currentDateWithId, currentDateWithId)
                 setFunc("Today")
             }}/>
             <Button title="Week" onPress={async () => {
                 const week = selectDays(7)
-                await getTravelChain(currentDate, week)
-                setFunc(`${week} - ${currentDate}`)
+                await getTravelChain(currentDateWithId, week)
+                setFunc("Week")
             } }/>
             <Button title="Month" onPress={async () => {
                 const month = selectDays(30)
-                await getTravelChain(currentDate, month)
-                setFunc(`${month} - ${currentDate}`)
+                await getTravelChain(currentDateWithId, month)
+                setFunc("Month")
             }}/>
             <Button title="All" onPress={async () => {
                 await getAllTravelChains(id)
                 setFunc("All time")
             }}/>
+            <H2>{func}</H2>
             {listLoading &&
             <ProgressBar/>
             }
-            {!listLoading &&
-            <H2>{func}</H2>
+            {data
+                .map(it => <InnerChainItem data={it} key={Helper.generateUUID()} navigation={navigation}/>)
             }
-            <HomeFeed data={data} extra={data} navigation={navigation}/>
         </SafeAreaView>
     )
 }

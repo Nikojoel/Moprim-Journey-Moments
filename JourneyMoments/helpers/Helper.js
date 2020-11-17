@@ -41,7 +41,7 @@ const transportIcon = (type) => {
         case 'motorized/rail': return {icon:'train', color:Colors.rail}
         case 'motorized/rail/tram': return {icon:'train', color:Colors.rail}
         case 'motorized/rail/train': return {icon:'train', color:Colors.rail}
-        case 'motorized/rail/metro"': return {icon:'train', color:Colors.rail}
+        case 'motorized/rail/metro': return {icon:'train', color:Colors.rail}
         case 'motorized/air/plane': return {icon:'plane', color:Colors.plane}
     }
 }
