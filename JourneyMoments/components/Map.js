@@ -1,21 +1,25 @@
 import React from 'react'
 import MapboxGL from "@react-native-mapbox-gl/maps"
-import {View, StyleSheet} from "react-native"
+import { View, StyleSheet, Dimensions } from "react-native"
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import API_KEY from '../Keys'
 import Helper from "../helpers/Helper";
+import Colors from '../values/Colors'
 
-const Decoder = require('@mapbox/polyline')
+
+
 MapboxGL.setAccessToken(API_KEY)
 MapboxGL.setConnected(true)
+MapboxGL.setTelemetryEnabled(false);
+
 
 const styles = StyleSheet.create({
     page: {
         backgroundColor: "#F5FCFF"
     },
     container: {
-        height: "100%",
-        width: "100%",
+        height: '100%',
+        width: '100%',
         backgroundColor: "tomato"
     },
     map: {
@@ -31,29 +35,36 @@ const styles = StyleSheet.create({
     },
 })
 
-const Map = ({data}) => {
-    const coords = Decoder.decode(data.polyline)
+const Map = ({ data }) => {
+    
+    const coords = data
     const initial = coords[0]
     const last = coords[coords.length - 1]
+    
+    const reversedCoords = []
+    coords.forEach(it => {
+        reversedCoords.push([it[1],it[0]])
+    })
+    const shapeSource = {
+        "type": "LineString",
+        "coordinates": reversedCoords
+    }
 
     return (
         <View style={styles.page}>
             <View style={styles.container}>
                 <MapboxGL.MapView style={styles.map}>
                     <MapboxGL.Camera
-                        zoomLevel={8}
-                        centerCoordinate={[initial[1], initial[0]]}
+                        zoomLevel={10}
+                        centerCoordinate={reversedCoords[0]}
                     />
                     <MapboxGL.PointAnnotation coordinate={[last[1], last[0]]} id={Helper.generateUUID()}>
                             <Icon name={"flag-checkered"} size={30} color={"black"}/>
                     </MapboxGL.PointAnnotation>
                     <MapboxGL.PointAnnotation coordinate={[initial[1], initial[0]]} id={Helper.generateUUID()}/>
-                    {coords
-                        .map(it =>
-                            <MapboxGL.PointAnnotation coordinate={[it[1], it[0]]} key={it} id={Helper.generateUUID()}>
-                                <View style={styles.point}/>
-                            </MapboxGL.PointAnnotation>)
-                    }
+                    <MapboxGL.ShapeSource id={Helper.generateUUID()} shape={shapeSource}>
+                        <MapboxGL.LineLayer id={Helper.generateUUID()} style={{ lineColor: 'red', lineWidth: 2 }} />
+                    </MapboxGL.ShapeSource>
                 </MapboxGL.MapView>
             </View>
         </View>
