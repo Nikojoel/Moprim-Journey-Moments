@@ -1,61 +1,43 @@
 import React, {useState, useEffect} from 'react'
-import {Text, Button, ScrollView, SafeAreaView, StyleSheet,BackHandler} from 'react-native'
+import {Text, Button, ScrollView, SafeAreaView, StyleSheet, BackHandler} from 'react-native'
 import LoginService from "../services/LoginService"
-import FootPrint from "../components/FootPrint"
+import UserItem from "../components/UserItem"
 import DatabaseService from "../services/DatabaseService"
 import {ProgressBar} from '@react-native-community/progress-bar-android'
+import MoprimBridge from '../modules/Moprim'
+import Helper from "../helpers/Helper";
 
 const Stats = () => {
-    const [loading, setLoading] = useState(true)
-    const [arr, setArr] = useState([])
-    const userId = LoginService.getCurrentUser().uid
-
-    useEffect(() => {
-        console.log(userId)
-        const getMoprimData = async (userId) => {
-            const db = await DatabaseService.dbMoprimGET(userId)
-            console.log(db)
-            iterateData(db)
-        }
-        getMoprimData(userId)
-        BackHandler.addEventListener('hardwareBackPress', () => {
-            return true
-        })
-        return () =>
-            BackHandler.removeEventListener('hardwareBackPress', () => {
-                return true
-            })
-
-    }, [])
+    const [data, setData] = useState([])
 
     const iterateData = (obj) => {
         if (obj === undefined) return undefined
         if (obj === null)  return null
         const array = []
         const keys = Object.values(obj)[0].childKeys
-        console.log("keys:", keys)
         keys.forEach(key => {
-            const temp = []
-            temp.push(Object.values(obj)[0].value[key])
-            array.push(temp)
+            array.push(Object.values(obj)[0].value[key])
         })
-        setArr(array)
-        setLoading(false)
+        return array
     }
 
-    if (loading) {
-        return <ProgressBar/>
+    const getusers = async () => {
+        const result = await DatabaseService.dbUserGET("/")
+        const iterate = iterateData(result)
+        setData(iterate)
+        console.log(iterate)
     }
+    useEffect(() => {
+        getusers()
+    }, [])
 
     return (
-        <SafeAreaView>
-            <Text>Stats</Text>
-            <ScrollView style={styles.scrollArea}>
-                {arr
-                    .map(it => <FootPrint data={it[0]} key={it[0].id}/>)
-                }
-            </ScrollView>
-        </SafeAreaView>
+        <ScrollView style={{flex: 1}}>
+            {data
+                .sort((a,b) => a.rating < b.rating ? 1 : -1)
+                .map(it => <UserItem data={it} key={it.id}/>)
+            }
+        </ScrollView>
     )
 
 }
