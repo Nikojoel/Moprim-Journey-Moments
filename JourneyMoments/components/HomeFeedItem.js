@@ -63,7 +63,6 @@ const styles = StyleSheet.create({
     profile: {   
         width: 50,
         height: 50,
-        fontSize: 50,
         alignSelf: 'flex-end',
         borderRadius: 25
         

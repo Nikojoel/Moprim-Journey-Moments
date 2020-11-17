@@ -7,7 +7,8 @@ const Colors = {
   nonMotor: '#90EE90',
   motor: '#ffcccb',
   rail: '#b19cd9',
-  plane: '#add8e6' 
+  plane: '#add8e6',
+  polyline: '#add8e6'
 }
 
 module.exports = Colors

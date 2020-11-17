@@ -11,6 +11,7 @@ import Notification from "../components/Notification";
 import Login from "./Login";
 import LoginService from "../services/LoginService";
 import Stars from "../components/StarRating";
+const Decoder = require('@mapbox/polyline')
 
 const Single = ({route, navigation}) => {
     const id = LoginService.getCurrentUser().uid
@@ -95,7 +96,7 @@ const Single = ({route, navigation}) => {
             <Text>Rating: {user.rating}</Text>
             <Text>Member since: {Helper.unixToSimpleDate(user.metadata.creationTime)}</Text>
             <View style={styles.map}>
-                <Map data={data}/>
+                <Map data={Decoder.decode(data.polyline)}/>
             </View>
             <Notification message={error}/>
             <Button title={btn} onPress={() => {
@@ -120,8 +121,8 @@ const Single = ({route, navigation}) => {
 }
 const styles = StyleSheet.create({
     map: {
-        width: 250,
-        height: 250,
+        width: '100%',
+        height: 300,
     }
 })
 export default Single
