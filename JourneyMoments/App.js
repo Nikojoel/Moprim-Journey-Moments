@@ -13,8 +13,9 @@ import {PERMISSIONS, requestMultiple} from 'react-native-permissions'
 import TabNavigator from './navigation/TabNavigator'
 import Login from './screens/Login'
 import Profile from './screens/Profile'
-import Single from "./screens/Single";
+import Single from "./screens/Single"
 import MoprimBridge from './modules/Moprim'
+import ChainList from "./components/ChainList"
 
 requestMultiple([
   PERMISSIONS.ANDROID.ACTIVITY_RECOGNITION,
@@ -24,9 +25,9 @@ requestMultiple([
   console.log(
     'Location',
     statuses[PERMISSIONS.ANDROID.ACCESS_BACKGROUND_LOCATION],
-  );
+  )
   console.log('Activity', statuses[PERMISSIONS.ANDROID.ACTIVITY_RECOGNITION])
-});
+})
 
 const uploadDataPolling = async (days) => {
   try {
@@ -37,13 +38,13 @@ const uploadDataPolling = async (days) => {
     console.log(data) */
   } catch (e) {
     console.log(e)
-  };
+  }
 }
 
 uploadDataPolling(10)
 //setInterval(uploadDataPolling(0), 5000)
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator()
 
 const App = () => {
   return (
@@ -65,6 +66,11 @@ const App = () => {
             options={{headerShown: false, title: 'Single'}}
         />
         <Stack.Screen
+            name="ChainList"
+            component={ChainList}
+            options={{headerShown: false, title: 'Your trip'}}
+        />
+        <Stack.Screen
           name="tabs"
           component={TabNavigator}
           options={{headerLeft: null, title: 'Main'}}
@@ -72,7 +78,7 @@ const App = () => {
 
       </Stack.Navigator>
     </NavigationContainer>
-  );
-};
+  )
+}
 
-export default App;
+export default App

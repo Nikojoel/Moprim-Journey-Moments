@@ -6,15 +6,14 @@ import Colors from "../values/Colors";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 const HomeFeedItem = ({ item, navigation }) => {
-
-    const { icon, color } = Helper.transportIcon(item.activity)
+    const {icon, color} = Helper.transportIcon(item.activity)
     const time = Helper.unixToTime(parseInt(item.timestampStart))
 
     return (
         <View noBorder style={container(color)} onPress={() => navigation.navigate("Single", { item })}>
             <TouchableOpacity  onPress={() => navigation.navigate("Single", { item })}>
             <View style={{flexDirection: 'row'}}>
-                <Icon name={icon} style={styles.mainIcon} />           
+                <Icon name={icon} style={styles.mainIcon}/>
             </View>
             <Text>{item.date}</Text>
             <Text>{time}</Text>

@@ -9,6 +9,8 @@ const MEDIA_ROUTE = "/Media/"
 const MEDIA_ID_ROUTE = "/Media"
 const COMMENT_ID_ROUTE = "/Comment"
 const COMMENT_ROUTE = "/Comment/"
+const TRAVEL_CHAIN_ID_ROUTE = "/Travelchain"
+const TRAVEL_CHAIN_ROUTE = "/Travelchain/"
 
 // Get all = "/"
 // Get single = "/id"
@@ -157,6 +159,34 @@ const dbCommentINSERT = async (data) => {
         .set(data)
 }
 
+// Get all = "/"
+// Get single = "/date" (MM_DD_YYYY format)
+const dbAllTravelChainGET = async (date) => {
+    return await database()
+        .ref(TRAVEL_CHAIN_ID_ROUTE + date)
+        .once("value")
+}
+
+// Get all user travel chains
+const dbUserTravelChainGET = async (userId) => {
+    return await database()
+        .ref(TRAVEL_CHAIN_ROUTE)
+        .orderByChild("userId")
+        .equalTo(userId)
+        .once("value")
+}
+
+// Get all travel chains from a set time period
+// MM_DD_YYYY format
+const dbTravelChainDateGET = async (start, end) => {
+    return await database()
+        .ref(TRAVEL_CHAIN_ROUTE)
+        .orderByKey()
+        .startAt(end)
+        .endAt(start)
+        .once("value")
+}
+
 export default {
     dbUserGET,
     dbUserINSERT,
@@ -175,4 +205,7 @@ export default {
     dbCommentINSERT,
     dbCommentMoprimGET,
     dbUserPhotoINSERT,
+    dbAllTravelChainGET,
+    dbUserTravelChainGET,
+    dbTravelChainDateGET,
 }
