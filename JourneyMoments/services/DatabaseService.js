@@ -11,6 +11,8 @@ const COMMENT_ID_ROUTE = "/Comment"
 const COMMENT_ROUTE = "/Comment/"
 const TRAVEL_CHAIN_ID_ROUTE = "/Travelchain"
 const TRAVEL_CHAIN_ROUTE = "/Travelchain/"
+const RATE_ID_ROUTE = "/Rating"
+const RATE_ROUTE = "/Rating/"
 
 // Get all = "/"
 // Get single = "/id"
@@ -74,8 +76,10 @@ const dbMoprimINSERT = async (data) => {
 // Update travel rating
 const dbMoprimUPDATE = async (id, data) => {
     return await database()
-        .ref(TRAVEL_ROUTE + id)
-        .update({
+        .ref(RATE_ROUTE + id)
+        .set({
+            id: id,
+            moprimId: id,
             rating: {
                 speed: data.speed,
                 cleanness: data.cleanness,
@@ -84,13 +88,11 @@ const dbMoprimUPDATE = async (id, data) => {
         })
 }
 
-// Get rating average
-const dbMoprimAVERAGE = async (id) => {
-    const rating = await database()
-        .ref(TRAVEL_ROUTE + id)
-        .child("rating")
+// Get journey rating
+const dbMoprimRatingGET = async (id) => {
+    return await database()
+        .ref(RATE_ROUTE + id)
         .once("value")
-    return (rating.child("cleanness").val() + rating.child("comfort").val() + rating.child("speed").val()) / 3
 }
 
 // Insert media data, data in JSON
@@ -195,7 +197,7 @@ export default {
     dbMoprimINSERT,
     dbMoprimGET,
     dbMoprimUPDATE,
-    dbMoprimAVERAGE,
+    dbMoprimRatingGET,
     dbMediaINSERT,
     dbAllMediaGET,
     dbMediaGET,

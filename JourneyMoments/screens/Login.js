@@ -12,6 +12,7 @@ import LoginService from '../services/LoginService'
 import Colors from '../values/Colors'
 import DatabaseService from "../services/DatabaseService"
 import Notification from "../components/Notification"
+import Helper from "../helpers/Helper";
 
 const Login = ({navigation}) => {
   const [email, setEmail] = useState('')
@@ -49,7 +50,7 @@ const Login = ({navigation}) => {
           "creationTime": result.user.metadata.creationTime,
           "lastSignInTime": result.user.metadata.lastSignInTime
         },
-        "photoURL": "undefined",
+        "photoURL": Helper.dummy,
         "id": result.user.uid,
         "rating": 0
       }

@@ -11,7 +11,7 @@ import {ProgressBar} from '@react-native-community/progress-bar-android'
 //const cameraIcon = <Icon family={'FontAwesome'} name={'camera'} color={'#000000'} size={30} />
 //const videoIcon = <Icon family={'FontAwesome'} name={'video-camera'} color={'#000000'} size={30} />
 
-const Upload = ({moprimId}) => {
+const Upload = ({moprimId, handleUpload}) => {
     const [image, setImage] = useState(null)
     const [uploading, setUploading] = useState(false)
     const userId = LoginService.getCurrentUser().uid
@@ -100,6 +100,7 @@ const Upload = ({moprimId}) => {
             }
 
             try {
+                handleUpload()
                 await DatabaseService.dbMediaINSERT(data)
                 await DatabaseService.dbUserUPDATE(userId)
             } catch (e) {
@@ -124,12 +125,6 @@ const Upload = ({moprimId}) => {
             {image && <>
                 <View>
                     <Text>{image}</Text>
-                    <Button
-                        title="Upload"
-                        onPress={async () => {
-                            await uploadFile(image)
-                        }}
-                    />
                     <Image source={{uri: image}} style={{width: 250, height: 250}}/>
                 </View>
             </>}
