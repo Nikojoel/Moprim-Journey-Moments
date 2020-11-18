@@ -1,5 +1,7 @@
 import Colors from "../values/Colors"
 
+const dummy = "https://firebasestorage.googleapis.com/v0/b/journey-moments.appspot.com/o/Media%2Fdummy.png?alt=media&token=ae1dd9a5-db68-47df-b571-102ab8ce5f68"
+
 const generateRandom = () => {
     const data = [
         "null",
@@ -99,6 +101,7 @@ export default {
     unixToSimpleDate,
     parseJSON,
     transportIcon,
-    iterateData
+    iterateData,
+    dummy,
 }
 
