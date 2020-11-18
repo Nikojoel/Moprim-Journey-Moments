@@ -12,6 +12,9 @@ import LoginService from '../services/LoginService'
 import Colors from '../values/Colors'
 import DatabaseService from "../services/DatabaseService"
 import Notification from "../components/Notification"
+import validate from "validate.js";
+import {loginConstraints} from "../constraints/Constraints"
+import useSignUpForm from "../hooks/LoginHooks";
 
 const Login = ({navigation}) => {
   const [email, setEmail] = useState('')
@@ -40,6 +43,7 @@ const Login = ({navigation}) => {
   const onAuthCreateUser = async (username, password) => {
     try {
       const result = await LoginService.createUser(username, password)
+      console.log(result)
       MoprimBridge.initMoprim(result.user.uid)
 
       const json = {
@@ -51,7 +55,7 @@ const Login = ({navigation}) => {
         },
         "photoURL": "undefined",
         "id": result.user.uid,
-        "rating": 0
+        "rating": 0,
       }
       await DatabaseService.dbUserINSERT(json)
       navigation.navigate('tabs')
@@ -73,6 +77,24 @@ const Login = ({navigation}) => {
   }
 
 
+  const {
+    handleUsernameChange,
+    handlePasswordChange,
+    handleEmailChange,
+    validateField,
+    validateOnSend,
+    checkAvail,
+    inputs,
+    errors,
+    setErrors
+  } = useSignUpForm(loginConstraints);
+
+  const validationProperties = {
+    email: {email: inputs.email},
+    password: {password: inputs.password},
+  };
+
+
   return (
       <View style={styles.container}>
         <Notification message={errorMessage}/>
@@ -84,16 +106,19 @@ const Login = ({navigation}) => {
                 style={styles.inputText}
                 placeholder="Email..."
                 placeholderTextColor="#003f5c"
-                onChangeText={(text) => setEmail(text)}
+                onChangeText={handleEmailChange}
+              //  onEndEditing={() => {validateField(loginConstraints.email)}}
             />
           </View>
+
           <View style={styles.inputView}>
             <TextInput
                 secureTextEntry
                 style={styles.inputText}
                 placeholder="Password..."
                 placeholderTextColor="#003f5c"
-                onChangeText={(text) => setPwd(text)}
+                onChangeText={handlePasswordChange}
+              //  onEndEditing={(e) => {validateField(loginConstraints.password)}}
             />
           </View>
           <TouchableOpacity>
@@ -126,7 +151,9 @@ const Login = ({navigation}) => {
                 style={styles.inputText}
                 placeholder="Email..."
                 placeholderTextColor="#003f5c"
-                onChangeText={(text) => regSetEmail(text)}
+                onChangeText={handleEmailChange}
+                onEndEditing={() => validateField(validationProperties.email)}
+                error={errors.email}
             />
           </View>
           <View style={styles.inputView}>
@@ -143,7 +170,9 @@ const Login = ({navigation}) => {
                 style={styles.inputText}
                 placeholder="Password..."
                 placeholderTextColor="#003f5c"
-                onChangeText={(text) => regSetPwd(text)}
+                onChangeText={handlePasswordChange}
+                onEndEditing={() => validateField(validationProperties.password)}
+                error={errors.password}
             />
           </View>
           <TouchableOpacity
@@ -211,6 +240,10 @@ const styles = StyleSheet.create({
   loginText: {
     color: Colors.white,
   },
+  validationText: {
+    color: 'red',
+    marginBottom: 5
+  }
 })
 
 export default Login
