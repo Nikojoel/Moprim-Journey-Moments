@@ -6,8 +6,6 @@ import API_KEY from '../Keys'
 import Helper from "../helpers/Helper";
 import Colors from '../values/Colors'
 
-
-
 MapboxGL.setAccessToken(API_KEY)
 MapboxGL.setConnected(true)
 MapboxGL.setTelemetryEnabled(false);

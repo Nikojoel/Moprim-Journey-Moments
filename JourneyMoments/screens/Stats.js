@@ -25,7 +25,6 @@ const Stats = () => {
         const result = await DatabaseService.dbUserGET("/")
         const iterate = iterateData(result)
         setData(iterate)
-        console.log(iterate)
     }
     useEffect(() => {
         getusers()

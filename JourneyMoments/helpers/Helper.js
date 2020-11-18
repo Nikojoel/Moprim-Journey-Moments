@@ -23,7 +23,7 @@ const generateRandom = () => {
         "motorized/air/plane"
     ]
     const random = Math.floor(Math.random() * 16) + 1
-    console.log(data[random])
+    
     return data[random]
 }
 

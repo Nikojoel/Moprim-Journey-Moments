@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {Text, View, TouchableOpacity} from "react-native"
 import {H2} from "native-base"
-import DatabaseService from "../services/DatabaseService"
-import ChainList from "./ChainList";
 
 const InnerChainItem = ({data, navigation}) => {
     const date = data.key.split("_")

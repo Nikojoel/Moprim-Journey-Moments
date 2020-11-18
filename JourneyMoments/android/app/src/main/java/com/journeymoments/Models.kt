@@ -26,6 +26,6 @@ data class TravelChain(
 )
 
 data class Chain(
-        val activities: MutableList<TmdActivity>,
+        val activities: List<TmdActivity>,
         val date: Date
 )

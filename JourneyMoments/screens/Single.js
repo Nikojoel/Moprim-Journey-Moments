@@ -37,7 +37,6 @@ const Single = ({route, navigation}) => {
     const getUser = async (userId) => {
         const result = await DatabaseService.dbUserGET("/" + userId)
         setUser(Helper.parseJSON(result))
-        console.log(user)
         setLoading(false)
     }
 
@@ -53,7 +52,7 @@ const Single = ({route, navigation}) => {
 
     const handleSend = async (text) => {
         console.log("send comment with text:", text)
-        console.log("data", data)
+        
         if (text === "") setError("Can't be empty")
         else {
             const json = {
@@ -75,7 +74,7 @@ const Single = ({route, navigation}) => {
     }
 
     const handleStars = async (data) => {
-        console.log("data", data)
+       
         const rating = {
             speed: data.speed,
             cleanness: data.cleanness,

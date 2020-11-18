@@ -9,6 +9,7 @@ import Home from "./Home";
 import {BackHandler, Button} from "react-native"
 import {H2} from "native-base"
 import InnerChainItem from "../components/InnerChainItem";
+import TripsFeed from "../components/TripsFeed"
 
 const Trips = ({navigation}) => {
     const [listLoading, setList] = useState(false)
@@ -88,6 +89,7 @@ const Trips = ({navigation}) => {
     }
 
     useEffect(() => {
+        loadMytrips()
         BackHandler.addEventListener('hardwareBackPress', () => {
             return true
         })
@@ -97,33 +99,17 @@ const Trips = ({navigation}) => {
             })
     }, [])
 
+    const loadMytrips = async () => {
+        const month = selectDays(30)
+                await getTravelChain(currentDateWithId, month)
+    }
+
     return (
         <SafeAreaView style={{flex: 1}}>
-            <Button title="Today" onPress={async () => {
-                await getTravelChain(currentDateWithId, currentDateWithId)
-                setFunc("Today")
-            }}/>
-            <Button title="Week" onPress={async () => {
-                const week = selectDays(7)
-                await getTravelChain(currentDateWithId, week)
-                setFunc("Week")
-            } }/>
-            <Button title="Month" onPress={async () => {
-                const month = selectDays(30)
-                await getTravelChain(currentDateWithId, month)
-                setFunc("Month")
-            }}/>
-            <Button title="All" onPress={async () => {
-                await getAllTravelChains(id)
-                setFunc("All time")
-            }}/>
-            <H2>{func}</H2>
             {listLoading &&
             <ProgressBar/>
             }
-            {data
-                .map(it => <InnerChainItem data={it} key={Helper.generateUUID()} navigation={navigation}/>)
-            }
+            <TripsFeed data={data} extra={data} navigation={navigation} />
         </SafeAreaView>
     )
 }

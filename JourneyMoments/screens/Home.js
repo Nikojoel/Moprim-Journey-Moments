@@ -40,7 +40,7 @@ const Home = ({navigation}) => {
         try {
             const result = await MoprimBridge.getFakeResults(it)
             const obj = JSON.parse(result)
-            console.log(obj)
+            
             obj.forEach((it) => {
                 setResult(arr => [...arr, it])
                 it.id = Helper.generateUUID()
@@ -52,7 +52,7 @@ const Home = ({navigation}) => {
                     "comfort": 0
                 }
                 it.date = Helper.unixToSimpleDate(parseInt(it.timestampStart))
-                console.log(it)
+            
                 DatabaseService.dbMoprimINSERT(it)
             })
         } catch (e) {
