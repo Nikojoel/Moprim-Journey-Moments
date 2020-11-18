@@ -59,7 +59,7 @@ const Login = ({navigation}) => {
                 const result = await handleURL(uri)
                 if (result) {
                     url = result
-                    console.log("if result:", url)
+                
                 }
             } else if (!uri) {
                 url = dummy
@@ -76,7 +76,7 @@ const Login = ({navigation}) => {
                 "id": result.user.uid,
                 "rating": 0
             }
-            console.log("json in insert", json)
+        
             await DatabaseService.dbUserINSERT(json)
             setLoading(false)
             navigation.navigate('tabs')
@@ -101,7 +101,6 @@ const Login = ({navigation}) => {
 
     const handleURL = async (uri) => {
         const task = await DownloadService.dlINSERT(uri)
-        console.log("task state: ", task)
 
         if (task.state === "success") {
             const UUID = task.metadata.fullPath.split("/")[1]

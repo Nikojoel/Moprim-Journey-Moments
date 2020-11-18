@@ -31,11 +31,7 @@ requestMultiple([
 
 const uploadDataPolling = async (days) => {
   try {
-    Promise.all([...Array(days).keys()].map(key => {return MoprimBridge.getResults(key)})).then(result => {
-      console.log(result)
-    })
-    /*const data = await MoprimBridge.getResults(days)
-    console.log(data) */
+    Promise.all([...Array(days).keys()].map(key => {return MoprimBridge.getResults(key)}))
   } catch (e) {
     console.log(e)
   }
