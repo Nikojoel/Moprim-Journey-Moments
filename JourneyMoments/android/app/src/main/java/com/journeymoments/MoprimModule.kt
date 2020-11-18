@@ -71,7 +71,9 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                         val data = convertedDate?.let { date -> TmdCloudApi.fetchData(context, date) }
                         if (data != null && data.result.isNotEmpty()) {
                             val filtered = data.result.filter { it.activity != "stationary" && it.activity != "null" && it.activity != "unknown" }
-                            set.add(Chain(filtered, convertedDate))
+                            if (filtered.isNotEmpty()) {
+                                set.add(Chain(filtered, convertedDate))
+                            }
                         }
                     }
                     set
