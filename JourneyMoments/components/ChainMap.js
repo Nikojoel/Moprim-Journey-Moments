@@ -20,7 +20,8 @@ const styles = StyleSheet.create({
         backgroundColor: "tomato"
     },
     map: {
-        flex: 1
+        flex: 1,
+        color: '#466266',
     },
     point: {
         height: 20,
@@ -32,33 +33,57 @@ const styles = StyleSheet.create({
     },
 })
 
-const ChainMap = ({ data }) => {
-   
-        const initial = data[0]
-        const last = data[data.length - 1]
-        
-        const reversedCoords = []
-        data.forEach(it => {
-            reversedCoords.push([it[1],it[0]])
+const ChainMap = ({ data, trips }) => {
+    if (data == null) return (<></>)
+
+    const initial = data[0][0]
+    const last = data[0][data.length - 1]
+    console.log(data[0][0])
+    const reversedCoords = []
+    data.forEach(day => {
+        const reverseDay = []
+        day.forEach(it => {
+            reverseDay.push([it[1], it[0]])
         })
+
+        reversedCoords.push(reverseDay)
+    })
+    const hyvatSetit = []
+    reversedCoords.forEach(it => {
         const shapeSource = {
             "type": "LineString",
-            "coordinates": reversedCoords
+            "coordinates": it
         }
+        hyvatSetit.push(shapeSource)
+    })
+
+    const tripStyles = []
+    trips.forEach(it => {
+        tripStyles.push(Helper.transportIcon(it.activity))
+        console.log(Helper.transportIcon(it.activity).color)
+    })
+
     
-    if (data == null) return (<></>)
+
     return (
         <View style={styles.page}>
             <View style={styles.container}>
-                <MapboxGL.MapView style={styles.map}>
+                <MapboxGL.MapView 
+                    style={styles.map} 
+                    logoEnabled={false}
+                    attributionEnabled={false}
+                    styleURL={'mapbox://styles/enarm/ckhnrwos315eq19mc0k1wynfj'}>
                     <MapboxGL.Camera
                         zoomLevel={9}
-                        centerCoordinate={reversedCoords[0]}
+                        centerCoordinate={[initial[1], initial[0]]}
                     />
-                    
-                    <MapboxGL.ShapeSource id={Helper.generateUUID()} shape={shapeSource}>
-                        <MapboxGL.LineLayer id={Helper.generateUUID()} style={{ lineColor: 'red', lineWidth: 2 }} />
-                    </MapboxGL.ShapeSource>
+                    {hyvatSetit.map(
+                        (it, index) => {
+                            return (
+                        <MapboxGL.ShapeSource id={Helper.generateUUID()} shape={it}>
+                                <MapboxGL.LineLayer id={Helper.generateUUID()} style={{ lineColor: tripStyles[index].color, lineWidth: 2 }} />   
+                    </MapboxGL.ShapeSource>)})}
+
                 </MapboxGL.MapView>
             </View>
         </View>
