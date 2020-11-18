@@ -10,7 +10,7 @@ const Decoder = require('@mapbox/polyline')
 
 const ChainList = ({route, navigation}) => {
     const [trips, setTrips] = useState([])
-    const [polyline, setPolyline] = useState([])
+    const [polyline, setPolyline] = useState()
 
     const getTrips = async () => {
         try {
@@ -29,7 +29,7 @@ const ChainList = ({route, navigation}) => {
         const pie = []
         data.forEach(it => {
            const coords = Decoder.decode(it.polyline)
-           pie.push(...coords)
+           pie.push(coords)
         });
         
         setPolyline(pie)
@@ -59,7 +59,7 @@ const ChainList = ({route, navigation}) => {
     return (
         <SafeAreaView style={{flex: 1}}>
             <View style={{width:'100%', height: 300}}>
-                <ChainMap data={polyline} />
+                <ChainMap data={polyline} trips={trips} />
             </View>
             <HomeFeed data={trips} extra={trips} navigation={navigation}/>
         </SafeAreaView>

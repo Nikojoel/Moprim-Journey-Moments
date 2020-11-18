@@ -51,7 +51,12 @@ const Map = ({ data }) => {
     return (
         <View style={styles.page}>
             <View style={styles.container}>
-                <MapboxGL.MapView style={styles.map}>
+                <MapboxGL.MapView 
+                    style={styles.map}
+                    logoEnabled={false}
+                    attributionEnabled={false}
+                    styleURL={'mapbox://styles/enarm/ckhnrwos315eq19mc0k1wynfj'}
+                >
                     <MapboxGL.Camera
                         zoomLevel={10}
                         centerCoordinate={reversedCoords[0]}
