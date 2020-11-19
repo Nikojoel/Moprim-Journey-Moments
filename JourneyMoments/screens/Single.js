@@ -15,6 +15,7 @@ import MediaItem from "../components/MediaItem"
 const Decoder = require('@mapbox/polyline')
 
 const Single = ({route, navigation}) => {
+    console.log(route)
     const id = LoginService.getCurrentUser().uid
     const [user, setUser] = useState([])
     const [loading, setLoading] = useState(true)
@@ -24,8 +25,8 @@ const Single = ({route, navigation}) => {
     const [rating, setRating] = useState(null)
     const [comments, setComments] = useState([])
     const [media, setMedia] = useState([])
-
-    const data = Helper.parseJSON(route.params.item)
+    
+    const data = Object.values(route.params)[0]
     const moprimId = data.id
     const userId = data.userId
 
