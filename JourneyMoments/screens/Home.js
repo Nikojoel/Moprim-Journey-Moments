@@ -9,6 +9,7 @@ import {ProgressBar} from "@react-native-community/progress-bar-android"
 const Home = ({navigation}) => {
     const [commentedTrips, setCommentedTrips] = useState([])
     const [loading, setLoading] = useState(true)
+    const [refreshing, setRefreshing] = useState(false)
 
     const getCommentedTrips = async () => {
         try {
@@ -50,6 +51,13 @@ const Home = ({navigation}) => {
     }
 
 
+    const onRefresh = React.useCallback(async () => {
+        setRefreshing(true);
+        getCommentedTrips() 
+        setRefreshing(false) 
+    }, [refreshing]);
+
+
     useEffect(() => {
         getCommentedTrips()
         BackHandler.addEventListener('hardwareBackPress', () => {
@@ -65,7 +73,7 @@ const Home = ({navigation}) => {
 
     return (
         <SafeAreaView style={{flex: 1}}>
-                <HomeFeed data={commentedTrips} extra={commentedTrips} navigation={navigation} />
+                <HomeFeed data={commentedTrips} extra={commentedTrips} navigation={navigation} refresh={refreshing} onRefresh={onRefresh} />
         </SafeAreaView>
     )
 }

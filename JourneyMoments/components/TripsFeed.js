@@ -1,9 +1,9 @@
 import React from "react"
-import { FlatList, SafeAreaView, StatusBar, TouchableOpacity } from "react-native"
+import { FlatList, SafeAreaView, StatusBar, TouchableOpacity, RefreshControl } from "react-native"
 import { Text, ListItem, Left, Body, Icon, Right, Title } from "native-base"
 import InnerChainItem from "../components/InnerChainItem";
 
-const TripsFeed = ({data, extra, navigation}) => {
+const TripsFeed = ({data, extra, navigation, refresh, onRefresh}) => {
     
     return (
         <FlatList
@@ -13,6 +13,9 @@ const TripsFeed = ({data, extra, navigation}) => {
                 }
                 keyExtractor={data.key}
                 extraData={extra}
+                refreshControl={
+                    <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
+                  }
             />
     )
 }

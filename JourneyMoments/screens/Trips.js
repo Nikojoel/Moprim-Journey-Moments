@@ -15,6 +15,7 @@ const Trips = ({navigation}) => {
     const [listLoading, setList] = useState(false)
     const [data, setData] = useState([])
     const [func, setFunc] = useState(null)
+    const [refreshing, setRefreshing] = useState(false)
 
     const id = LoginService.getCurrentUser().uid
     const dd = new Date()
@@ -104,12 +105,19 @@ const Trips = ({navigation}) => {
                 await getTravelChain(currentDateWithId, month)
     }
 
+    const onRefresh = React.useCallback(async () => {
+        setRefreshing(true);
+        loadMytrips()
+        setRefreshing(false) 
+        console.log('refreshing trips')
+    }, [refreshing]);
+
     return (
         <SafeAreaView style={{flex: 1}}>
             {listLoading &&
             <ProgressBar/>
             }
-            <TripsFeed data={data} extra={data} navigation={navigation} />
+            <TripsFeed data={data} extra={data} navigation={navigation} refresh={refreshing} onRefresh={onRefresh} />
         </SafeAreaView>
     )
 }
