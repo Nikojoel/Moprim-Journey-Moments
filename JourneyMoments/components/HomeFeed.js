@@ -1,11 +1,11 @@
 import React from "react"
-import { FlatList, SafeAreaView, StatusBar, TouchableOpacity } from "react-native"
+import { FlatList, SafeAreaView, StatusBar, TouchableOpacity, RefreshControl } from "react-native"
 import { Text, ListItem, Left, Body, Icon, Right, Title } from "native-base"
 import HomeFeedItem from "./HomeFeedItem"
 import Home from "../screens/Home";
 
 
-const HomeFeed = ({data, extra, navigation}) => {
+const HomeFeed = ({data, extra, navigation, refresh, onRefresh}) => {
     return (
         <SafeAreaView>
             <FlatList
@@ -16,6 +16,9 @@ const HomeFeed = ({data, extra, navigation}) => {
                 keyExtractor={item => item.id}
                 extraData={extra}
                 numColumns={2}
+                refreshControl={
+                    <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
+                  }
             />
         </SafeAreaView>
     )
