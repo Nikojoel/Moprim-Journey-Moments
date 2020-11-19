@@ -1,5 +1,5 @@
-import React from 'react';
-import auth from '@react-native-firebase/auth';
+import React from 'react'
+import auth from '@react-native-firebase/auth'
 
 const createUser = async (username, password) => {
     return await auth()
@@ -17,7 +17,7 @@ const logoutUser = async () => {
 }
 
 const getCurrentUser = () => {
-    return auth().currentUser;
+    return auth().currentUser
 }
 
 export default {

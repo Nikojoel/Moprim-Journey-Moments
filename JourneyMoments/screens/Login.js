@@ -5,7 +5,7 @@ import {
     StyleSheet,
     TextInput,
     TouchableOpacity,
-    Button, BackHandler, Image,
+    Button, BackHandler, Image, Alert
 } from 'react-native'
 import MoprimBridge from '../modules/Moprim'
 import LoginService from '../services/LoginService'
@@ -17,6 +17,10 @@ import DownloadService from "../services/DownloadService";
 import RNBottomActionSheet from "react-native-bottom-action-sheet";
 import ImagePicker from "react-native-image-picker";
 import {ProgressBar} from "@react-native-community/progress-bar-android";
+import Icon from "react-native-vector-icons";
+
+const cameraIcon = <Icon family={'FontAwesome'} name={'camera'} color={'#000000'} size={30}/>
+const libraryIcon = <Icon family={'FontAwesome'} name={'photo'} color={'#000000'} size={30}/>
 
 const Login = ({navigation}) => {
     const [email, setEmail] = useState('')
@@ -34,8 +38,6 @@ const Login = ({navigation}) => {
     const dummy = Helper.dummy
 
     useEffect(() => {
-        setImage(null)
-        setUri(null)
         if (user) {
             MoprimBridge.initMoprim(user.uid)
             navigation.navigate('tabs')
@@ -59,7 +61,7 @@ const Login = ({navigation}) => {
                 const result = await handleURL(uri)
                 if (result) {
                     url = result
-                
+
                 }
             } else if (!uri) {
                 url = dummy
@@ -76,10 +78,12 @@ const Login = ({navigation}) => {
                 "id": result.user.uid,
                 "rating": 0
             }
-        
+
             await DatabaseService.dbUserINSERT(json)
             setLoading(false)
             navigation.navigate('tabs')
+            setImage(null)
+            setUri(null)
         } catch (e) {
             console.log(e)
             setLoading(false)
@@ -91,6 +95,7 @@ const Login = ({navigation}) => {
         try {
             const user = await LoginService.loginUser(username, password)
             MoprimBridge.initMoprim(user.user.uid)
+            setLoading(false)
             navigation.navigate('tabs')
         } catch (e) {
             setLoading(false)
@@ -109,8 +114,28 @@ const Login = ({navigation}) => {
     }
 
     const imageOptions = {
-        mediaType: 'image',
-        isImage: true,
+        storageOptions: {
+            skipBackup: true,
+            path: "images"
+        }
+    }
+
+    const showAlert = () => {
+        Alert.alert(
+            "Warning",
+            "Choosing Google Photos might not work properly",
+            [
+                {
+                    text: "Proceed",
+                    onPress: () => launchFiles()
+                },
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+            ],
+            { cancelable: false }
+        )
     }
 
     const pickImage = () => {
@@ -119,8 +144,8 @@ const Login = ({navigation}) => {
         sheetView.Show({
             title: "Choose format",
             items: [
-                {title: "Image", value: "image", subTitle: "Image description"},
-                {title: "Gallery", value: "image", subTitle: "Gallery description"},
+                {title: "Image", value: "image", subTitle: "Image description", icon: cameraIcon},
+                {title: "Gallery", value: "image", subTitle: "Gallery description", icon: libraryIcon},
             ],
             theme: "light",
             selection: 3,
@@ -130,7 +155,7 @@ const Login = ({navigation}) => {
                     launchCamera(imageOptions)
                 } else if (index === 1) {
                     console.log("gallery")
-                    launchFiles(imageOptions)
+                    showAlert()
                 }
             }
         })
@@ -150,8 +175,8 @@ const Login = ({navigation}) => {
         }))
     }
 
-    const launchFiles = (options) => {
-        ImagePicker.launchImageLibrary(options, (response => {
+    const launchFiles = () => {
+        ImagePicker.launchImageLibrary(imageOptions, (response => {
             if (response.didCancel) {
                 console.log('cancel')
             } else if (response.error) {
@@ -189,10 +214,6 @@ const Login = ({navigation}) => {
                         onChangeText={(text) => setPwd(text)}
                     />
                 </View>
-                <TouchableOpacity>
-                    <Text style={styles.forgot}>Forgot Password?</Text>
-                    {/* TODO: Able to recover password */}
-                </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.loginBtn}
                     onPress={async () => {

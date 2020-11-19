@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {Text, View, Button, Image} from 'react-native'
+import {Text, View, Button, Image, Alert} from 'react-native'
 import ImagePicker from 'react-native-image-picker'
 import DownloadService from "../services/DownloadService"
 import DatabaseService from "../services/DatabaseService"
@@ -8,8 +8,9 @@ import RNBottomActionSheet from 'react-native-bottom-action-sheet'
 import Icon from 'react-native-vector-icons'
 import {ProgressBar} from '@react-native-community/progress-bar-android'
 
-//const cameraIcon = <Icon family={'FontAwesome'} name={'camera'} color={'#000000'} size={30} />
-//const videoIcon = <Icon family={'FontAwesome'} name={'video-camera'} color={'#000000'} size={30} />
+const cameraIcon = <Icon family={'FontAwesome'} name={'camera'} color={'#000000'} size={30}/>
+const videoIcon = <Icon family={'FontAwesome'} name={'video-camera'} color={'#000000'} size={30}/>
+const libraryIcon = <Icon family={'FontAwesome'} name={'photo'} color={'#000000'} size={30}/>
 
 const Upload = ({moprimId, handleUpload}) => {
     const [image, setImage] = useState(null)
@@ -26,15 +27,32 @@ const Upload = ({moprimId, handleUpload}) => {
         isImage: true,
     }
 
+    const showAlert = () => {
+        Alert.alert(
+            "Warning",
+            "Choosing Google Photos might not work properly",
+            [
+                {
+                    text: "Proceed",
+                    onPress: () => launchFiles(imageOptions)
+                },
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+            ],
+            { cancelable: false }
+        )
+    }
+
     const pickImage = () => {
         const sheetView = RNBottomActionSheet.SheetView
-
         sheetView.Show({
             title: "Choose format",
             items: [
-                { title: "Image", value: "image", subTitle: "Image description"},
-                { title: "Video", value: "video", subTitle: "Video Description"},
-                { title: "Gallery", value: "image", subTitle: "Gallery description"},
+                { title: "Image", value: "image", subTitle: "Image description", icon: cameraIcon},
+                { title: "Video", value: "video", subTitle: "Video Description", icon: videoIcon},
+                { title: "Gallery", value: "image", subTitle: "Gallery description", icon: libraryIcon},
             ],
             theme: "light",
             selection: 3,
@@ -47,7 +65,7 @@ const Upload = ({moprimId, handleUpload}) => {
                     launchCamera(videoOptions)
                 } else {
                     console.log("gallery")
-                    launchFiles(imageOptions)
+                    showAlert()
                 }
             }
         })

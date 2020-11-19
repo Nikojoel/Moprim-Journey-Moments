@@ -1,6 +1,6 @@
 import React from 'react'
-import storage from '@react-native-firebase/storage';
-import Helper from "../helpers/Helper";
+import storage from '@react-native-firebase/storage'
+import Helper from "../helpers/Helper"
 
 const MEDIA_PATH = "/Media/"
 const STORAGE_PATH = "Media/"
