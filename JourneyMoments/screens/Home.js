@@ -4,12 +4,18 @@ import DatabaseService from "../services/DatabaseService"
 import HomeFeed from "../components/HomeFeed"
 import {SafeAreaView} from "react-native-safe-area-context"
 import {ProgressBar} from "@react-native-community/progress-bar-android"
+import LoginService from '../services/LoginService'
+import { View, Text, H2 } from 'native-base'
+import { TouchableOpacity } from 'react-native-gesture-handler'
 
 
 const Home = ({navigation}) => {
     const [commentedTrips, setCommentedTrips] = useState([])
     const [loading, setLoading] = useState(true)
+    const [latest, setLatest] = useState([])
     const [refreshing, setRefreshing] = useState(false)
+
+    const userId = LoginService.getCurrentUser().uid
 
     const getCommentedTrips = async () => {
         try {
@@ -50,9 +56,19 @@ const Home = ({navigation}) => {
         return array
     }
 
+    const getUserLastrip = async(userId) => {
+        try {
+            const data = await DatabaseService.dbGetLatestTrip(userId)
+            const it = iterateData(data)
+            setLatest(it[0])
+        } catch (e) {
+            console.log(e)
+        }
+    }
 
     const onRefresh = React.useCallback(async () => {
         setRefreshing(true);
+        getUserLastrip(userId)
         getCommentedTrips() 
         setRefreshing(false) 
     }, [refreshing]);
@@ -60,6 +76,7 @@ const Home = ({navigation}) => {
 
     useEffect(() => {
         getCommentedTrips()
+        getUserLastrip(userId)
         BackHandler.addEventListener('hardwareBackPress', () => {
             return true
         })
@@ -70,9 +87,15 @@ const Home = ({navigation}) => {
     }, [])
 
     if (loading) return <ProgressBar/>
-
+    
     return (
         <SafeAreaView style={{flex: 1}}>
+                {latest != undefined &&        
+                <TouchableOpacity style={{padding:20, backgroundColor:'black', margin: 5}} onPress={() => navigation.navigate("Single", { latest } )}>
+                    <H2 style={{color:'white'}}>Rate your latest trip</H2>
+                    <Text style={{color:'white'}}>{latest.activity}</Text>
+                </TouchableOpacity>
+                }
                 <HomeFeed data={commentedTrips} extra={commentedTrips} navigation={navigation} refresh={refreshing} onRefresh={onRefresh} />
         </SafeAreaView>
     )

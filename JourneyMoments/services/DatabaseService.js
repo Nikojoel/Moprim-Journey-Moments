@@ -38,6 +38,15 @@ const dbUserUPDATE = async (userId) => {
             rating: rating
         })
 }
+const dbGetLatestTrip = async (userId) => {
+    return await database()
+        .ref(TRAVEL_ROUTE)
+        .orderByChild("userId")
+        .equalTo(userId)
+        .limitToLast(1)
+        .once("value")
+}
+
 
 // Insert user profile photo
 const dbUserPhotoINSERT = async (id, url) => {
@@ -209,4 +218,5 @@ export default {
     dbAllTravelChainGET,
     dbUserTravelChainGET,
     dbTravelChainDateGET,
+    dbGetLatestTrip,
 }

@@ -11,7 +11,7 @@ const HomeFeedItem = ({ item, navigation }) => {
     const time = Helper.unixToTime(parseInt(item.timestampStart))
 
     return (
-        <View noBorder style={container(color)} onPress={() => navigation.navigate("Single", { item })}>
+        <View noBorder style={container(color)}>
             <TouchableOpacity onPress={() => navigation.navigate("Single", { item })}>
                 <View style={{ flexDirection: 'row' }}>
                     <Icon name={icon} style={styles.mainIcon} />

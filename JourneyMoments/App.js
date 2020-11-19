@@ -22,17 +22,6 @@ requestMultiple([
   console.log('Activity', statuses[PERMISSIONS.ANDROID.ACTIVITY_RECOGNITION])
 })
 
-const uploadDataPolling = async (days) => {
-  try {
-    Promise.all([...Array(days).keys()].map(key => {return MoprimBridge.getResults(key)}))
-  } catch (e) {
-    console.log(e)
-  }
-}
-
-uploadDataPolling(10)
-//setInterval(uploadDataPolling(0), 5000)
-
 const Stack = createStackNavigator()
 
 const App = () => {
