@@ -1,18 +1,16 @@
 import React, {useState, useEffect} from 'react'
-import {Text, Button, ScrollView, SafeAreaView, StyleSheet, BackHandler} from 'react-native'
-import LoginService from "../services/LoginService"
+import {ScrollView} from 'react-native'
 import UserItem from "../components/UserItem"
 import DatabaseService from "../services/DatabaseService"
 import {ProgressBar} from '@react-native-community/progress-bar-android'
-import MoprimBridge from '../modules/Moprim'
-import Helper from "../helpers/Helper";
 
 const Stats = () => {
     const [data, setData] = useState([])
+    const [loading, setLoading] = useState(true)
 
     const iterateData = (obj) => {
         if (obj === undefined) return undefined
-        if (obj === null)  return null
+        if (obj === null) return null
         const array = []
         const keys = Object.values(obj)[0].childKeys
         keys.forEach(key => {
@@ -25,26 +23,23 @@ const Stats = () => {
         const result = await DatabaseService.dbUserGET("/")
         const iterate = iterateData(result)
         setData(iterate)
+        setLoading(false)
     }
+
     useEffect(() => {
         getusers()
     }, [])
 
+    if (loading) return <ProgressBar/>
+
     return (
         <ScrollView style={{flex: 1}}>
             {data
-                .sort((a,b) => a.rating < b.rating ? 1 : -1)
+                .sort((a, b) => a.rating < b.rating ? 1 : -1)
                 .map(it => <UserItem data={it} key={it.id}/>)
             }
         </ScrollView>
     )
-
 }
-const styles = StyleSheet.create({
-    scrollArea: {
-        marginBottom: 40,
-        marginTop: 40,
-        backgroundColor: "orange"
-    }
-})
+
 export default Stats

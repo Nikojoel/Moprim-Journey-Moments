@@ -11,7 +11,6 @@ const COMMENT_ID_ROUTE = "/Comment"
 const COMMENT_ROUTE = "/Comment/"
 const TRAVEL_CHAIN_ID_ROUTE = "/Travelchain"
 const TRAVEL_CHAIN_ROUTE = "/Travelchain/"
-const RATE_ID_ROUTE = "/Rating"
 const RATE_ROUTE = "/Rating/"
 
 // Get all = "/"

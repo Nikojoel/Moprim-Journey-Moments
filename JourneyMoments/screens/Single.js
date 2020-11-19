@@ -7,11 +7,10 @@ import {Content, H2, Icon, Text} from "native-base"
 import DatabaseService from "../services/DatabaseService"
 import {ProgressBar} from "@react-native-community/progress-bar-android"
 import {BackHandler, Button, StyleSheet, View, ScrollView} from "react-native"
-import Notification from "../components/Notification";
-import LoginService from "../services/LoginService";
-import Stars from "../components/StarRating";
-import CommentItem from "../components/CommentItem";
-import MediaItem from "../components/MediaItem";
+import LoginService from "../services/LoginService"
+import Stars from "../components/StarRating"
+import CommentItem from "../components/CommentItem"
+import MediaItem from "../components/MediaItem"
 
 const Decoder = require('@mapbox/polyline')
 
@@ -52,7 +51,7 @@ const Single = ({route, navigation}) => {
 
     const handleSend = async (text) => {
         console.log("send comment with text:", text)
-        
+
         if (text === "") setError("Can't be empty")
         else {
             const json = {
@@ -74,7 +73,7 @@ const Single = ({route, navigation}) => {
     }
 
     const handleStars = async (data) => {
-       
+
         const rating = {
             speed: data.speed,
             cleanness: data.cleanness,
@@ -167,8 +166,6 @@ const Single = ({route, navigation}) => {
         }
     }
 
-
-
     if (loading) return <ProgressBar/>
 
     return (
@@ -229,9 +226,3 @@ const styles = StyleSheet.create({
     }
 })
 export default Single
-
-/**
- <Text>Speed: {data.rating.speed}/5</Text>
-            <Text>Cleanness: {data.rating.cleanness}/5</Text>
-            <Text>Comfort: {data.rating.comfort}/5</Text>
- */
