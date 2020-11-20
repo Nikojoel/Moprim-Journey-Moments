@@ -20,7 +20,7 @@ const Stats = () => {
     }
 
     const getusers = async () => {
-        const result = await DatabaseService.dbUserGET("/")
+        const result = await DatabaseService.dbUserTopTenGET()
         const iterate = iterateData(result)
         setData(iterate)
         setLoading(false)

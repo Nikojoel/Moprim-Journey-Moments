@@ -38,6 +38,18 @@ const dbUserUPDATE = async (userId) => {
             rating: rating
         })
 }
+
+// Update username and photoURL
+const dbUserProfileUPDATE = async (userId, data) => {
+    return await database()
+        .ref(USER_ROUTE + userId)
+        .update({
+            username: data.username,
+            photoURL: data.photoURL
+        })
+}
+
+// Get users last recorded journey
 const dbGetLatestTrip = async (userId) => {
     return await database()
         .ref(TRAVEL_ROUTE)
@@ -47,7 +59,6 @@ const dbGetLatestTrip = async (userId) => {
         .once("value")
 }
 
-
 // Insert user profile photo
 const dbUserPhotoINSERT = async (id, url) => {
     return await database()
@@ -55,6 +66,15 @@ const dbUserPhotoINSERT = async (id, url) => {
         .update({
             photoURL: url
         })
+}
+
+// Get top ten users sorted by rating
+const dbUserTopTenGET = async () => {
+    return await database()
+        .ref(USER_ROUTE)
+        .orderByChild("rating")
+        .limitToLast(10)
+        .once("value")
 }
 
 // Get all = "/"
@@ -201,6 +221,8 @@ export default {
     dbUserGET,
     dbUserINSERT,
     dbUserUPDATE,
+    dbUserProfileUPDATE,
+    dbUserTopTenGET,
     dbAllMoprimGET,
     dbMoprimINSERT,
     dbMoprimGET,
