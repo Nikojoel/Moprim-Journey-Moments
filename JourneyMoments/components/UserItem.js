@@ -7,9 +7,6 @@ const UserItem = ({data}) => {
     return (
         <View style={styles.text}>
             <Text>username: {data.username}</Text>
-            {data.photoURL === "undefined" && <>
-               <H2>NO IMAGE</H2>
-            </>}
             {data.photoURL !== "undefined" && <>
                 <Image source={{uri: data.photoURL}} style={{width: 250, height: 250}}/>
             </>}

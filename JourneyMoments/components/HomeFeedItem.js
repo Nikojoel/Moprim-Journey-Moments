@@ -9,6 +9,9 @@ const HomeFeedItem = ({ item, navigation }) => {
     
     const { icon, color } = Helper.transportIcon(item.activity)
     const time = Helper.unixToTime(parseInt(item.timestampStart))
+    const endTime = Helper.unixToTime(parseInt(item.timestampEnd))
+    const arr = Helper.unixToSimpleDate(item.timestampStart).split("/")
+    const date = `${arr[1]}.${arr[0]}.${arr[2]}`
 
     return (
         <View noBorder style={container(color)}>
@@ -21,9 +24,15 @@ const HomeFeedItem = ({ item, navigation }) => {
                     <Text style={{fontSize: 12, alignSelf: 'center', marginTop: 5}}>{item.user.username}</Text>
                     </View>
                 </View>
-                <Text>{item.date}</Text>
-                <Text>{time}</Text>
+                <Text>{date}</Text>
+                <Text>{time} - {endTime}</Text>
                 <Text note>{item.distance}m</Text>
+                {item.co2 !== 0 && <>
+                    <Text note>{Math.round(item.co2)} grams of CO2</Text>
+                </>}
+                {item.co2 === 0 && <>
+                    <Text note>-</Text>
+                </>}
             </TouchableOpacity>
         </View>
     )

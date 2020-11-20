@@ -246,6 +246,7 @@ const Login = ({navigation}) => {
                 </View>
                 <View style={styles.inputView}>
                     <TextInput
+                        maxLength={15}
                         style={styles.inputText}
                         placeholder="Username..."
                         placeholderTextColor="#003f5c"

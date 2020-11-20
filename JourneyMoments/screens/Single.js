@@ -33,6 +33,9 @@ const Single = ({route, navigation}) => {
     const {icon, color} = Helper.transportIcon(data.activity)
     const timeSpent = Helper.millisToMinutesAndSeconds(parseInt(data.timestampEnd) - parseInt(data.timestampStart))
     const startTime = Helper.unixToTime(parseInt(data.timestampStart))
+    const endTime = Helper.unixToTime(parseInt(data.timestampEnd))
+    const arr = Helper.unixToSimpleDate(data.timestampStart).split("/")
+    const date = `${arr[1]}.${arr[0]}.${arr[2]}`
 
     const getUser = async (userId) => {
         const result = await DatabaseService.dbUserGET("/" + userId)
@@ -172,9 +175,11 @@ const Single = ({route, navigation}) => {
     return (
         <Content>
             <H2>Trip</H2>
+            <Text>Date: {date}</Text>
             <Text>Total time: {timeSpent}</Text>
             <Text>Starting time: {startTime}</Text>
-            <Text>Emissions: {data.co2}</Text>
+            <Text>End time: {endTime}</Text>
+            <Text>Emissions: {data.co2}g</Text>
             <Text>Speed: {data.speed}</Text>
             <Icon name={icon} size={30} color={color}/>
             {rating && <>
