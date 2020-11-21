@@ -85,7 +85,7 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                         var idSet = mutableSetOf<String>()
                         val userId = TMD.getUUID()
                         chain.activities.forEach { activity ->
-                            idSet.add(userId + activity.id)
+                            idSet.add(userId + activity.timestampStart + activity.id)
                             totalCo2 += activity.co2
                             totalDistance += activity.distance
                             db.child("Moprim")
