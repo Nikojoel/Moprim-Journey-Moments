@@ -3,9 +3,10 @@ import { FlatList, SafeAreaView, StatusBar, TouchableOpacity, RefreshControl } f
 import { Text, ListItem, Left, Body, Icon, Right, Title } from "native-base"
 import HomeFeedItem from "./HomeFeedItem"
 import Home from "../screens/Home";
-
+import Helper from "../helpers/Helper";
 
 const HomeFeed = ({data, extra, navigation, refresh, onRefresh}) => {
+    console.log(data)
     return (
         <SafeAreaView>
             <FlatList
@@ -13,7 +14,7 @@ const HomeFeed = ({data, extra, navigation, refresh, onRefresh}) => {
                 renderItem={({item}) =>
                     <HomeFeedItem item={item} navigation={navigation}/>
                 }
-                keyExtractor={item => item.id}
+                keyExtractor={item => Helper.generateUUID()}
                 extraData={extra}
                 numColumns={2}
                 refreshControl={

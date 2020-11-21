@@ -1,15 +1,15 @@
-import React, {useState, useEffect} from 'react'
-import {BackHandler} from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { BackHandler } from 'react-native'
 import DatabaseService from "../services/DatabaseService"
 import HomeFeed from "../components/HomeFeed"
-import {SafeAreaView} from "react-native-safe-area-context"
-import {ProgressBar} from "@react-native-community/progress-bar-android"
+import { SafeAreaView } from "react-native-safe-area-context"
+import { ProgressBar } from "@react-native-community/progress-bar-android"
 import LoginService from '../services/LoginService'
 import { View, Text, H2 } from 'native-base'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 
 
-const Home = ({navigation}) => {
+const Home = ({ navigation }) => {
     const [commentedTrips, setCommentedTrips] = useState([])
     const [loading, setLoading] = useState(true)
     const [latest, setLatest] = useState([])
@@ -25,7 +25,7 @@ const Home = ({navigation}) => {
             commentsArray.forEach(it => {
                 morpimID.add(it.moprimId)
             })
-            Promise.all([...morpimID].map((id) => { return getMorprimData(id)})).then((values) => {
+            Promise.all([...morpimID].map((id) => { return getMorprimData(id) })).then((values) => {
                 setCommentedTrips(values)
             })
             setLoading(false)
@@ -47,7 +47,7 @@ const Home = ({navigation}) => {
 
     const iterateData = (obj) => {
         if (obj === undefined) return undefined
-        if (obj === null)  return null
+        if (obj === null) return null
         const array = []
         const keys = Object.values(obj)[0].childKeys
         keys.forEach(key => {
@@ -56,7 +56,7 @@ const Home = ({navigation}) => {
         return array
     }
 
-    const getUserLastrip = async(userId) => {
+    const getUserLastrip = async (userId) => {
         try {
             const data = await DatabaseService.dbGetLatestTrip(userId)
             const it = iterateData(data)
@@ -69,8 +69,8 @@ const Home = ({navigation}) => {
     const onRefresh = React.useCallback(async () => {
         setRefreshing(true);
         getUserLastrip(userId)
-        getCommentedTrips() 
-        setRefreshing(false) 
+        getCommentedTrips()
+        setRefreshing(false)
     }, [refreshing]);
 
 
@@ -86,18 +86,20 @@ const Home = ({navigation}) => {
             })
     }, [])
 
-    if (loading) return <ProgressBar/>
-    
+    if (loading) return <ProgressBar />
+
     return (
-        <SafeAreaView style={{flex: 1}}>
-                {latest != undefined &&        
-                <TouchableOpacity style={{padding:20, backgroundColor:'black', margin: 5}} onPress={() => navigation.navigate("Single", { latest } )}>
-                    <H2 style={{color:'white'}}>Rate your latest trip</H2>
-                    <Text style={{color:'white'}}>{latest.activity}</Text>
+        <View style={{ flex: 1 }}>
+            {latest != undefined &&
+                <TouchableOpacity style={{ padding: 20, backgroundColor: 'black', margin: 5 }} onPress={() => navigation.navigate("Single", { latest })}>
+                    <H2 style={{ color: 'white' }}>Rate your latest trip</H2>
+                    <Text style={{ color: 'white' }}>{latest.activity}</Text>
                 </TouchableOpacity>
-                }
+            }
+            <SafeAreaView style={{ flex: 1 }}>
                 <HomeFeed data={commentedTrips} extra={commentedTrips} navigation={navigation} refresh={refreshing} onRefresh={onRefresh} />
-        </SafeAreaView>
+            </SafeAreaView>
+        </View>
     )
 }
 

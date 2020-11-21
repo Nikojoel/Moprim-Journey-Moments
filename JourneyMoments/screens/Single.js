@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import Helper from "../helpers/Helper"
 import Map from "../components/Map"
 import Upload from "../components/Upload"
 import CommentField from "../components/CommentField";
-import {Content, H2, Icon, Text} from "native-base"
+import { Content, H2, Icon, Text, Left, Right, Body } from "native-base"
 import DatabaseService from "../services/DatabaseService"
-import {ProgressBar} from "@react-native-community/progress-bar-android"
-import {BackHandler, Button, StyleSheet, View, ScrollView} from "react-native"
+import { ProgressBar } from "@react-native-community/progress-bar-android"
+import { BackHandler, Button, StyleSheet, View, ScrollView } from "react-native"
 import LoginService from "../services/LoginService"
 import Stars from "../components/StarRating"
 import CommentItem from "../components/CommentItem"
@@ -14,8 +14,7 @@ import MediaItem from "../components/MediaItem"
 
 const Decoder = require('@mapbox/polyline')
 
-const Single = ({route, navigation}) => {
-    console.log(route)
+const Single = ({ route, navigation }) => {
     const id = LoginService.getCurrentUser().uid
     const [user, setUser] = useState([])
     const [loading, setLoading] = useState(true)
@@ -25,12 +24,12 @@ const Single = ({route, navigation}) => {
     const [rating, setRating] = useState(null)
     const [comments, setComments] = useState([])
     const [media, setMedia] = useState([])
-    
+
     const data = Object.values(route.params)[0]
-    const moprimId = data.id
+    const moprimId = data.timestampStart + data.id
     const userId = data.userId
 
-    const {icon, color} = Helper.transportIcon(data.activity)
+    const { icon, color } = Helper.transportIcon(data.activity)
     const timeSpent = Helper.millisToMinutesAndSeconds(parseInt(data.timestampEnd) - parseInt(data.timestampStart))
     const startTime = Helper.unixToTime(parseInt(data.timestampStart))
     const endTime = Helper.unixToTime(parseInt(data.timestampEnd))
@@ -44,6 +43,7 @@ const Single = ({route, navigation}) => {
     }
 
     useEffect(() => {
+        navigation.setOptions({ title: date })
         getUser(userId)
         getRating(userId + moprimId)
         getComments(userId + moprimId)
@@ -115,7 +115,7 @@ const Single = ({route, navigation}) => {
 
     const iterateData = (obj) => {
         if (obj === undefined) return undefined
-        if (obj === null)  return null
+        if (obj === null) return null
         const array = []
         const keys = Object.values(obj)[0].childKeys
         keys.forEach(key => {
@@ -134,7 +134,7 @@ const Single = ({route, navigation}) => {
                 comment: it.text,
             })
         })
-        Promise.all(userArr.map((it) => { return getUserData(it.comment,"/" + it.userId)})).then((values) => {
+        Promise.all(userArr.map((it) => { return getUserData(it.comment, "/" + it.userId) })).then((values) => {
             setComments(values)
         })
     }
@@ -149,7 +149,7 @@ const Single = ({route, navigation}) => {
                 url: it.url
             })
         })
-        Promise.all(mediaArr.map((it) => {return getTravelMedia(it.url, "/" + it.userId)})).then((values) => {
+        Promise.all(mediaArr.map((it) => { return getTravelMedia(it.url, "/" + it.userId) })).then((values) => {
             setMedia(values)
         })
     }
@@ -170,57 +170,69 @@ const Single = ({route, navigation}) => {
         }
     }
 
-    if (loading) return <ProgressBar/>
+
+    if (loading) return <ProgressBar />
 
     return (
-        <Content>
-            <H2>Trip</H2>
-            <Text>Date: {date}</Text>
-            <Text>Total time: {timeSpent}</Text>
-            <Text>Starting time: {startTime}</Text>
-            <Text>End time: {endTime}</Text>
-            <Text>Emissions: {data.co2}g</Text>
-            <Text>Speed: {data.speed}</Text>
-            <Icon name={icon} size={30} color={color}/>
-            {rating && <>
-                <H2>Current rating</H2>
-                <Text>Speed: {rating.speed}/5</Text>
-                <Text>Cleanness: {rating.cleanness}/5</Text>
-                <Text>Comfort: {rating.comfort}/5</Text>
-            </>}
-            <H2>User</H2>
-            <Text>Name: {user.username}</Text>
-            <Text>Rating: {user.rating}</Text>
-            <Text>Member since: {Helper.unixToSimpleDate(user.metadata.creationTime)}</Text>
-            <View style={styles.map}>
-                <Map data={Decoder.decode(data.polyline)}/>
-            </View>
-            <ScrollView>
-                <H2>Comments</H2>
-                {comments
-                    .map((it) => <CommentItem data={it} key={Helper.generateUUID()}/>)
-                }
-            </ScrollView>
-            <H2>Media</H2>
-            {media
-                .map((it) => <MediaItem data={it} key={Helper.generateUUID()}/>)
-            }
-            <Button title={btn} onPress={() => {
-                if (toggle) {
-                    setToggle(false)
-                    setBtn("Hide")
-                } else {
-                    setToggle(true)
-                    setBtn("Rate")
-                }
-            }}/>
-            {!toggle && <>
-                <CommentField handleSend={handleSend}/>
-                {userId === id && <>
-                    <Upload moprimId={userId + moprimId} handleUpload={handleUpload}/>
-                    <Stars handleStars={handleStars}/>
+        <Content style={{ margin: 10 }}>
+            <View style={{ flexDirection: 'column', padding: 10, backgroundColor: 'white' }}>
+                <View style={{ flexDirection: 'row', paddingBottom: 10 }}>
+                    <Text>{user.username}</Text>
+                    <Right >
+                        <View style={{ borderColor: 'red', borderWidth: 2, borderRadius: 10 }}>
+                            <Text style={{ textAlign: 'center', margin: 2 }}>{user.rating}</Text>
+                        </View>
+                    </Right>
+                </View>
+                <View style={styles.map}>
+                    <Map data={Decoder.decode(data.polyline)} />
+                </View>
+                <Body style={{ flexDirection: 'row', padding: 10 }}>
+                    <Icon name={icon} style={{ marginLeft: 20, fontSize: 60 }} />
+                    <Right>
+                        <Text>Time: {startTime} - {endTime}</Text>
+                        <Text>Total time: {timeSpent}</Text>
+                        <Text>Speed: {Math.round(data.speed * 1000 * 3.6)} km/h</Text>
+                        <Text>Distance: {data.distance}</Text>
+                        <Text>Emissions: {Math.round(data.co2)}g</Text>
+                    </Right>
+                </Body>
+                {rating && <>
+                    <H2>Current rating</H2>
+                    <Text>Speed: {rating.speed}/5</Text>
+                    <Text>Cleanness: {rating.cleanness}/5</Text>
+                    <Text>Comfort: {rating.comfort}/5</Text>
                 </>}
-            </>}
+                </View>
+                <View style={{ flexDirection: 'column', padding: 10, marginTop: 5, backgroundColor: 'white' }}>
+                <ScrollView >
+                    {comments
+                        .map((it) => <CommentItem data={it} key={Helper.generateUUID()} />)
+                    }
+                    
+                </ScrollView>
+                <H2>Media</H2>
+                {media
+                    .map((it) => <MediaItem data={it} key={Helper.generateUUID()} />)
+                }
+                <Button title={btn} onPress={() => {
+                    if (toggle) {
+                        setToggle(false)
+                        setBtn("Hide")
+                    } else {
+                        setToggle(true)
+                        setBtn("Rate")
+                    }
+                }} />
+                {!toggle && <>
+                    
+                    {userId === id && <>
+                        <Upload moprimId={userId + moprimId} handleUpload={handleUpload} />
+                        <Stars handleStars={handleStars} />
+                    </>}
+                </>}
+                </View>
+                <CommentField handleSend={handleSend} />
         </Content>
 
     )

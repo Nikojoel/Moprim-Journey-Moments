@@ -14,10 +14,11 @@ const CommentItem = ({data}) => {
     }, [])
     return (
         <View>
-            <Image source={{uri: image}} style={{width: 50, height: 50}}/>
-            <Text>User: {user.username}</Text>
-            <Text>Comment: {data.comment}</Text>
-            <Text>User rating {user.rating}</Text>
+            <View style={{flexDirection: 'row'}}>
+            <Image source={{uri: image}} style={{width: 20, height: 20, borderRadius: 25, marginRight: 10}}/>
+            <Text>{user.username}</Text>
+            </View>
+            <Text style={{marginLeft: 30}}>- {data.comment}</Text>
         </View>
     )
 }

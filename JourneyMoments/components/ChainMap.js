@@ -38,7 +38,6 @@ const ChainMap = ({ data, trips }) => {
 
     const initial = data[0][0]
     const last = data[0][data.length - 1]
-    console.log(data[0][0])
     const reversedCoords = []
     data.forEach(day => {
         const reverseDay = []
@@ -60,10 +59,7 @@ const ChainMap = ({ data, trips }) => {
     const tripStyles = []
     trips.forEach(it => {
         tripStyles.push(Helper.transportIcon(it.activity))
-        console.log(Helper.transportIcon(it.activity).color)
     })
-
-    
 
     return (
         <View style={styles.page}>
@@ -72,6 +68,7 @@ const ChainMap = ({ data, trips }) => {
                     style={styles.map} 
                     logoEnabled={false}
                     attributionEnabled={false}
+                    center={[initial[1], initial[0]]}
                     styleURL={'mapbox://styles/enarm/ckhnrwos315eq19mc0k1wynfj'}>
                     <MapboxGL.Camera
                         zoomLevel={9}
@@ -79,9 +76,11 @@ const ChainMap = ({ data, trips }) => {
                     />
                     {hyvatSetit.map(
                         (it, index) => {
+                            const key = initial[1] + (index + 3)
+                            const key2 = initial[1] - (index + 2)
                             return (
-                        <MapboxGL.ShapeSource id={Helper.generateUUID()} shape={it}>
-                                <MapboxGL.LineLayer id={Helper.generateUUID()} style={{ lineColor: tripStyles[index].color, lineWidth: 2 }} />   
+                        <MapboxGL.ShapeSource id={String(key)} shape={it}>
+                                <MapboxGL.LineLayer id={String(key2)} style={{ lineColor: tripStyles[index].color, lineWidth: 2 }} />   
                     </MapboxGL.ShapeSource>)})}
 
                 </MapboxGL.MapView>

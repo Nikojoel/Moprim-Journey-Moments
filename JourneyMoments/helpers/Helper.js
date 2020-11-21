@@ -63,7 +63,6 @@ const millisToMinutesAndSeconds = (millis) => {
 
 const unixToTime = (millis) => {
     const date = new Date(millis).toLocaleTimeString().split(":")
-    console.log(date)
     return date[0] + ":" + date[1]
 }
 

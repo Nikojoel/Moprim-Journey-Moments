@@ -19,7 +19,6 @@ requestMultiple([
     'Location',
     statuses[PERMISSIONS.ANDROID.ACCESS_BACKGROUND_LOCATION],
   )
-  console.log('Activity', statuses[PERMISSIONS.ANDROID.ACTIVITY_RECOGNITION])
 })
 
 const Stack = createStackNavigator()
@@ -41,12 +40,12 @@ const App = () => {
         <Stack.Screen
             name="Single"
             component={Single}
-            options={{headerShown: false, title: 'Single'}}
+            options={{headerShown: true, title: 'Single'}}
         />
         <Stack.Screen
             name="ChainList"
             component={ChainList}
-            options={{headerShown: false, title: 'Your trip'}}
+            options={{headerShown: true, title: 'Your trip'}}
         />
         <Stack.Screen
           name="tabs"

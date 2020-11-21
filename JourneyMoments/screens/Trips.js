@@ -109,7 +109,6 @@ const Trips = ({navigation}) => {
         setRefreshing(true);
         loadMytrips()
         setRefreshing(false) 
-        console.log('refreshing trips')
     }, [refreshing]);
 
     return (

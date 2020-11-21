@@ -5,7 +5,6 @@ import Colors from '../values/Colors'
 import Home from '../screens/Home'
 import Trips from '../screens/Trips'
 import Stats from '../screens/Stats'
-import {Text, Button} from 'react-native'
 
 const Tab = createBottomTabNavigator()
 
@@ -14,7 +13,7 @@ const TabNavigator = ({navigation}) => {
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-          <Ionicons onPress={() => navigation.navigate("Profile")} name={'person'} size={30} color={'#000000'} />
+        <Ionicons onPress={() => navigation.navigate("Profile")} name={'person'} size={30} color={'#000000'} style={{marginRight: 10}} />      
       ),
     });
   }, [navigation]);
