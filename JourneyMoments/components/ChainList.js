@@ -26,6 +26,7 @@ const ChainList = ({route, navigation}) => {
     }
 
     const makePolylinePie = async (data) => {
+
         const pie = []
         data.forEach(it => {
            const coords = Decoder.decode(it.polyline)

@@ -34,7 +34,6 @@ const Profile = ({navigation}) => {
         setData(Helper.parseJSON(result))
         setUserName(data.username)
         setCurrent(data.photoURL)
-        console.log(data)
         setLoading(false)
     }
 
