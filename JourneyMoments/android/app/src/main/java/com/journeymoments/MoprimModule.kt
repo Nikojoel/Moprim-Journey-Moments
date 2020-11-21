@@ -89,7 +89,7 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                             totalCo2 += activity.co2
                             totalDistance += activity.distance
                             db.child("Moprim")
-                                    .child(userId + activity.id.toString())
+                                    .child(userId + activity.timestampStart + activity.id.toString())
                                     .setValue(
                                             CustomMoprimActivity(
                                                     activity,
