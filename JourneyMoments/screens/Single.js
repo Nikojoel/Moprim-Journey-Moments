@@ -6,7 +6,9 @@ import CommentField from "../components/CommentField";
 import { Content, H2, Icon, Text, Left, Right, Body } from "native-base"
 import DatabaseService from "../services/DatabaseService"
 import { ProgressBar } from "@react-native-community/progress-bar-android"
+
 import { BackHandler, Button, StyleSheet, View, ScrollView, SafeAreaView } from "react-native"
+
 import LoginService from "../services/LoginService"
 import Stars from "../components/StarRating"
 import CommentItem from "../components/CommentItem"
@@ -29,7 +31,6 @@ const Single = ({ route, navigation }) => {
     const data = Object.values(route.params)[0]
     const moprimId = data.timestampStart.toString() + data.id.toString()
     const userId = data.userId
-    
     const { icon, color } = Helper.transportIcon(data.activity)
     const timeSpent = Helper.millisToMinutesAndSeconds(parseInt(data.timestampEnd) - parseInt(data.timestampStart))
     const startTime = Helper.unixToTime(parseInt(data.timestampStart))
@@ -204,7 +205,7 @@ const Single = ({ route, navigation }) => {
                                 <Icon name='map-outline' style={{ marginLeft: 20, fontSize: 40 }} />
                         </TouchableOpacity>
                         </View>
-                        <Text>Time: {startTime} - {endTime}</Text>
+                       <Text>Time: {startTime} - {endTime}</Text>
                         <Text>Total time: {timeSpent}</Text>
                         <Text>Speed: {Math.round(data.speed * 1000 * 3.6)} km/h</Text>
                         <Text>Distance: {data.distance}</Text>
@@ -223,7 +224,7 @@ const Single = ({ route, navigation }) => {
                 </ScrollView>
                <CommentField handleSend={handleSend} />         
         </SafeAreaView>   
-       
+
 
     )
 }

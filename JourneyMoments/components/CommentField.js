@@ -7,7 +7,6 @@ const CommentField = ({handleSend, handlePicture}) => {
 
     return (
         <View style={styles.container}>
-            
             <TextInput
                 style={styles.input}
                 placeholder="Type here"
