@@ -128,10 +128,10 @@ const Upload = ({moprimId, handleUpload}) => {
     }
 
     return (
-        <View>
-            <Text>UPLOAD IMAGE</Text>
+        <View s>
+            
             <Button
-                title="Picture"
+                title="add media"
                 onPress={() => {
                     pickImage();
                 }}

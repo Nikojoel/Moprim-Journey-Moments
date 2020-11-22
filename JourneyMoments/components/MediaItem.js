@@ -7,10 +7,7 @@ const MediaItem = ({data}) => {
 
     return (
         <View>
-            <Image source={{uri: data.url}} style={{width: 150, height: 150}}/>
-            <Image source={{uri: user.photoURL}} style={{width: 50, height: 50}}/>
-            <Text>By user: {user.username}</Text>
-            <Text>User rating {user.rating}</Text>
+            <Image source={{uri: data.url}} style={{width: '100%', height: 200, resizeMode: 'cover'}}/>
         </View>
     )
 }

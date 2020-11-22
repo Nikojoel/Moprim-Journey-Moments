@@ -12,6 +12,7 @@ MapboxGL.setTelemetryEnabled(false);
 
 const styles = StyleSheet.create({
     page: {
+        flex: 1,
         backgroundColor: "#F5FCFF"
     },
     container: {
