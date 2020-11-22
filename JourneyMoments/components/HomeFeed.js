@@ -6,7 +6,7 @@ import Home from "../screens/Home";
 import Helper from "../helpers/Helper";
 
 const HomeFeed = ({data, extra, navigation, refresh, onRefresh}) => {
-    console.log(data)
+    
     return (
         <SafeAreaView>
             <FlatList
@@ -14,7 +14,7 @@ const HomeFeed = ({data, extra, navigation, refresh, onRefresh}) => {
                 renderItem={({item}) =>
                     <HomeFeedItem item={item} navigation={navigation}/>
                 }
-                keyExtractor={item => Helper.generateUUID()}
+                keyExtractor={item => item.key}
                 extraData={extra}
                 numColumns={2}
                 refreshControl={

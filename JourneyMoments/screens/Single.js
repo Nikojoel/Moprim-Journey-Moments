@@ -6,29 +6,30 @@ import CommentField from "../components/CommentField";
 import { Content, H2, Icon, Text, Left, Right, Body } from "native-base"
 import DatabaseService from "../services/DatabaseService"
 import { ProgressBar } from "@react-native-community/progress-bar-android"
-import { BackHandler, Button, StyleSheet, View, ScrollView } from "react-native"
+import { BackHandler, Button, StyleSheet, View, ScrollView, SafeAreaView } from "react-native"
 import LoginService from "../services/LoginService"
 import Stars from "../components/StarRating"
 import CommentItem from "../components/CommentItem"
 import MediaItem from "../components/MediaItem"
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const Decoder = require('@mapbox/polyline')
 
 const Single = ({ route, navigation }) => {
     const id = LoginService.getCurrentUser().uid
+    const [showMap, setShowMap] = useState(false)
     const [user, setUser] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
     const [toggle, setToggle] = useState(true)
     const [btn, setBtn] = useState("Rate")
-    const [rating, setRating] = useState(null)
+    const [rating, setRating] = useState({speed: 0, comfort: 0, cleanness: 0})
     const [comments, setComments] = useState([])
     const [media, setMedia] = useState([])
-
     const data = Object.values(route.params)[0]
-    const moprimId = data.timestampStart + data.id
+    const moprimId = data.timestampStart.toString() + data.id.toString()
     const userId = data.userId
-
+    
     const { icon, color } = Helper.transportIcon(data.activity)
     const timeSpent = Helper.millisToMinutesAndSeconds(parseInt(data.timestampEnd) - parseInt(data.timestampStart))
     const startTime = Helper.unixToTime(parseInt(data.timestampStart))
@@ -55,7 +56,7 @@ const Single = ({ route, navigation }) => {
 
     const handleSend = async (text) => {
         console.log("send comment with text:", text)
-
+        console.log(moprimId)
         if (text === "") setError("Can't be empty")
         else {
             const json = {
@@ -103,13 +104,14 @@ const Single = ({ route, navigation }) => {
             const result = await DatabaseService.dbMoprimRatingGET(id)
             if (result !== null && result !== undefined) {
                 const parse = Helper.parseJSON(result)
+                console.log
                 setRating(parse.rating)
             } else {
-                setRating(undefined)
+                setRating({speed: 0, comfort: 0, cleanness: 0})
             }
 
         } catch (e) {
-            setRating(undefined)
+            setRating({speed: 0, comfort: 0, cleanness: 0})
         }
     }
 
@@ -169,13 +171,13 @@ const Single = ({ route, navigation }) => {
             url: url,
         }
     }
-
-
+    
     if (loading) return <ProgressBar />
 
     return (
-        <Content style={{ margin: 10 }}>
-            <View style={{ flexDirection: 'column', padding: 10, backgroundColor: 'white' }}>
+        
+        <SafeAreaView style={{flex:1, backgroundColor: 'white'}}>
+            <ScrollView style={{marginBottom:60, marginHorizontal: 10, marginTop: 20}} showsVerticalScrollIndicator={false}>
                 <View style={{ flexDirection: 'row', paddingBottom: 10 }}>
                     <Text>{user.username}</Text>
                     <Right >
@@ -184,12 +186,24 @@ const Single = ({ route, navigation }) => {
                         </View>
                     </Right>
                 </View>
-                <View style={styles.map}>
+                {userId === id && <>
+                        <Upload moprimId={userId + moprimId} handleUpload={handleUpload} />  
+                    </>}
+                {media
+                    .map((it) => <MediaItem data={it} key={Helper.generateUUID()} />)
+                }
+                {showMap && <View style={styles.map}>
                     <Map data={Decoder.decode(data.polyline)} />
-                </View>
-                <Body style={{ flexDirection: 'row', padding: 10 }}>
-                    <Icon name={icon} style={{ marginLeft: 20, fontSize: 60 }} />
+                </View>}
+                <Body style={{ flexDirection: 'row' , flex:1, marginTop: 20}}> 
+                        <Stars handleStars={handleStars} rating={rating} owner={userId === id} />
                     <Right>
+                        <View style={{flexDirection: 'row'}}>
+                            <Icon name={icon} style={{ marginLeft: 20, fontSize: 40 }} />
+                            <TouchableOpacity onPress={()=> setShowMap(!showMap)}>
+                                <Icon name='map-outline' style={{ marginLeft: 20, fontSize: 40 }} />
+                        </TouchableOpacity>
+                        </View>
                         <Text>Time: {startTime} - {endTime}</Text>
                         <Text>Total time: {timeSpent}</Text>
                         <Text>Speed: {Math.round(data.speed * 1000 * 3.6)} km/h</Text>
@@ -197,43 +211,19 @@ const Single = ({ route, navigation }) => {
                         <Text>Emissions: {Math.round(data.co2)}g</Text>
                     </Right>
                 </Body>
-                {rating && <>
-                    <H2>Current rating</H2>
-                    <Text>Speed: {rating.speed}/5</Text>
-                    <Text>Cleanness: {rating.cleanness}/5</Text>
-                    <Text>Comfort: {rating.comfort}/5</Text>
-                </>}
-                </View>
-                <View style={{ flexDirection: 'column', padding: 10, marginTop: 5, backgroundColor: 'white' }}>
-                <ScrollView >
+               
+                <View style={{flex: 1, paddingTop: 20,}}>
+                    <View style={{height: 1, backgroundColor: 'gray', marginBottom: 10}}/>
                     {comments
                         .map((it) => <CommentItem data={it} key={Helper.generateUUID()} />)
                     }
+                </View>
+               
                     
                 </ScrollView>
-                <H2>Media</H2>
-                {media
-                    .map((it) => <MediaItem data={it} key={Helper.generateUUID()} />)
-                }
-                <Button title={btn} onPress={() => {
-                    if (toggle) {
-                        setToggle(false)
-                        setBtn("Hide")
-                    } else {
-                        setToggle(true)
-                        setBtn("Rate")
-                    }
-                }} />
-                {!toggle && <>
-                    
-                    {userId === id && <>
-                        <Upload moprimId={userId + moprimId} handleUpload={handleUpload} />
-                        <Stars handleStars={handleStars} />
-                    </>}
-                </>}
-                </View>
-                <CommentField handleSend={handleSend} />
-        </Content>
+               <CommentField handleSend={handleSend} />         
+        </SafeAreaView>   
+       
 
     )
 }

@@ -2,11 +2,12 @@ import React, {useState, useEffect} from 'react'
 import {Container,Icon, View, Input, Text, H2, Button, Body} from 'native-base'
 import {TextInput, StyleSheet, TouchableOpacity} from "react-native";
 
-const CommentField = ({handleSend}) => {
+const CommentField = ({handleSend, handlePicture}) => {
     const [text, setText] = useState('')
 
     return (
         <View style={styles.container}>
+            
             <TextInput
                 style={styles.input}
                 placeholder="Type here"
@@ -28,18 +29,20 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: "white",
         flexDirection: 'row',
-        margin: 10,
-        flex: 1
+        position: "absolute",
+        padding: 10,
+        elevation: 10,
+        bottom: 0
     },
     input: {
+        height: 30,
         flex: 1,
         backgroundColor: "white",
         borderWidth: 1,
         borderColor: 'black',
         borderRadius: 5,
-        marginBottom: 20,
-        padding: 0,
-        marginRight: 10    
+        padding: 5,
+        marginHorizontal: 10    
     },
 
 
