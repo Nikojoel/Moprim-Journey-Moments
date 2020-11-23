@@ -48,6 +48,22 @@ const transportIcon = (type) => {
     }
 }
 
+const ratingColor = (rating) => {
+    let rate
+    if (rating <= 15) {
+        rate = 1
+    } else if (rating > 15 && rating < 50) {
+        rate = 2
+    } else if (rating > 50) {
+        rate = 3
+    }
+    switch(rate) {
+        case 1: return Colors.greenRating
+        case 2: return Colors.yellowRating
+        case 3: return Colors.redRating
+    }
+}
+
 const generateUUID = () => {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
         const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8)
@@ -102,5 +118,6 @@ export default {
     transportIcon,
     iterateData,
     dummy,
+    ratingColor,
 }
 
