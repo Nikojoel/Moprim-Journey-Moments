@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import {Container,Icon, View, Input, Text, H2, Button, Body} from 'native-base'
 import {TextInput, StyleSheet, TouchableOpacity} from "react-native";
 
-const CommentField = ({handleSend, handlePicture}) => {
+const CommentField = ({handleSend}) => {
     const [text, setText] = useState('')
 
     return (
