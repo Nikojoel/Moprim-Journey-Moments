@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {Text, View, Button, BackHandler, Image, TextInput, StyleSheet, Alert} from 'react-native'
+import {Text, View, BackHandler, Image, TextInput, StyleSheet, Alert, Dimensions} from 'react-native'
 import LoginService from "../services/LoginService"
 import DatabaseService from "../services/DatabaseService"
 import {ProgressBar} from '@react-native-community/progress-bar-android'
@@ -7,10 +7,13 @@ import Helper from "../helpers/Helper"
 import DownloadService from "../services/DownloadService"
 import RNBottomActionSheet from "react-native-bottom-action-sheet"
 import ImagePicker from "react-native-image-picker"
-import Icon from "react-native-vector-icons";
+import Icons from "react-native-vector-icons"
+import {Container, Icon, Button, Body, CardItem, Card, Content, H2} from "native-base"
 
-const cameraIcon = <Icon family={'FontAwesome'} name={'camera'} color={'#000000'} size={30}/>
-const libraryIcon = <Icon family={'FontAwesome'} name={'photo'} color={'#000000'} size={30}/>
+const cameraIcon = <Icons family={'FontAwesome'} name={'camera'} color={'#000000'} size={30}/>
+const libraryIcon = <Icons family={'FontAwesome'} name={'photo'} color={'#000000'} size={30}/>
+const windowHeight = Dimensions.get('window').height
+const windowWidth = Dimensions.get('window').width
 
 const Profile = ({navigation}) => {
     const [loading, setLoading] = useState(true)
@@ -89,7 +92,7 @@ const Profile = ({navigation}) => {
                     style: "cancel"
                 },
             ],
-            { cancelable: false }
+            {cancelable: false}
         )
     }
 
@@ -150,63 +153,143 @@ const Profile = ({navigation}) => {
 
     if (toggle) {
         return (
-            <View>
-                <TextInput
-                    maxLength={15}
-                    placeholder="New username"
-                    style={styles.input}
-                    placeholderTextColor="#003f5c"
-                    onChangeText={(text) => setUserName(text)}
-                />
-                <View>
-                    <Text>Select a new profile picture</Text>
-                    <Button
-                        title="Picture"
-                        onPress={() => {
-                            pickImage();
-                        }}
-                    />
-                    {image && <>
-                        <View>
-                            <Text>Selected picture</Text>
-                            <Image source={{uri: image}} style={{width: 100, height: 100}}/>
-                        </View>
-                    </>}
-                </View>
-                <Button title="Update" onPress={() => handleSend()}/>
-                <Button title="Go back" onPress={() => setToggle(false)}/>
-            </View>
+            <Container>
+                <Content>
+                    <Card>
+                        <TextInput
+                            maxLength={15}
+                            placeholder="New username"
+                            style={styles.input}
+                            placeholderTextColor="grey"
+                            onChangeText={(text) => setUserName(text)}
+                        />
+                        <Body>
+                        <CardItem>
+                            <Button warning rounded
+                                    title="Picture"
+                                    onPress={() => {
+                                        pickImage();
+                                    }}
+                            >
+                                <Icon name='ios-image'/>
+                                <Text style={styles.btnStyle}>Image</Text>
+                            </Button>
+                        </CardItem>
+                            {image && <>
+                                <H2>Selected image</H2>
+                                <CardItem>
+                                    <Image style={styles.selectedPic} source={{uri: image}}/>
+                                </CardItem>
+                            </>}
+                        </Body>
+                        <Body>
+                            <CardItem>
+                                <Button rounded style={styles.submitBtn} onPress={() => handleSend()}>
+                                    <Icon name='ios-cloud-upload'/>
+                                    <Text style={styles.btnStyle}>Update</Text>
+                                </Button>
+                                <Button danger rounded onPress={() => setToggle(false)}>
+                                    <Icon name='ios-exit'/>
+                                    <Text style={styles.btnStyle}>Go back</Text>
+                                </Button>
+                            </CardItem>
+                        </Body>
+                    </Card>
+                </Content>
+            </Container>
         )
     }
 
     return (
-    <View>
-        <Text>Profile</Text>
-        <Text>name: {data.username}</Text>
-        <Text>email: {data.email}</Text>
-        <Text>creationTime: {data.metadata.creationTime}</Text>
-        <Text>lastSignInTime: {data.metadata.lastSignInTime}</Text>
-        <Text>photo: {data.photoURL}</Text>
-        <Image source={{uri: data.photoURL}} style={{width: 250, height: 250}}/>
-        <Text>rating: {data.rating}</Text>
-        <Button title="Settings" onPress={() => setToggle(true)}/>
-        <Button title="Logout" onPress={async () => {
-            await LoginService.logoutUser()
-            navigation.navigate("Login")
-        }}/>
-    </View>
-)
+        <Container>
+            <Content>
+                <Card>
+                    <CardItem bordered>
+                        <Icon name='ios-person' style={styles.profileIcon}/>
+                        <Text style={styles.info}>Username: {data.username}</Text>
+                    </CardItem>
+                    <CardItem>
+                        <Body>
+                            <Image
+                                style={styles.profilePic}
+                                source={{uri: data.photoURL}}
+                            />
+                        </Body>
+                    </CardItem>
+                    <CardItem bordered>
+                        <Icon name='ios-document' style={styles.profileIcon}/>
+                        <Body>
+                            <Text style={styles.info}>Email: {data.email}</Text>
+                            <Text style={styles.info}>Rating: {data.rating}</Text>
+                        </Body>
+                    </CardItem>
+                    <Body>
+                        <CardItem footer bordered>
+                            <Button warning rounded iconLeft onPress={() => setToggle(true)}>
+                                <Icon name='ios-cog'/>
+                                <Text style={styles.btnStyle}>Settings</Text>
+                            </Button>
+                            <Button danger rounded iconLeft style={styles.logoutIcon} onPress={async () => {
+                                await LoginService.logoutUser()
+                                navigation.navigate("Login")
+                            }}>
+                                <Icon name='ios-exit'/>
+                                <Text style={styles.btnStyle}>Logout</Text>
+                            </Button>
+                        </CardItem>
+                    </Body>
+                </Card>
+            </Content>
+        </Container>
+    )
 }
 const styles = StyleSheet.create({
-    input: {
+    profilePic: {
         width: '100%',
-        backgroundColor: "white",
+        height: windowHeight * 0.5,
+    },
+    selectedPic: {
+        width: "80%",
+        height: windowHeight * 0.5,
+    },
+    submitBtn: {
+        backgroundColor: "rgba(32,222,36,0.76)"
+    },
+    profileIcon: {
+        fontSize: 30,
+    },
+    info: {
+        fontSize: 16,
+    },
+    myPostsIcon: {
+        marginRight: 10,
+    },
+    logoutIcon: {
+        marginLeft: 10,
+    },
+    btnStyle: {
+        width: 70
+    },
+    border: {
+        borderColor: 'transparent',
+    },
+    iconSize: {
+        fontSize: 30,
+    },
+    input: {
+        width: "100%",
         borderRadius: 25,
-        height: 50,
-        marginBottom: 20,
-        justifyContent: 'center',
-        padding: 10,
-}
+        borderStyle: "solid",
+        borderWidth: 1,
+    },
+    slider: {
+        width: 300,
+        height: 40,
+    },
+    image: {
+        width: windowWidth * 0.2,
+        height: windowHeight * 0.09,
+    },
 })
 
 export default Profile
