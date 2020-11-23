@@ -12,12 +12,12 @@ import LoginService from '../services/LoginService'
 import Colors from '../values/Colors'
 import DatabaseService from "../services/DatabaseService"
 import Notification from "../components/Notification"
-import Helper from "../helpers/Helper";
-import DownloadService from "../services/DownloadService";
-import RNBottomActionSheet from "react-native-bottom-action-sheet";
-import ImagePicker from "react-native-image-picker";
-import {ProgressBar} from "@react-native-community/progress-bar-android";
-import Icon from "react-native-vector-icons";
+import Helper from "../helpers/Helper"
+import DownloadService from "../services/DownloadService"
+import RNBottomActionSheet from "react-native-bottom-action-sheet"
+import ImagePicker from "react-native-image-picker"
+import {ProgressBar} from "@react-native-community/progress-bar-android"
+import Icon from "react-native-vector-icons"
 
 const cameraIcon = <Icon family={'FontAwesome'} name={'camera'} color={'#000000'} size={30}/>
 const libraryIcon = <Icon family={'FontAwesome'} name={'photo'} color={'#000000'} size={30}/>
@@ -34,8 +34,15 @@ const Login = ({navigation}) => {
     const [image, setImage] = useState(null)
     const [uri, setUri] = useState(null)
     const [loading, setLoading] = useState(false)
+    const [validEmailReg, setValidEmailReg] = useState(true)
+    const [validUsername, setValidUsername] = useState(true)
+    const [validPassword, setValidPassword] = useState(true)
 
     const dummy = Helper.dummy
+
+    const emailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    const userReg = /^(?=[a-zA-Z0-9._]{4,10}$)(?!.*[_.]{2})[^_.].*[^_.]$/
+    const passReg = /^(?=[a-zA-Z0-9._]{6,15}$)(?!.*[_.]{2})[^_.].*[^_.]$/
 
     useEffect(() => {
         if (user) {
@@ -100,7 +107,7 @@ const Login = ({navigation}) => {
         } catch (e) {
             setLoading(false)
             console.log(e)
-            setErrorMessage("Error in login")
+            setErrorMessage("Invalid username or password")
         }
     }
 
@@ -134,7 +141,7 @@ const Login = ({navigation}) => {
                     style: "cancel"
                 },
             ],
-            { cancelable: false }
+            {cancelable: false}
         )
     }
 
@@ -189,6 +196,18 @@ const Login = ({navigation}) => {
         }))
     }
 
+    const checkInputs = () => {
+        return regEmail.length !== 0 && regPwd.length !== 0 && name.length !== 0
+    }
+
+    const checkRegExp = () => {
+        return emailRegExp.test(regEmail) && userReg.test(name) && passReg.test(regPwd)
+    }
+
+    const checkLoginInputs = () => {
+        return email.length !== 0 && pwd.length !== 0
+    }
+
     if (loading) return <ProgressBar/>
 
     return (
@@ -217,7 +236,7 @@ const Login = ({navigation}) => {
                 <TouchableOpacity
                     style={styles.loginBtn}
                     onPress={async () => {
-                        if (email.length > 1 && pwd.length > 1) {
+                        if (checkLoginInputs()) {
                             setLoading(true)
                             await onAuthLoginUser(email, pwd)
                         } else {
@@ -236,55 +255,95 @@ const Login = ({navigation}) => {
             }
             {toggleForm && <>
                 <Text style={styles.logo}>Register</Text>
+                {validEmailReg ? true :
+                    <Text style={styles.regWarn}>Email must be valid</Text>
+                }
                 <View style={styles.inputView}>
                     <TextInput
                         style={styles.inputText}
                         placeholder="Email..."
                         placeholderTextColor="#003f5c"
-                        onChangeText={(text) => regSetEmail(text)}
+                        onChangeText={it => {
+                            regSetEmail(it)
+                        }}
+                        onEndEditing={() => {
+                            if (emailRegExp.test(regEmail) === true) {
+                                setValidEmailReg(true)
+                            } else {
+                                setValidEmailReg(false)
+                            }
+                        }}
                     />
                 </View>
+                {validUsername ? true :
+                    <Text style={styles.regWarn}>Username must be 4 characters long.</Text>
+                }
                 <View style={styles.inputView}>
                     <TextInput
                         maxLength={15}
                         style={styles.inputText}
                         placeholder="Username..."
                         placeholderTextColor="#003f5c"
-                        onChangeText={(text) => regSetName(text)}
+                        onChangeText={it => {
+                            regSetName(it)
+                        }}
+                        onEndEditing={() => {
+                            if (userReg.test(name) === true) {
+                                setValidUsername(true)
+                            } else {
+                                setValidUsername(false)
+                            }
+                        }}
                     />
                 </View>
+                {validPassword ? true :
+                    <Text style={styles.regWarn}>Password must be 6 characters long.</Text>
+                }
                 <View style={styles.inputView}>
                     <TextInput
                         secureTextEntry
                         style={styles.inputText}
                         placeholder="Password..."
                         placeholderTextColor="#003f5c"
-                        onChangeText={(text) => regSetPwd(text)}
-                    />
-                </View>
-                <View>
-                    <Text>Select a profile picture</Text>
-                    <Button
-                        title="Picture"
-                        onPress={() => {
-                            pickImage();
+                        onChangeText={it => {
+                            regSetPwd(it)
+                        }}
+                        onEndEditing={() => {
+                            if (passReg.test(regPwd) === true) {
+                                setValidPassword(true)
+                            } else {
+                                setValidPassword(false)
+                            }
                         }}
                     />
+                </View>
+                    <TouchableOpacity
+                        style={styles.pictureBtn}
+                        onPress={() => {
+                            pickImage()
+                        }}
+                    >
+                        <Text style={styles.loginText}>PICTURE</Text>
+                    </TouchableOpacity>
                     {image && <>
                         <View>
                             <Text>Selected picture</Text>
                             <Image source={{uri: image}} style={{width: 100, height: 100}}/>
                         </View>
                     </>}
-                </View>
                 <TouchableOpacity
                     style={styles.loginBtn}
                     onPress={async () => {
-                        if (regEmail.length > 1 && regPwd.length > 1) {
-                            setLoading(true)
-                            await onAuthCreateUser(regEmail, regPwd)
+                        if (checkInputs()) {
+                            if (checkRegExp()) {
+                                await onAuthCreateUser(regEmail, regPwd)
+                            } else {
+                                setErrorMessage("Check inputs")
+                            }
                         } else {
-                            setErrorMessage("Bad input")
+                            setValidEmailReg(false)
+                            setValidUsername(false)
+                            setValidPassword(false)
                         }
                     }}>
                     <Text style={styles.loginText}>REGISTER</Text>
@@ -342,6 +401,17 @@ const styles = StyleSheet.create({
     },
     loginText: {
         color: Colors.white,
+    },
+    regWarn: {
+        color: 'red',
+    },
+    pictureBtn: {
+        width: '60%',
+        backgroundColor: 'purple',
+        borderRadius: 25,
+        height: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 })
 
