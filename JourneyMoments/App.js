@@ -35,7 +35,7 @@ const App = () => {
         <Stack.Screen
           name="Profile"
           component={Profile}
-          options={{headerLeft: null, title: 'Profile'}}
+          options={{headerShown: true, title: 'Profile'}}
         />
         <Stack.Screen
             name="Single"

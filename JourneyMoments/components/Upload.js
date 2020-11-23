@@ -106,7 +106,7 @@ const Upload = ({moprimId, handleUpload}) => {
 
         if (task.state === "success") {
             setUploading(false)
-            setImage('Uploaded to the bucket')
+            setImage(null)
             const UUID = task.metadata.fullPath.split("/")[1]
             const url = await DownloadService.dlGetURL(UUID)
 
@@ -128,23 +128,16 @@ const Upload = ({moprimId, handleUpload}) => {
     }
 
     return (
-        <View s>
-            
+        <View>
             <Button
                 title="add media"
                 onPress={() => {
-                    pickImage();
+                    pickImage()
                 }}
             />
             {uploading && <>
                 <Text>Uploading...</Text>
                 <ProgressBar/>
-            </>}
-            {image && <>
-                <View>
-                    <Text>{image}</Text>
-                    <Image source={{uri: image}} style={{width: 250, height: 250}}/>
-                </View>
             </>}
         </View>
     );

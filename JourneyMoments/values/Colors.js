@@ -8,7 +8,10 @@ const Colors = {
   motor: '#ffcccb',
   rail: '#b19cd9',
   plane: '#add8e6',
-  polyline: '#add8e6'
+  polyline: '#add8e6',
+  greenRating: '#70ff70',
+  yellowRating: '#faff70',
+  redRating: '#ff7070',
 }
 
 module.exports = Colors
