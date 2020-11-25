@@ -1,24 +1,35 @@
 import React, {useState} from 'react'
 import {View, Text, StyleSheet, Image} from 'react-native'
 import Helper from "../helpers/Helper";
-import {H2} from 'native-base'
+import {Content, Card, CardItem, Body, H2} from 'native-base'
 
 const UserItem = ({data}) => {
     return (
-        <View style={styles.text}>
-            <Text>username: {data.username}</Text>
-            {data.photoURL !== "undefined" && <>
-                <Image source={{uri: data.photoURL}} style={{width: 250, height: 250}}/>
-            </>}
-            <Text>email: {data.email}</Text>
-            <Text>rating: {data.rating}</Text>
-        </View>
+        <Content style={styles.content}>
+            <Card style={styles.card}>
+                <CardItem>
+                    <Image source={{uri: data.photoURL}} style={styles.image}/>
+                    <Body style={{margin: 20}}>
+                        <Text style={styles.text}>{data.username}</Text>
+                        <Text style={styles.text}>{data.email}</Text>
+                        <Text style={styles.text}>{data.rating} annotations</Text>
+                    </Body>
+                </CardItem>
+            </Card>
+        </Content>
     )
 }
 const styles = StyleSheet.create({
-    text: {
-        marginBottom: 20,
-        marginTop: 20
+    content: {
+        margin: 10,
+        display: "flex"
     },
+    image: {
+        width: 100,
+        height: 100
+    },
+    text: {
+        fontSize: 16,
+    }
 })
 export default UserItem
