@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {Text, View, BackHandler, Image, TextInput, StyleSheet, Alert, Dimensions} from 'react-native'
+import {Text,BackHandler, Image, TextInput, StyleSheet, Alert, Dimensions, TouchableOpacity} from 'react-native'
 import LoginService from "../services/LoginService"
 import DatabaseService from "../services/DatabaseService"
 import {ProgressBar} from '@react-native-community/progress-bar-android'
@@ -8,7 +8,8 @@ import DownloadService from "../services/DownloadService"
 import RNBottomActionSheet from "react-native-bottom-action-sheet"
 import ImagePicker from "react-native-image-picker"
 import Icons from "react-native-vector-icons"
-import {Container, Icon, Button, Body, CardItem, Card, Content, H2} from "native-base"
+import {Container, Icon,Body, CardItem, Card, Content, H2} from "native-base"
+import Colors from "../values/Colors";
 
 const cameraIcon = <Icons family={'FontAwesome'} name={'camera'} color={'#000000'} size={30}/>
 const libraryIcon = <Icons family={'FontAwesome'} name={'photo'} color={'#000000'} size={30}/>
@@ -163,18 +164,10 @@ const Profile = ({navigation}) => {
                             placeholderTextColor="grey"
                             onChangeText={(text) => setUserName(text)}
                         />
+                            <TouchableOpacity style={styles.btn} onPress={() => pickImage()}>
+                                <Text style={styles.text}>IMAGE</Text>
+                            </TouchableOpacity>
                         <Body>
-                        <CardItem>
-                            <Button warning rounded
-                                    title="Picture"
-                                    onPress={() => {
-                                        pickImage();
-                                    }}
-                            >
-                                <Icon name='ios-image'/>
-                                <Text style={styles.btnStyle}>Image</Text>
-                            </Button>
-                        </CardItem>
                             {image && <>
                                 <H2>Selected image</H2>
                                 <CardItem>
@@ -182,18 +175,12 @@ const Profile = ({navigation}) => {
                                 </CardItem>
                             </>}
                         </Body>
-                        <Body>
-                            <CardItem>
-                                <Button rounded style={styles.submitBtn} onPress={() => handleSend()}>
-                                    <Icon name='ios-cloud-upload'/>
-                                    <Text style={styles.btnStyle}>Update</Text>
-                                </Button>
-                                <Button danger rounded onPress={() => setToggle(false)}>
-                                    <Icon name='ios-exit'/>
-                                    <Text style={styles.btnStyle}>Go back</Text>
-                                </Button>
-                            </CardItem>
-                        </Body>
+                                <TouchableOpacity style={styles.btnAction} onPress={() => handleSend()}>
+                                    <Text style={styles.text}>UPDATE</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.btnAccent} onPress={() => setToggle(false)}>
+                                    <Text style={styles.text}>BACK</Text>
+                                </TouchableOpacity>
                     </Card>
                 </Content>
             </Container>
@@ -223,27 +210,57 @@ const Profile = ({navigation}) => {
                             <Text style={styles.info}>Rating: {data.rating}</Text>
                         </Body>
                     </CardItem>
-                    <Body>
-                        <CardItem footer bordered>
-                            <Button warning rounded iconLeft onPress={() => setToggle(true)}>
-                                <Icon name='ios-cog'/>
-                                <Text style={styles.btnStyle}>Settings</Text>
-                            </Button>
-                            <Button danger rounded iconLeft style={styles.logoutIcon} onPress={async () => {
-                                await LoginService.logoutUser()
-                                navigation.navigate("Login")
-                            }}>
-                                <Icon name='ios-exit'/>
-                                <Text style={styles.btnStyle}>Logout</Text>
-                            </Button>
-                        </CardItem>
-                    </Body>
+                        <TouchableOpacity style={styles.btn} onPress={() => setToggle(true)}>
+                            <Text style={styles.text}>SETTINGS</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.btnAccent} onPress={async () => {
+                            await LoginService.logoutUser()
+                            navigation.navigate("Login")
+                        }}>
+                            <Text style={styles.text}>LOGOUT</Text>
+                        </TouchableOpacity>
                 </Card>
             </Content>
         </Container>
     )
 }
 const styles = StyleSheet.create({
+    btn: {
+        width: '80%',
+        backgroundColor: Colors.primaryColor,
+        borderRadius: 25,
+        height: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 20,
+        marginBottom: 10,
+        marginLeft: windowWidth * 0.1
+    },
+    btnAction: {
+        width: '80%',
+        backgroundColor: Colors.secondaryColor,
+        borderRadius: 25,
+        height: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 20,
+        marginBottom: 10,
+        marginLeft: windowWidth * 0.1
+    },
+    btnAccent: {
+        width: '80%',
+        backgroundColor: Colors.accent,
+        borderRadius: 25,
+        height: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 20,
+        marginBottom: 10,
+        marginLeft: windowWidth * 0.1
+    },
+    text: {
+        color: Colors.white,
+    },
     profilePic: {
         width: '100%',
         height: windowHeight * 0.5,
