@@ -164,9 +164,9 @@ const Profile = ({navigation}) => {
                             placeholderTextColor="grey"
                             onChangeText={(text) => setUserName(text)}
                         />
-                            <TouchableOpacity style={styles.btn} onPress={() => pickImage()}>
-                                <Text style={styles.text}>IMAGE</Text>
-                            </TouchableOpacity>
+                        <TouchableOpacity style={styles.btn} onPress={() => pickImage()}>
+                            <Text style={styles.text}>IMAGE</Text>
+                        </TouchableOpacity>
                         <Body>
                             {image && <>
                                 <H2>Selected image</H2>
@@ -175,12 +175,12 @@ const Profile = ({navigation}) => {
                                 </CardItem>
                             </>}
                         </Body>
-                                <TouchableOpacity style={styles.btnAction} onPress={() => handleSend()}>
-                                    <Text style={styles.text}>UPDATE</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.btnAccent} onPress={() => setToggle(false)}>
-                                    <Text style={styles.text}>BACK</Text>
-                                </TouchableOpacity>
+                        <TouchableOpacity style={styles.btnAction} onPress={() => handleSend()}>
+                            <Text style={styles.text}>UPDATE</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.btnAccent} onPress={() => setToggle(false)}>
+                            <Text style={styles.text}>BACK</Text>
+                        </TouchableOpacity>
                     </Card>
                 </Content>
             </Container>
@@ -210,15 +210,15 @@ const Profile = ({navigation}) => {
                             <Text style={styles.info}>Rating: {data.rating}</Text>
                         </Body>
                     </CardItem>
-                        <TouchableOpacity style={styles.btn} onPress={() => setToggle(true)}>
-                            <Text style={styles.text}>SETTINGS</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.btnAccent} onPress={async () => {
-                            await LoginService.logoutUser()
-                            navigation.navigate("Login")
-                        }}>
-                            <Text style={styles.text}>LOGOUT</Text>
-                        </TouchableOpacity>
+                    <TouchableOpacity style={styles.btn} onPress={() => setToggle(true)}>
+                        <Text style={styles.text}>SETTINGS</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.btnAccent} onPress={async () => {
+                        await LoginService.logoutUser()
+                        navigation.navigate("Login")
+                    }}>
+                        <Text style={styles.text}>LOGOUT</Text>
+                    </TouchableOpacity>
                 </Card>
             </Content>
         </Container>
