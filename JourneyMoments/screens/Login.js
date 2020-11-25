@@ -5,7 +5,8 @@ import {
     StyleSheet,
     TextInput,
     TouchableOpacity,
-    Button, BackHandler, Image, Alert
+    Button, BackHandler, Image, Alert,
+    ImageBackground
 } from 'react-native'
 import MoprimBridge from '../modules/Moprim'
 import LoginService from '../services/LoginService'
@@ -208,122 +209,125 @@ const Login = ({navigation}) => {
         return email.length !== 0 && pwd.length !== 0
     }
 
+    const bgImage = {uri: "https://images.unsplash.com/photo-1557261651-f893a96f357e?ixlib=rb-1.2.1&auto=format&fit=crop&w=976&q=80"}
+
     if (loading) return <ProgressBar/>
 
     return (
-        <View style={styles.container}>
-            <Notification message={errorMessage}/>
-            <Text style={styles.logo}>JourneyMoments</Text>
-            {!toggleForm && <>
-                <Text style={styles.logo}>Login</Text>
-                <View style={styles.inputView}>
-                    <TextInput
-                        style={styles.inputText}
-                        placeholder="Email..."
-                        placeholderTextColor="#003f5c"
-                        onChangeText={(text) => setEmail(text)}
-                    />
-                </View>
-                <View style={styles.inputView}>
-                    <TextInput
-                        secureTextEntry
-                        style={styles.inputText}
-                        placeholder="Password..."
-                        placeholderTextColor="#003f5c"
-                        onChangeText={(text) => setPwd(text)}
-                    />
-                </View>
-                <TouchableOpacity
-                    style={styles.loginBtn}
-                    onPress={async () => {
-                        if (checkLoginInputs()) {
-                            setLoading(true)
-                            await onAuthLoginUser(email, pwd)
-                        } else {
-                            setErrorMessage("Bad input")
-                        }
-                    }}>
-                    <Text style={styles.loginText}>LOGIN</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => {
-                        setForm(true)
-                    }}>
-                    <Text style={styles.loginText}>Not registered?</Text>
-                </TouchableOpacity>
-            </>
-            }
-            {toggleForm && <>
-                <Text style={styles.logo}>Register</Text>
-                {validEmailReg ? true :
-                    <Text style={styles.regWarn}>Email must be valid</Text>
-                }
-                <View style={styles.inputView}>
-                    <TextInput
-                        style={styles.inputText}
-                        placeholder="Email..."
-                        placeholderTextColor="#003f5c"
-                        onChangeText={it => {
-                            regSetEmail(it)
-                        }}
-                        onEndEditing={() => {
-                            if (emailRegExp.test(regEmail) === true) {
-                                setValidEmailReg(true)
+        <View style={styles.loginScreen}>
+            <ImageBackground source={bgImage} style={styles.container}>
+                <Notification message={errorMessage}/>
+                <Text style={styles.logo}>Journey Moments</Text>
+                {!toggleForm && <>
+                    <Text style={styles.logo2}>Login</Text>
+                    <View style={styles.inputView}>
+                        <TextInput
+                            style={styles.inputText}
+                            placeholder="Email..."
+                            placeholderTextColor="#003f5c"
+                            onChangeText={(text) => setEmail(text)}
+                        />
+                    </View>
+                    <View style={styles.inputView}>
+                        <TextInput
+                            secureTextEntry
+                            style={styles.inputText}
+                            placeholder="Password..."
+                            placeholderTextColor="#003f5c"
+                            onChangeText={(text) => setPwd(text)}
+                        />
+                    </View>
+                    <TouchableOpacity
+                        style={styles.loginBtn}
+                        onPress={async () => {
+                            if (checkLoginInputs()) {
+                                setLoading(true)
+                                await onAuthLoginUser(email, pwd)
                             } else {
-                                setValidEmailReg(false)
+                                setErrorMessage("Bad input")
                             }
-                        }}
-                    />
-                </View>
-                {validUsername ? true :
-                    <Text style={styles.regWarn}>Username must be 4 characters long.</Text>
+                        }}>
+                        <Text style={styles.placeHolderColor}>LOGIN</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => {
+                            setForm(true)
+                        }}>
+                        <Text style={styles.secondaryText}>Not registered?</Text>
+                    </TouchableOpacity>
+                </>
                 }
-                <View style={styles.inputView}>
-                    <TextInput
-                        maxLength={15}
-                        style={styles.inputText}
-                        placeholder="Username..."
-                        placeholderTextColor="#003f5c"
-                        onChangeText={it => {
-                            regSetName(it)
-                        }}
-                        onEndEditing={() => {
-                            if (userReg.test(name) === true) {
-                                setValidUsername(true)
-                            } else {
-                                setValidUsername(false)
-                            }
-                        }}
-                    />
-                </View>
-                {validPassword ? true :
-                    <Text style={styles.regWarn}>Password must be 6 characters long.</Text>
-                }
-                <View style={styles.inputView}>
-                    <TextInput
-                        secureTextEntry
-                        style={styles.inputText}
-                        placeholder="Password..."
-                        placeholderTextColor="#003f5c"
-                        onChangeText={it => {
-                            regSetPwd(it)
-                        }}
-                        onEndEditing={() => {
-                            if (passReg.test(regPwd) === true) {
-                                setValidPassword(true)
-                            } else {
-                                setValidPassword(false)
-                            }
-                        }}
-                    />
-                </View>
+                {toggleForm && <>
+                    <Text style={styles.logo2}>Register</Text>
+                    {validEmailReg ? true :
+                        <Text style={styles.regWarn}>Email must be valid</Text>
+                    }
+                    <View style={styles.inputView}>
+                        <TextInput
+                            style={styles.inputText}
+                            placeholder="Email..."
+                            placeholderTextColor="#003f5c"
+                            onChangeText={it => {
+                                regSetEmail(it)
+                            }}
+                            onEndEditing={() => {
+                                if (emailRegExp.test(regEmail) === true) {
+                                    setValidEmailReg(true)
+                                } else {
+                                    setValidEmailReg(false)
+                                }
+                            }}
+                        />
+                    </View>
+                    {validUsername ? true :
+                        <Text style={styles.regWarn}>Username must be 4 characters long.</Text>
+                    }
+                    <View style={styles.inputView}>
+                        <TextInput
+                            maxLength={15}
+                            style={styles.inputText}
+                            placeholder="Username..."
+                            placeholderTextColor="#003f5c"
+                            onChangeText={it => {
+                                regSetName(it)
+                            }}
+                            onEndEditing={() => {
+                                if (userReg.test(name) === true) {
+                                    setValidUsername(true)
+                                } else {
+                                    setValidUsername(false)
+                                }
+                            }}
+                        />
+                    </View>
+                    {validPassword ? true :
+                        <Text style={styles.regWarn}>Password must be 6 characters long.</Text>
+                    }
+                    <View style={styles.inputView}>
+                        <TextInput
+                            secureTextEntry
+                            style={styles.inputText}
+                            placeholder="Password..."
+                            placeholderTextColor="#003f5c"
+                            onChangeText={it => {
+                                regSetPwd(it)
+                            }}
+                            onEndEditing={() => {
+                                if (passReg.test(regPwd) === true) {
+                                    setValidPassword(true)
+                                } else {
+                                    setValidPassword(false)
+                                }
+                            }}
+                        />
+                    </View>
                     <TouchableOpacity
                         style={styles.pictureBtn}
                         onPress={() => {
                             pickImage()
                         }}
                     >
-                        <Text style={styles.loginText}>PICTURE</Text>
+                        <Text style={styles.placeHolderColor}>PICTURE</Text>
                     </TouchableOpacity>
                     {image && <>
                         <View>
@@ -331,46 +335,56 @@ const Login = ({navigation}) => {
                             <Image source={{uri: image}} style={{width: 100, height: 100}}/>
                         </View>
                     </>}
-                <TouchableOpacity
-                    style={styles.loginBtn}
-                    onPress={async () => {
-                        if (checkInputs()) {
-                            if (checkRegExp()) {
-                                await onAuthCreateUser(regEmail, regPwd)
+                    <TouchableOpacity
+                        style={styles.loginBtn}
+                        onPress={async () => {
+                            if (checkInputs()) {
+                                if (checkRegExp()) {
+                                    await onAuthCreateUser(regEmail, regPwd)
+                                } else {
+                                    setErrorMessage("Check inputs")
+                                }
                             } else {
-                                setErrorMessage("Check inputs")
+                                setValidEmailReg(false)
+                                setValidUsername(false)
+                                setValidPassword(false)
                             }
-                        } else {
-                            setValidEmailReg(false)
-                            setValidUsername(false)
-                            setValidPassword(false)
-                        }
-                    }}>
-                    <Text style={styles.loginText}>REGISTER</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => {
-                        setForm(false)
-                    }}>
-                    <Text style={styles.loginText}>Already an user?</Text>
-                </TouchableOpacity>
-            </>}
+                        }}>
+                        <Text style={styles.placeHolderColor}>REGISTER</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => {
+                            setForm(false)
+                        }}>
+                        <Text style={styles.userAlreadyText}>Already an user?</Text>
+                    </TouchableOpacity>
+                </>}
+            </ImageBackground>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
+        width: '100%',
+        height: '100%',
         flex: 1,
-        backgroundColor: Colors.secondaryColor,
         alignItems: 'center',
         justifyContent: 'center',
     },
     logo: {
         fontWeight: 'bold',
         fontSize: 30,
-        color: Colors.primaryColor,
+        color: Colors.backgroundGrayOp,
         marginBottom: 40,
+        fontFamily: 'monospace'
+    },
+    logo2: {
+        fontWeight: 'bold',
+        fontSize: 25,
+        color: Colors.backgroundGrayOp,
+        marginBottom: 40,
+        fontFamily: 'monospace'
     },
     inputView: {
         width: '80%',
@@ -400,18 +414,37 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     loginText: {
-        color: Colors.white,
+        color: 'black',
     },
     regWarn: {
         color: 'red',
     },
     pictureBtn: {
         width: '60%',
-        backgroundColor: 'purple',
+        backgroundColor: Colors.secondaryColor,
         borderRadius: 25,
         height: 50,
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    loginScreen: {
+        flex: 1,
+        backgroundColor: 'white',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    secondaryText: {
+        color: 'white',
+        fontSize: 16,
+        marginTop: 20,
+    },
+    userAlreadyText: {
+        color: 'black',
+        fontSize: 16,
+        marginTop: 20,
+    },
+    placeHolderColor: {
+        color: Colors.placeHolderColor
     },
 })
 
