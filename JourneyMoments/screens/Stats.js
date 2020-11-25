@@ -1,8 +1,9 @@
 import React, {useState, useEffect} from 'react'
-import {ScrollView} from 'react-native'
+import {ScrollView, StyleSheet} from 'react-native'
 import UserItem from "../components/UserItem"
 import DatabaseService from "../services/DatabaseService"
 import {ProgressBar} from '@react-native-community/progress-bar-android'
+import {Container} from "native-base"
 
 const Stats = () => {
     const [data, setData] = useState([])
@@ -36,7 +37,7 @@ const Stats = () => {
         <ScrollView style={{flex: 1}}>
             {data
                 .sort((a, b) => a.rating < b.rating ? 1 : -1)
-                .map(it => <UserItem data={it} key={it.id}/>)
+                .map((it,i)=> <UserItem data={it} i={i} key={it.id}/>)
             }
         </ScrollView>
     )

@@ -209,8 +209,6 @@ const Login = ({navigation}) => {
         return email.length !== 0 && pwd.length !== 0
     }
 
-    const bgImage = {uri: "https://images.unsplash.com/photo-1557261651-f893a96f357e?ixlib=rb-1.2.1&auto=format&fit=crop&w=976&q=80"}
-
     if (loading) return <ProgressBar/>
 
     return (

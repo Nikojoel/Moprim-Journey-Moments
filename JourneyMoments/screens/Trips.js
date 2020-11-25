@@ -14,7 +14,6 @@ import TripsFeed from "../components/TripsFeed"
 const Trips = ({navigation}) => {
     const [listLoading, setList] = useState(false)
     const [data, setData] = useState([])
-    const [func, setFunc] = useState(null)
     const [refreshing, setRefreshing] = useState(false)
 
     const id = LoginService.getCurrentUser().uid
@@ -58,23 +57,6 @@ const Trips = ({navigation}) => {
     const getTravelChain = async (start, end) => {
         setList(true)
         const result = await DatabaseService.dbTravelChainDateGET(start, end)
-        const parse = iterateData(result)
-        const arr = []
-        parse.forEach(it => {
-            arr.push({
-                key: it.key,
-                moprim: it.value.id,
-                totalCo2: it.value.totalCo2,
-                totalDistance: it.value.totalDistance
-            })
-        })
-        setData(arr)
-        setList(false)
-    }
-
-    const getAllTravelChains = async (id) => {
-        setList(true)
-        const result = await DatabaseService.dbUserTravelChainGET(id)
         const parse = iterateData(result)
         const arr = []
         parse.forEach(it => {
