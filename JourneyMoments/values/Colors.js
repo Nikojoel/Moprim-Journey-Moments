@@ -1,6 +1,6 @@
 const Colors = {
-  primaryColor: '#b89f5d',
-  secondaryColor: '#5a7670',
+  primaryColor: '#e1c7bb',
+  secondaryColor: '#cdba9a',
   accent: '#FA292A',
   backgroundGray: '#dddfd4',
   white: '#ffffff',
@@ -12,6 +12,11 @@ const Colors = {
   greenRating: '#70ff70',
   yellowRating: '#faff70',
   redRating: '#ff7070',
+  loginButtons: 'rgba(251,253,255,0.88)',
+  regPic: 'rgba(96,125,119,0.95)',
+  backgroundGrayOp: '#ffe8d8',
+  placeHolderColor: '#fefffd',
+  gebardi: '#001147',
 }
 
 module.exports = Colors
