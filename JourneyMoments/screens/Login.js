@@ -6,7 +6,7 @@ import {
     TextInput,
     TouchableOpacity,
     Button, BackHandler, Image, Alert,
-    ImageBackground
+    ImageBackground,
 } from 'react-native'
 import MoprimBridge from '../modules/Moprim'
 import LoginService from '../services/LoginService'
@@ -215,7 +215,7 @@ const Login = ({navigation}) => {
 
     return (
         <View style={styles.loginScreen}>
-            <ImageBackground source={bgImage} style={styles.container}>
+            <ImageBackground source={require('../images/backgroundMoprDark.jpg')} style={styles.container}>
                 <Notification message={errorMessage}/>
                 <Text style={styles.logo}>Journey Moments</Text>
                 {!toggleForm && <>
@@ -356,7 +356,7 @@ const Login = ({navigation}) => {
                         onPress={() => {
                             setForm(false)
                         }}>
-                        <Text style={styles.userAlreadyText}>Already an user?</Text>
+                        <Text style={styles.secondaryText}>Already an user?</Text>
                     </TouchableOpacity>
                 </>}
             </ImageBackground>
@@ -436,12 +436,7 @@ const styles = StyleSheet.create({
     secondaryText: {
         color: 'white',
         fontSize: 16,
-        marginTop: 20,
-    },
-    userAlreadyText: {
-        color: 'black',
-        fontSize: 16,
-        marginTop: 20,
+        marginTop: 5,
     },
     placeHolderColor: {
         color: Colors.placeHolderColor

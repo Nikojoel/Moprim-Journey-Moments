@@ -16,7 +16,6 @@ const Colors = {
   regPic: 'rgba(96,125,119,0.95)',
   backgroundGrayOp: '#ffe8d8',
   placeHolderColor: '#fefffd',
-  gebardi: '#001147',
 }
 
 module.exports = Colors
