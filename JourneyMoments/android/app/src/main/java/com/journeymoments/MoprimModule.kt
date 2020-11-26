@@ -162,7 +162,7 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                                 val userId = TMD.getUUID()
                                 chain.activities.forEach { activity ->
                                     if (activity.activity.contains("bus") || activity.activity.contains("rail")) {
-                                        //decodePolylineSubject.onNext(activity)
+                                        decodePolylineSubject.onNext(activity)
                                     }
                                     idSet.add(userId + activity.timestampStart + activity.id)
                                     totalCo2 += activity.co2
