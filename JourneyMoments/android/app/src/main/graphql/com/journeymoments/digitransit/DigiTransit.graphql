@@ -1,0 +1,34 @@
+
+query GetTransportType(
+    $fromLat: Float!,
+    $fromlon: Float!,
+    $toLat: Float!,
+    $toLon: Float!,
+    $date: String!,
+    $time: String!,
+    $mode: Mode!
+) {
+    plan(
+        from: {lat: $fromLat, lon: $fromlon}
+        to: {lat: $toLat, lon: $toLon}
+        date: $date
+        time: $time
+        numItineraries: 1
+        transportModes: [{mode: WALK}, {mode: $mode}]
+    ) {
+        itineraries {
+            legs {
+                mode
+                trip {
+                    routeShortName
+                }
+                from {
+                    name
+                }
+                to {
+                    name
+                }
+            }
+        }
+    }
+}

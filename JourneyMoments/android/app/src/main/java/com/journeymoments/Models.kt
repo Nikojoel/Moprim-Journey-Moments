@@ -29,3 +29,9 @@ data class Chain(
         val activities: List<TmdActivity>,
         val date: Date
 )
+
+data class Digitransit(
+        val from: String,
+        val to: String,
+        val id: String
+)
