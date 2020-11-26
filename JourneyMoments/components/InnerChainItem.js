@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react'
-import {Text, View, TouchableOpacity, StyleSheet} from "react-native"
-import {H2, Body, Card, CardItem} from "native-base"
+import React from 'react'
+import {View, TouchableOpacity, StyleSheet} from "react-native"
+import {H2, Body, Card} from "native-base"
 
 const InnerChainItem = ({data, navigation}) => {
     const date = data.key.split("_")
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     },
     textCenter: {
         textAlign: 'center'
-    }
+    },
 })
 
 export default InnerChainItem
