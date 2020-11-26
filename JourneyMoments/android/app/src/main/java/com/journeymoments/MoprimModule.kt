@@ -40,6 +40,16 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
     private val gson = Gson()
     private val unsubOnStop = CompositeDisposable()
     private val db = Firebase.database.reference
+    private val decodePolylineSubject = PublishSubject.create<String>()
+
+    init {
+        decodePolylineSubject
+                .map {
+                    val coords = decode(it)
+                    Log.i("XXX", coords.toString())
+                }
+                .subscribe()
+    }
 
     @ReactMethod
     fun show(message: String?) {
@@ -66,7 +76,7 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                 .observeOn(io())
                 .map {
                     val set = mutableSetOf<Chain>()
-                    for (index in 0..3) {
+                    for (index in 0..7) {
                         val convertedDate = convertToDate(LocalDateTime.now().minusDays(index.toLong()))
                         val data = convertedDate?.let { date -> TmdCloudApi.fetchData(context, date) }
                         if (data != null && data.result.isNotEmpty()) {
@@ -85,6 +95,7 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                         var idSet = mutableSetOf<String>()
                         val userId = TMD.getUUID()
                         chain.activities.forEach { activity ->
+                            decodePolylineSubject.onNext(activity.polyline)
                             idSet.add(userId + activity.timestampStart + activity.id)
                             totalCo2 += activity.co2
                             totalDistance += activity.distance
