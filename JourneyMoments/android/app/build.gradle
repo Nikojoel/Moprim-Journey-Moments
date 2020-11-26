@@ -130,12 +130,23 @@ if (apiRootPropertiesFile.exists()) {
     apiRootPropertiesFile.withInputStream { apiRootProperties.load(it) }
 }
 
+apply plugin: "com.apollographql.apollo"
+
+apollo {
+    // instruct the compiler to generate Kotlin models
+    generateKotlinModels.set(true)
+}
+
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
     defaultConfig {
@@ -251,6 +262,10 @@ dependencies {
     // Add the dependency for the Firebase SDK for Google Analytics
     // When using the BoM, don't specify versions in Firebase dependencies
     implementation 'com.google.firebase:firebase-analytics-ktx'
+
+    implementation("com.apollographql.apollo:apollo-runtime:2.4.5")
+    // Coroutines extensions for easier asynchronicity handling
+    implementation("com.apollographql.apollo:apollo-coroutines-support:2.4.5")
 
 }
 

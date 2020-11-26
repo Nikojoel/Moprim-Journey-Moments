@@ -7,6 +7,9 @@ import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import com.apollographql.apollo.ApolloClient
+import com.apollographql.apollo.coroutines.toDeferred
+import com.apollographql.apollo.exception.ApolloException
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
@@ -14,9 +17,12 @@ import com.facebook.react.bridge.ReactMethod
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
+import com.journeymoments.digitransit.GetTransportTypeQuery
+import com.journeymoments.digitransit.type.Mode
 import fi.moprim.tmd.sdk.TMD
 import fi.moprim.tmd.sdk.TmdCloudApi
 import fi.moprim.tmd.sdk.TmdCoreConfigurationBuilder
+import fi.moprim.tmd.sdk.model.TmdActivity
 import fi.moprim.tmd.sdk.model.TmdError
 import fi.moprim.tmd.sdk.model.TmdInitListener
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -25,12 +31,14 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.schedulers.Schedulers.io
 import io.reactivex.rxjava3.subjects.PublishSubject
-import java.text.DateFormat
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
 import java.util.concurrent.TimeUnit
+
 
 
 class MoprimModule(private val context: ReactApplicationContext) : ReactContextBaseJavaModule() {
@@ -40,6 +48,71 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
     private val gson = Gson()
     private val unsubOnStop = CompositeDisposable()
     private val db = Firebase.database.reference
+    private val decodePolylineSubject = PublishSubject.create<TmdActivity>()
+    private val apolloGraphQlSubject = PublishSubject.create<Pair<TmdActivity,GetTransportTypeQuery>>()
+    private var lastEntryTimestamp: Long = 0
+    val apolloClient = ApolloClient.builder()
+            .serverUrl("https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql")
+            .build()
+
+    private fun getMode(type: String): Mode {
+        return when(type) {
+            "motorized/road/bus" -> Mode.BUS
+            "motorized/rail" -> Mode.RAIL
+            "motorized/rail/tram" -> Mode.TRAM
+            "motorized/rail/train" -> Mode.RAIL
+            "motorized/rail/metro" -> Mode.SUBWAY
+            else -> Mode.UNKNOWN__
+        }
+    }
+
+    init {
+        decodePolylineSubject
+                .observeOn(io())
+                .map {
+                    val coords = decode(it.polyline)
+                    apolloGraphQlSubject.onNext(Pair(it,GetTransportTypeQuery(
+                            coords.first().latitude,
+                            coords.first().longitude,
+                            coords.last().latitude,
+                            coords.last().longitude,
+                            SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(it.timestampStart).toString(),
+                            SimpleDateFormat("HH:mm:ss", Locale.ENGLISH).format(it.timestampStart).toString(),
+                            getMode(it.activity))
+                    ))
+                }
+                .subscribe()
+
+        apolloGraphQlSubject
+                .map {
+                    GlobalScope.launch {
+                        val response = try {
+                            apolloClient.query(it.second
+                            ).toDeferred().await()
+                        } catch (e: ApolloException) {
+                            // handle protocol errors
+                            return@launch
+                        }
+
+                        val result = response.data
+                        if (result == null || response.hasErrors()) {
+                            // handle application errors
+                            return@launch
+                        }
+
+                        result.plan?.itineraries?.forEach { plan ->
+                            plan?.legs?.forEach { leg ->
+                                if (leg?.mode != Mode.WALK) {
+                                    db.child("DigiTransit")
+                                            .child(TMD.getUUID() + it.first.timestampStart + it.first.id.toString())
+                                            .setValue(Digitransit(leg?.from.toString(), leg?.to.toString(), leg?.trip?.routeShortName.toString()))
+                                }
+                            }
+                        }
+                    }
+                }
+                .subscribe()
+    }
 
     @ReactMethod
     fun show(message: String?) {
@@ -79,36 +152,42 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                     set
                 }
                 .subscribe { set ->
-                    set.forEach { chain ->
-                        var totalCo2: Double = 0.0
-                        var totalDistance: Double = 0.0
-                        var idSet = mutableSetOf<String>()
-                        val userId = TMD.getUUID()
-                        chain.activities.forEach { activity ->
-                            idSet.add(userId + activity.timestampStart + activity.id)
-                            totalCo2 += activity.co2
-                            totalDistance += activity.distance
-                            db.child("Moprim")
-                                    .child(userId + activity.timestampStart + activity.id.toString())
-                                    .setValue(
-                                            CustomMoprimActivity(
-                                                    activity,
-                                                    activity.activity,
-                                                    activity.id,
-                                                    activity.timestampStart,
-                                                    activity.timestampEnd,
-                                                    activity.co2,
-                                                    activity.distance,
-                                                    activity.speed,
-                                                    activity.polyline,
-                                                    activity.origin,
-                                                    activity.destination,
-                                                    TMD.getUUID()
-                                            ))
+                    if (set.last().activities.last().timestampEnd != lastEntryTimestamp) {
+                        lastEntryTimestamp = set.last().activities.last().timestampEnd
+                        set.forEach { chain ->
+                            var totalCo2 = 0.0
+                            var totalDistance = 0.0
+                            val idSet = mutableSetOf<String>()
+                            val userId = TMD.getUUID()
+                            chain.activities.forEach { activity ->
+                                if (activity.activity.contains("bus") || activity.activity.contains("rail")) {
+                                    decodePolylineSubject.onNext(activity)
+                                }
+                                idSet.add(userId + activity.timestampStart + activity.id)
+                                totalCo2 += activity.co2
+                                totalDistance += activity.distance
+                                db.child("Moprim")
+                                        .child(userId + activity.timestampStart + activity.id.toString())
+                                        .setValue(
+                                                CustomMoprimActivity(
+                                                        activity,
+                                                        activity.activity,
+                                                        activity.id,
+                                                        activity.timestampStart,
+                                                        activity.timestampEnd,
+                                                        activity.co2,
+                                                        activity.distance,
+                                                        activity.speed,
+                                                        activity.polyline,
+                                                        activity.origin,
+                                                        activity.destination,
+                                                        TMD.getUUID()
+                                                ))
+                            }
+                            db.child("Travelchain")
+                                    .child(userId + "_" + SimpleDateFormat("MM_dd_yyyy", Locale.ENGLISH).format(chain.date.time))
+                                    .setValue(TravelChain(idSet.toMutableList(), totalCo2, totalDistance, userId))
                         }
-                        db.child("Travelchain")
-                                .child(userId + "_" + SimpleDateFormat("MM_dd_yyyy", Locale.ENGLISH).format(chain.date.time))
-                                .setValue(TravelChain(idSet.toMutableList(), totalCo2, totalDistance, userId))
                     }
                 }
                 .addTo(unsubOnStop)
