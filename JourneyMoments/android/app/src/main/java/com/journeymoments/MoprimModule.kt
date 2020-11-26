@@ -152,41 +152,43 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                     set
                 }
                 .subscribe { set ->
-                    if (set.last().activities.last().timestampEnd != lastEntryTimestamp) {
-                        lastEntryTimestamp = set.last().activities.last().timestampEnd
-                        set.forEach { chain ->
-                            var totalCo2 = 0.0
-                            var totalDistance = 0.0
-                            val idSet = mutableSetOf<String>()
-                            val userId = TMD.getUUID()
-                            chain.activities.forEach { activity ->
-                                if (activity.activity.contains("bus") || activity.activity.contains("rail")) {
-                                    decodePolylineSubject.onNext(activity)
+                    if (set.isNotEmpty()) {
+                        if (set.last().activities.last().timestampEnd != lastEntryTimestamp) {
+                            lastEntryTimestamp = set.last().activities.last().timestampEnd
+                            set.forEach { chain ->
+                                var totalCo2 = 0.0
+                                var totalDistance = 0.0
+                                val idSet = mutableSetOf<String>()
+                                val userId = TMD.getUUID()
+                                chain.activities.forEach { activity ->
+                                    if (activity.activity.contains("bus") || activity.activity.contains("rail")) {
+                                        //decodePolylineSubject.onNext(activity)
+                                    }
+                                    idSet.add(userId + activity.timestampStart + activity.id)
+                                    totalCo2 += activity.co2
+                                    totalDistance += activity.distance
+                                    db.child("Moprim")
+                                            .child(userId + activity.timestampStart + activity.id.toString())
+                                            .setValue(
+                                                    CustomMoprimActivity(
+                                                            activity,
+                                                            activity.activity,
+                                                            activity.id,
+                                                            activity.timestampStart,
+                                                            activity.timestampEnd,
+                                                            activity.co2,
+                                                            activity.distance,
+                                                            activity.speed,
+                                                            activity.polyline,
+                                                            activity.origin,
+                                                            activity.destination,
+                                                            TMD.getUUID()
+                                                    ))
                                 }
-                                idSet.add(userId + activity.timestampStart + activity.id)
-                                totalCo2 += activity.co2
-                                totalDistance += activity.distance
-                                db.child("Moprim")
-                                        .child(userId + activity.timestampStart + activity.id.toString())
-                                        .setValue(
-                                                CustomMoprimActivity(
-                                                        activity,
-                                                        activity.activity,
-                                                        activity.id,
-                                                        activity.timestampStart,
-                                                        activity.timestampEnd,
-                                                        activity.co2,
-                                                        activity.distance,
-                                                        activity.speed,
-                                                        activity.polyline,
-                                                        activity.origin,
-                                                        activity.destination,
-                                                        TMD.getUUID()
-                                                ))
+                                db.child("Travelchain")
+                                        .child(userId + "_" + SimpleDateFormat("MM_dd_yyyy", Locale.ENGLISH).format(chain.date.time))
+                                        .setValue(TravelChain(idSet.toMutableList(), totalCo2, totalDistance, userId))
                             }
-                            db.child("Travelchain")
-                                    .child(userId + "_" + SimpleDateFormat("MM_dd_yyyy", Locale.ENGLISH).format(chain.date.time))
-                                    .setValue(TravelChain(idSet.toMutableList(), totalCo2, totalDistance, userId))
                         }
                     }
                 }
