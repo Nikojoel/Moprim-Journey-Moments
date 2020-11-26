@@ -3,35 +3,36 @@ import Helper from "../helpers/Helper"
 import Map from "../components/Map"
 import Upload from "../components/Upload"
 import CommentField from "../components/CommentField";
-import { Content, H2, Icon, Text, Left, Right, Body } from "native-base"
+import {Icon, Text,Right, Body } from "native-base"
 import DatabaseService from "../services/DatabaseService"
 import { ProgressBar } from "@react-native-community/progress-bar-android"
-
-import { BackHandler, Button, StyleSheet, View, ScrollView, SafeAreaView } from "react-native"
-
+import { BackHandler,StyleSheet, View, ScrollView, SafeAreaView, Image} from "react-native"
+import {H3, H2} from "native-base"
 import LoginService from "../services/LoginService"
 import Stars from "../components/StarRating"
 import CommentItem from "../components/CommentItem"
 import MediaItem from "../components/MediaItem"
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native-gesture-handler'
+import Colors from "../values/Colors"
 
 const Decoder = require('@mapbox/polyline')
 
 const Single = ({ route, navigation }) => {
     const id = LoginService.getCurrentUser().uid
     const [showMap, setShowMap] = useState(false)
+    const [mapText, setMapText] = useState('SHOW MAP')
     const [user, setUser] = useState([])
+    const [toggle, setToggle] = useState('SHOW MEDIA')
+    const [mediaToggle, setMediaToggle] = useState(false)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
-    const [toggle, setToggle] = useState(true)
-    const [btn, setBtn] = useState("Rate")
     const [rating, setRating] = useState({speed: 0, comfort: 0, cleanness: 0})
     const [comments, setComments] = useState([])
     const [media, setMedia] = useState([])
     const data = Object.values(route.params)[0]
     const moprimId = data.timestampStart.toString() + data.id.toString()
     const userId = data.userId
-    const { icon, color } = Helper.transportIcon(data.activity)
+    const {icon, color} = Helper.transportIcon(data.activity)
     const timeSpent = Helper.millisToMinutesAndSeconds(parseInt(data.timestampEnd) - parseInt(data.timestampStart))
     const startTime = Helper.unixToTime(parseInt(data.timestampStart))
     const endTime = Helper.unixToTime(parseInt(data.timestampEnd))
@@ -149,10 +150,11 @@ const Single = ({ route, navigation }) => {
         iterate.forEach(it => {
             mediaArr.push({
                 userId: it.userId,
-                url: it.url
+                url: it.url,
+                type: it.contentType,
             })
         })
-        Promise.all(mediaArr.map((it) => { return getTravelMedia(it.url, "/" + it.userId) })).then((values) => {
+        Promise.all(mediaArr.map((it) => { return getTravelMedia(it.type, it.url, "/" + it.userId) })).then((values) => {
             setMedia(values)
         })
     }
@@ -165,9 +167,10 @@ const Single = ({ route, navigation }) => {
         }
     }
 
-    const getTravelMedia = async (url, id) => {
+    const getTravelMedia = async (type, url, id) => {
         const user = await DatabaseService.dbUserGET(id)
         return {
+            type: type,
             user: user,
             url: url,
         }
@@ -180,34 +183,54 @@ const Single = ({ route, navigation }) => {
         <SafeAreaView style={{flex:1, backgroundColor: 'white'}}>
             <ScrollView style={{marginBottom:60, marginHorizontal: 10, marginTop: 20}} showsVerticalScrollIndicator={false}>
                 <View style={{ flexDirection: 'row', paddingBottom: 10 }}>
-                    <Text>{user.username}</Text>
-                    <Right >
-                        <View style={{ borderColor: 'red', borderWidth: 2, borderRadius: 10 }}>
-                            <Text style={{ textAlign: 'center', margin: 2 }}>{user.rating}</Text>
-                        </View>
+                    <H2>{user.username}</H2>
+                    <Right>
+                        <H3>{user.rating} annotations</H3>
                     </Right>
                 </View>
                 {userId === id && <>
                         <Upload moprimId={userId + moprimId} handleUpload={handleUpload} />  
                     </>}
-                {media
-                    .map((it) => <MediaItem data={it} key={Helper.generateUUID()} />)
-                }
+                <TouchableOpacity style={styles.btn} onPress={()=> {
+                    if (!showMap) {
+                        setMapText('HIDE MAP')
+                    } else {
+                        setMapText('SHOW MAP')
+                    }
+                    setShowMap(!showMap)
+                }}>
+                    <Text style={styles.btnText}>{mapText}</Text>
+                </TouchableOpacity>
                 {showMap && <View style={styles.map}>
                     <Map data={Decoder.decode(data.polyline)} />
                 </View>}
-                <Body style={{ flexDirection: 'row' , flex:1, marginTop: 20}}> 
+                <TouchableOpacity style={styles.btn} onPress={()=> {
+                    if (!mediaToggle) {
+                        setToggle('HIDE MEDIA')
+                    } else {
+                        setToggle('SHOW MEDIA')
+                    }
+                    setMediaToggle(!mediaToggle)
+                }}>
+                    <Text style={styles.btnText}>{toggle}</Text>
+                </TouchableOpacity>
+                {mediaToggle && <>
+                    {media
+                        .map((it) => <MediaItem data={it} key={Helper.generateUUID()}/>)
+                    }
+                    {media.length === 0 && <>
+                        <Image source={require('../images/noImageAvailable.png')} style={styles.noImgStyle}/>
+                    </>}
+                </>}
+                <Body style={{ flexDirection: 'row' , flex:1, marginTop: 20}}>
                         <Stars handleStars={handleStars} rating={rating} owner={userId === id} />
                     <Right>
                         <View style={{flexDirection: 'row'}}>
-                            <Icon name={icon} style={{ marginLeft: 20, fontSize: 40 }} />
-                            <TouchableOpacity onPress={()=> setShowMap(!showMap)}>
-                                <Icon name='map-outline' style={{ marginLeft: 20, fontSize: 40 }} />
-                        </TouchableOpacity>
+                            <Icon name={icon} style={{ marginLeft: 20, fontSize: 80, color: color}} />
                         </View>
-                       <Text>Time: {startTime} - {endTime}</Text>
+                        <Text>Time: {startTime} - {endTime}</Text>
                         <Text>Total time: {timeSpent}</Text>
-                        <Text>Speed: {Math.round(data.speed * 1000 * 3.6)} km/h</Text>
+                        <Text>Avg speed: {Math.round(data.speed * 1000 * 3.6)} km/h</Text>
                         <Text>Distance: {data.distance}</Text>
                         <Text>Emissions: {Math.round(data.co2)}g</Text>
                     </Right>
@@ -219,8 +242,6 @@ const Single = ({ route, navigation }) => {
                         .map((it) => <CommentItem data={it} key={Helper.generateUUID()} />)
                     }
                 </View>
-               
-                    
                 </ScrollView>
                <CommentField handleSend={handleSend} />         
         </SafeAreaView>   
@@ -232,6 +253,37 @@ const styles = StyleSheet.create({
     map: {
         width: '100%',
         height: 300,
+        marginBottom: 40,
+    },
+    btnFull: {
+        width: '80%',
+        backgroundColor: Colors.primaryColor,
+        borderRadius: 25,
+        height: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 40,
+        marginBottom: 10,
+    },
+    btn: {
+        width: '100%',
+        backgroundColor: Colors.primaryColor,
+        borderRadius: 25,
+        height: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 20,
+    },
+    btnText: {
+        fontSize: 14
+    },
+    noImgStyle: {
+        width: 300,
+        height: 250,
+        marginTop: "auto",
+        marginBottom: "auto",
+        marginLeft: "auto",
+        marginRight: "auto",
     }
 })
 export default Single

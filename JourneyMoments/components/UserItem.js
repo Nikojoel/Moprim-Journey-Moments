@@ -1,7 +1,6 @@
-import React, {useState} from 'react'
-import {View, Text, StyleSheet, Image} from 'react-native'
-import Helper from "../helpers/Helper";
-import {Content, Card, CardItem, Body, H2} from 'native-base'
+import React from 'react'
+import {Text, StyleSheet, Image} from 'react-native'
+import {Content, Card, CardItem, Body} from 'native-base'
 
 const UserItem = ({data}) => {
     return (
