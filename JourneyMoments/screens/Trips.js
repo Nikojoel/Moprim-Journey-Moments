@@ -1,14 +1,9 @@
 import React, {useEffect, useState} from 'react'
-import HomeFeed from "../components/HomeFeed"
 import {SafeAreaView} from "react-native-safe-area-context"
 import {ProgressBar} from "@react-native-community/progress-bar-android"
 import LoginService from "../services/LoginService"
 import DatabaseService from "../services/DatabaseService"
-import Helper from "../helpers/Helper"
-import Home from "./Home";
-import {BackHandler, Button} from "react-native"
-import {H2} from "native-base"
-import InnerChainItem from "../components/InnerChainItem";
+import {BackHandler, Image, StyleSheet, View} from "react-native"
 import TripsFeed from "../components/TripsFeed"
 
 const Trips = ({navigation}) => {
@@ -98,9 +93,28 @@ const Trips = ({navigation}) => {
             {listLoading &&
             <ProgressBar/>
             }
+            {data.length === 0 && listLoading === false && <>
+                <View style={styles.imageContainer}>
+                    <Image style={styles.image} source={require('../images/noTrips.png')}/>
+                </View>
+            </>}
             <TripsFeed data={data} extra={data} navigation={navigation} refresh={refreshing} onRefresh={onRefresh} />
         </SafeAreaView>
     )
 }
+
+const styles = StyleSheet.create({
+    imageContainer: {
+        width: '57%',
+        height: '30%',
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        marginTop: '45%'
+    },
+    image: {
+        width: '100%',
+        height: '100%'
+    }
+})
 
 export default Trips
