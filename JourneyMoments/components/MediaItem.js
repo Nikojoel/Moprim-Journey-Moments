@@ -1,15 +1,48 @@
-import React, {useEffect, useState} from 'react'
-import {Text, View, Image} from "react-native"
-import Helper from "../helpers/Helper";
+import React from 'react'
+import {View,Image, Dimensions, StyleSheet} from "react-native"
+import VideoPlayer from "react-native-video-player"
+
+const windowWidth = Dimensions.get('window').width * 0.75
+const windowHeight = Dimensions.get('window').height * 0.5
 
 const MediaItem = ({data}) => {
-    const user = Helper.parseJSON(data.user)
-
+    const split = data.type.split("/")
+    const type = split[0]
     return (
-        <View>
-            <Image source={{uri: data.url}} style={{width: '100%', height: 200, resizeMode: 'cover'}}/>
-        </View>
+           <View style={styles.content}>
+                {type === 'video' && <>
+                    <View style={styles.media}>
+                    <VideoPlayer
+                        video={{uri: data.url}}
+                        videoWidth={windowWidth}
+                        videoHeight={windowHeight}
+                        thumbnail={{uri: data.url}}
+                    />
+                    </View>
+                </>}
+                {type !== 'video' && <>
+                    <Image
+                        source={{uri: data.url}}
+                        style={styles.mediaImg}/>
+                </>}
+           </View>
     )
 }
+const styles = StyleSheet.create({
+    content: {
+        marginTop: 30,
+        alignItems: 'center'
+    },
+    media: {
+        width: windowWidth,
+        height: windowHeight
+    },
+    mediaImg: {
+        width: windowWidth,
+        height: windowHeight,
+        resizeMode: 'cover'
+    }
+})
+
 
 export default MediaItem

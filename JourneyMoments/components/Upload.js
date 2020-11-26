@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {Text, View, Button, Image, Alert} from 'react-native'
+import {Text, View, Alert, TouchableOpacity, StyleSheet} from 'react-native'
 import ImagePicker from 'react-native-image-picker'
 import DownloadService from "../services/DownloadService"
 import DatabaseService from "../services/DatabaseService"
@@ -7,13 +7,13 @@ import LoginService from "../services/LoginService"
 import RNBottomActionSheet from 'react-native-bottom-action-sheet'
 import Icon from 'react-native-vector-icons'
 import {ProgressBar} from '@react-native-community/progress-bar-android'
+import Colors from "../values/Colors";
 
 const cameraIcon = <Icon family={'FontAwesome'} name={'camera'} color={'#000000'} size={30}/>
 const videoIcon = <Icon family={'FontAwesome'} name={'video-camera'} color={'#000000'} size={30}/>
 const libraryIcon = <Icon family={'FontAwesome'} name={'photo'} color={'#000000'} size={30}/>
 
 const Upload = ({moprimId, handleUpload}) => {
-    const [image, setImage] = useState(null)
     const [uploading, setUploading] = useState(false)
     const userId = LoginService.getCurrentUser().uid
 
@@ -79,7 +79,6 @@ const Upload = ({moprimId, handleUpload}) => {
                 console.log('error')
             } else {
                 console.log('success, uri:', response.uri)
-                setImage(response.uri)
                 uploadFile(response.uri)
             }
         }))
@@ -93,7 +92,6 @@ const Upload = ({moprimId, handleUpload}) => {
                 console.log('error')
             } else {
                 console.log('success, uri:', response.uri)
-                setImage(response.uri)
                 uploadFile(response.uri)
             }
         }))
@@ -106,15 +104,16 @@ const Upload = ({moprimId, handleUpload}) => {
 
         if (task.state === "success") {
             setUploading(false)
-            setImage(null)
             const UUID = task.metadata.fullPath.split("/")[1]
             const url = await DownloadService.dlGetURL(UUID)
+            const type = JSON.parse(JSON.stringify(task.metadata.contentType))
 
             const data = {
                 "id": UUID,
                 "moprimId": moprimId,
                 "url": url,
-                "userId": userId
+                "userId": userId,
+                "contentType": type
             }
 
             try {
@@ -129,18 +128,26 @@ const Upload = ({moprimId, handleUpload}) => {
 
     return (
         <View>
-            <Button
-                title="add media"
-                onPress={() => {
-                    pickImage()
-                }}
-            />
+            <TouchableOpacity style={styles.btn} onPress={() => pickImage()}>
+                <Text>ADD MEDIA</Text>
+            </TouchableOpacity>
             {uploading && <>
                 <Text>Uploading...</Text>
                 <ProgressBar/>
             </>}
         </View>
-    );
-};
+    )
+}
+
+const styles = StyleSheet.create({
+    btn: {
+        width: '100%',
+        backgroundColor: Colors.secondaryColor,
+        borderRadius: 25,
+        height: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+})
 
 export default Upload;

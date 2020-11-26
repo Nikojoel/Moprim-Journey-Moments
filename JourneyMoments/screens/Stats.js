@@ -1,9 +1,8 @@
 import React, {useState, useEffect} from 'react'
-import {ScrollView, StyleSheet} from 'react-native'
+import {ScrollView} from 'react-native'
 import UserItem from "../components/UserItem"
 import DatabaseService from "../services/DatabaseService"
 import {ProgressBar} from '@react-native-community/progress-bar-android'
-import {Container} from "native-base"
 
 const Stats = () => {
     const [data, setData] = useState([])
