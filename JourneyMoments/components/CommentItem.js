@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react'
-import {Text, View, Image} from "react-native"
+import {Text, View, Image, StyleSheet} from "react-native"
 import Helper from "../helpers/Helper"
+import {Card, CardItem} from "native-base";
 
 const CommentItem = ({data}) => {
     const [image, setImage] = useState(Helper.dummy)
@@ -15,16 +16,37 @@ const CommentItem = ({data}) => {
 
     return (
         <View>
-            <View style={{flexDirection: 'row'}}>
-            <Image source={{uri: image}} style={{width: 20, height: 20, borderRadius: 25, marginRight: 10}}/>
-            <Text>{user.username}</Text>
-                <View style={{borderColor: rating, borderWidth: 2, borderRadius: 10 }}>
-                    <Text style={{ textAlign: 'center', margin: 2 }}>{user.rating}</Text>
+            <Card style={{flexDirection: 'row'}}>
+                <Image source={{uri: image}} style={{
+                    width: 45,
+                    height: 45,
+                    borderRadius: 25,
+                    margin: 10,
+                    borderColor: rating,
+                    borderWidth: 2,
+                }}/>
+                <View style={{flexDirection: 'column', marginTop: 10}}>
+                    <CardItem>
+                        <Text style={styles.user}>{user.username} </Text>
+                    </CardItem>
+                    <Text style={styles.comment}>{data.comment}</Text>
                 </View>
-            </View>
-            <Text style={{marginLeft: 30}}>- {data.comment}</Text>
+            </Card>
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    user: {
+        fontSize: 20,
+        marginTop: -15,
+        marginLeft: -20,
+        fontWeight: 'bold',
+    },
+    comment: {
+        fontSize: 15,
+        marginTop: -10
+    },
+})
 
 export default CommentItem
