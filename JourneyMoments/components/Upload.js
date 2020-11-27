@@ -20,7 +20,8 @@ const Upload = ({moprimId, handleUpload}) => {
     const videoOptions = {
         mediaType: 'video',
         isVideo: true,
-        videoQuality: 'medium',
+        videoQuality: 'low',
+        durationLimit: 15,
     }
     const imageOptions = {
         mediaType: 'image',
@@ -41,7 +42,7 @@ const Upload = ({moprimId, handleUpload}) => {
                     style: "cancel"
                 },
             ],
-            { cancelable: false }
+            {cancelable: false}
         )
     }
 
@@ -50,9 +51,9 @@ const Upload = ({moprimId, handleUpload}) => {
         sheetView.Show({
             title: "Choose format",
             items: [
-                { title: "Image", value: "image", subTitle: "Image description", icon: cameraIcon},
-                { title: "Video", value: "video", subTitle: "Video Description", icon: videoIcon},
-                { title: "Gallery", value: "image", subTitle: "Gallery description", icon: libraryIcon},
+                {title: "Image", value: "image", subTitle: "Image description", icon: cameraIcon},
+                {title: "Video (15s max)", value: "video", subTitle: "Video Description", icon: videoIcon},
+                {title: "Gallery", value: "image", subTitle: "Gallery description", icon: libraryIcon},
             ],
             theme: "light",
             selection: 3,

@@ -1,5 +1,5 @@
 import React from 'react'
-import {View,Image, Dimensions, StyleSheet} from "react-native"
+import {View, Image, Dimensions, StyleSheet} from "react-native"
 import VideoPlayer from "react-native-video-player"
 
 const windowWidth = Dimensions.get('window').width * 0.75
@@ -9,23 +9,23 @@ const MediaItem = ({data}) => {
     const split = data.type.split("/")
     const type = split[0]
     return (
-           <View style={styles.content}>
-                {type === 'video' && <>
-                    <View style={styles.media}>
+        <View style={styles.content}>
+            {type === 'video' && <>
+                <View style={styles.media}>
                     <VideoPlayer
                         video={{uri: data.url}}
                         videoWidth={windowWidth}
                         videoHeight={windowHeight}
-                        thumbnail={{uri: data.url}}
+                        thumbnail={require('../images/backgroundMoprDark.jpg')}
                     />
-                    </View>
-                </>}
-                {type !== 'video' && <>
-                    <Image
-                        source={{uri: data.url}}
-                        style={styles.mediaImg}/>
-                </>}
-           </View>
+                </View>
+            </>}
+            {type !== 'video' && <>
+                <Image
+                    source={{uri: data.url}}
+                    style={styles.mediaImg}/>
+            </>}
+        </View>
     )
 }
 const styles = StyleSheet.create({
