@@ -1,15 +1,16 @@
 import React, {useState, useEffect} from 'react'
-import {Container,Icon, View, Input, Text, H2, Button, Body} from 'native-base'
+import {Container, Icon, View, Input, Text, H2, Button, Body} from 'native-base'
 import {TextInput, StyleSheet, TouchableOpacity} from "react-native";
+import Notification from "./Notification";
 
-const CommentField = ({handleSend}) => {
+const CommentField = ({handleSend, error, className}) => {
     const [text, setText] = useState('')
 
     return (
         <View style={styles.container}>
             <TextInput
-                style={styles.input}
-                placeholder="Type here"
+                style={className}
+                placeholder={error}
                 onChangeText={(text) => {
                     setText(text)
                 }}
@@ -18,7 +19,7 @@ const CommentField = ({handleSend}) => {
                 onPress={() => {
                     handleSend(text)
                 }}>
-            <Icon name='send'/>
+                <Icon name='send'/>
             </TouchableOpacity>
         </View>
     )
@@ -41,10 +42,8 @@ const styles = StyleSheet.create({
         borderColor: 'black',
         borderRadius: 5,
         padding: 5,
-        marginHorizontal: 10    
-    },
-
-
+        marginHorizontal: 10
+    }
 })
 
 export default CommentField

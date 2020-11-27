@@ -108,7 +108,7 @@ const Login = ({navigation}) => {
         } catch (e) {
             setLoading(false)
             console.log(e)
-            setErrorMessage("Invalid username or password")
+            setErrorMessage("Error in login")
         }
     }
 
@@ -214,10 +214,10 @@ const Login = ({navigation}) => {
     return (
         <View style={styles.loginScreen}>
             <ImageBackground source={require('../images/backgroundMoprDark.jpg')} style={styles.container}>
-                <Notification message={errorMessage}/>
                 <Text style={styles.logo}>Journey Moments</Text>
                 {!toggleForm && <>
                     <Text style={styles.logo2}>Login</Text>
+                    <Notification message={errorMessage}/>
                     <View style={styles.inputView}>
                         <TextInput
                             style={styles.inputText}
@@ -250,6 +250,7 @@ const Login = ({navigation}) => {
                     <TouchableOpacity
                         onPress={() => {
                             setForm(true)
+                            setErrorMessage(null)
                         }}>
                         <Text style={styles.secondaryText}>Not registered?</Text>
                     </TouchableOpacity>
@@ -257,6 +258,7 @@ const Login = ({navigation}) => {
                 }
                 {toggleForm && <>
                     <Text style={styles.logo2}>Register</Text>
+                    <Notification message={errorMessage}/>
                     {validEmailReg ? true :
                         <Text style={styles.regWarn}>Email must be valid</Text>
                     }
@@ -353,6 +355,7 @@ const Login = ({navigation}) => {
                     <TouchableOpacity
                         onPress={() => {
                             setForm(false)
+                            setErrorMessage(null)
                         }}>
                         <Text style={styles.secondaryText}>Already an user?</Text>
                     </TouchableOpacity>
