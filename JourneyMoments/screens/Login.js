@@ -20,9 +20,6 @@ import ImagePicker from "react-native-image-picker"
 import {ProgressBar} from "@react-native-community/progress-bar-android"
 import Icon from "react-native-vector-icons"
 
-const cameraIcon = <Icon family={'FontAwesome'} name={'camera'} color={'#000000'} size={30}/>
-const libraryIcon = <Icon family={'FontAwesome'} name={'photo'} color={'#000000'} size={30}/>
-
 const Login = ({navigation}) => {
     const [email, setEmail] = useState('')
     const [pwd, setPwd] = useState('')
@@ -152,8 +149,8 @@ const Login = ({navigation}) => {
         sheetView.Show({
             title: "Choose format",
             items: [
-                {title: "Image", value: "image", subTitle: "Image description", icon: cameraIcon},
-                {title: "Gallery", value: "image", subTitle: "Gallery description", icon: libraryIcon},
+                {title: "Image", value: "image", subTitle: "Image description", icon: <Icon family={'FontAwesome'} name={'camera'} color={'#000000'} size={30}/>},
+                {title: "Gallery", value: "image", subTitle: "Gallery description", icon: <Icon family={'FontAwesome'} name={'photo'} color={'#000000'} size={30}/>},
             ],
             theme: "light",
             selection: 3,

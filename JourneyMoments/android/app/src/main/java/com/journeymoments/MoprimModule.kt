@@ -40,7 +40,6 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 
-
 class MoprimModule(private val context: ReactApplicationContext) : ReactContextBaseJavaModule() {
     private val CHANNEL_ID = "moprim.channel"
     private var notificationManager: NotificationManager? = null

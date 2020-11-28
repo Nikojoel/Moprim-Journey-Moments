@@ -11,8 +11,6 @@ import Icons from "react-native-vector-icons"
 import {Container, Icon,Body, CardItem, Card, Content, H2} from "native-base"
 import Colors from "../values/Colors";
 
-const cameraIcon = <Icons family={'FontAwesome'} name={'camera'} color={'#000000'} size={30}/>
-const libraryIcon = <Icons family={'FontAwesome'} name={'photo'} color={'#000000'} size={30}/>
 const windowHeight = Dimensions.get('window').height
 const windowWidth = Dimensions.get('window').width
 
@@ -25,7 +23,9 @@ const Profile = ({navigation}) => {
     const [image, setImage] = useState(null)
     const [uri, setUri] = useState(null)
     const [current, setCurrent] = useState(null)
-
+    const cameraIcon = <Icons family={'FontAwesome'} name={'camera'} color={'#000000'} size={30}/>
+    const libraryIcon = <Icons family={'FontAwesome'} name={'photo'} color={'#000000'} size={30}/>
+    
     useEffect(() => {
         getProfile(id)
         BackHandler.addEventListener('hardwareBackPress', () => {

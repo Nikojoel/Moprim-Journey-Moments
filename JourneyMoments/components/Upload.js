@@ -9,13 +9,12 @@ import Icon from 'react-native-vector-icons'
 import {ProgressBar} from '@react-native-community/progress-bar-android'
 import Colors from "../values/Colors";
 
-const cameraIcon = <Icon family={'FontAwesome'} name={'camera'} color={'#000000'} size={30}/>
-const videoIcon = <Icon family={'FontAwesome'} name={'video-camera'} color={'#000000'} size={30}/>
-const libraryIcon = <Icon family={'FontAwesome'} name={'photo'} color={'#000000'} size={30}/>
+
 
 const Upload = ({moprimId, handleUpload}) => {
     const [uploading, setUploading] = useState(false)
     const userId = LoginService.getCurrentUser().uid
+    
 
     const videoOptions = {
         mediaType: 'video',
@@ -45,15 +44,15 @@ const Upload = ({moprimId, handleUpload}) => {
             {cancelable: false}
         )
     }
-
+    
     const pickImage = () => {
         const sheetView = RNBottomActionSheet.SheetView
         sheetView.Show({
             title: "Choose format",
             items: [
-                {title: "Image", value: "image", subTitle: "Image description", icon: cameraIcon},
-                {title: "Video (15s max)", value: "video", subTitle: "Video Description", icon: videoIcon},
-                {title: "Gallery", value: "image", subTitle: "Gallery description", icon: libraryIcon},
+                {title: "Image", value: "image", subTitle: "Image description", icon: <Icon family={'FontAwesome'} name={'camera'} color={'#000000'} size={30}/>},
+                {title: "Video (15s max)", value: "video", subTitle: "Video Description", icon: <Icon family={'FontAwesome'} name={'video-camera'} color={'#000000'} size={30}/>},
+                {title: "Gallery", value: "image", subTitle: "Gallery description", icon: <Icon family={'FontAwesome'} name={'photo'} color={'#000000'} size={30}/>},
             ],
             theme: "light",
             selection: 3,
