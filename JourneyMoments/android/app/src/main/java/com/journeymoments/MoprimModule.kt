@@ -48,7 +48,7 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
     private val unsubOnStop = CompositeDisposable()
     private val db = Firebase.database.reference
     private val decodePolylineSubject = PublishSubject.create<TmdActivity>()
-    private val apolloGraphQlSubject = PublishSubject.create<Pair<TmdActivity,GetTransportTypeQuery>>()
+    private val apolloGraphQlSubject = PublishSubject.create<Pair<TmdActivity, GetTransportTypeQuery>>()
     private var lastEntryTimestamp: Long = 0
     val apolloClient = ApolloClient.builder()
             .serverUrl("https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql")
@@ -70,7 +70,7 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                 .observeOn(io())
                 .map {
                     val coords = decode(it.polyline)
-                    apolloGraphQlSubject.onNext(Pair(it,GetTransportTypeQuery(
+                    apolloGraphQlSubject.onNext(Pair(it, GetTransportTypeQuery(
                             coords.first().latitude,
                             coords.first().longitude,
                             coords.last().latitude,
@@ -121,7 +121,7 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
     @ReactMethod
     fun start() {
         notificationManager = createNotificationChannel()
-        val notification = buildNotification("moprim is running")
+        val notification = buildNotification("JourneyMoments is running.")
         TMD.startForeground(context, 112, notification)
         Observable
                 .interval(60, TimeUnit.SECONDS)
@@ -138,7 +138,7 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                 .observeOn(io())
                 .map {
                     val set = mutableSetOf<Chain>()
-                    for (index in 0..3) {
+                    for (index in 0..7) {
                         val convertedDate = convertToDate(LocalDateTime.now().minusDays(index.toLong()))
                         val data = convertedDate?.let { date -> TmdCloudApi.fetchData(context, date) }
                         if (data != null && data.result.isNotEmpty()) {
@@ -196,7 +196,6 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
 
     @ReactMethod
     fun stop() {
-        Log.i("XXX", "stop moprim")
         TMD.stop(context)
         notificationManager?.cancel(112)
         unsubOnStop.clear()
@@ -243,29 +242,6 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
     }
 
     @ReactMethod
-    fun getFakeResults(day: Int, promise: Promise) {
-        Observable
-                .just(day)
-                .observeOn(io())
-                .map {
-                    convertToDate(LocalDateTime.now().minusDays(it.toLong()))?.let { date -> TmdCloudApi.fetchData(context, date) }
-                }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    if (it != null) {
-                        if (it.hasResult()) {
-                            val json = gson.toJson(it.result)
-                            promise.resolve("[{\"id\":\"10\",\"timestampDownload\":\"1603387823109\",\"timestampStart\":\"1603384439635\",\"timestampEnd\":\"1603385367839\",\"correctedActivity\":\"null\",\"originalActivity\":\"non-motorized/pedestrian/walk\",\"co2\":\"20.3\",\"distance\":\"1160.0\",\"speed\":\"0.0012497252759091752\",\"polyline\":\"szgnJmgkvCUOIb@]Pa@?m@AS@Ow@YcAEkAGg@KgAEgA@qAEgAUaA@w@_@Ja@Re@Pg@k@[UGs@Cy@Eu@Iw@Iq@Es@Gq@Im@Oq@a@AWTOf@Hp@ZIBf@DhABnAPxAR`A^SXYT^B~@CrARO^c@^EXQd@[d@GRh@Fh@Bp@D~@GjAOj@T[j@KXHZDZOa@GIu@SY\",\"metadata\":\"null\",\"syncedWithCloud\":\"true\"}," +
-                                    "{\"id\":\"10\",\"timestampDownload\":\"1603387823109\",\"timestampStart\":\"1603384439635\",\"timestampEnd\":\"1603385367839\",\"correctedActivity\":\"null\",\"originalActivity\":\"non-motorized/pedestrian/walk\",\"co2\":\"20.3\",\"distance\":\"1160.0\",\"speed\":\"0.0012497252759091752\",\"polyline\":\"szgnJmgkvCUOIb@]Pa@?m@AS@Ow@YcAEkAGg@KgAEgA@qAEgAUaA@w@_@Ja@Re@Pg@k@[UGs@Cy@Eu@Iw@Iq@Es@Gq@Im@Oq@a@AWTOf@Hp@ZIBf@DhABnAPxAR`A^SXYT^B~@CrARO^c@^EXQd@[d@GRh@Fh@Bp@D~@GjAOj@T[j@KXHZDZOa@GIu@SY\",\"metadata\":\"null\",\"syncedWithCloud\":\"true\"}]")
-                        }
-                        if (it.hasError()) {
-                            promise.reject("ERROR", it.error.toString())
-                        }
-                    }
-                }
-    }
-
-    @ReactMethod
     fun uploadMoprim() {
         Observable
                 .just(Unit)
@@ -282,25 +258,13 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
             val builder = TmdCoreConfigurationBuilder(context)
                     .setSdkConfigEndPoint(apiRoot)
                     .setSdkConfigKey(apiKey)
-            // Init the TMD
+
             TMD.setUUID(id)
             TMD.init(context.applicationContext as Application, builder.build(), object : TmdInitListener {
 
-                override fun onTmdInitFailed(tmdError: TmdError) {
-                    Log.e(
-                            "XXX",
-                            "Initialisation failed: " + tmdError.name
-                    )
-                }
+                override fun onTmdInitFailed(tmdError: TmdError) {       }
 
                 override fun onTmdInitSuccessful(s: String) {
-                    // s is the current installation ID, we'll put the UUID as the same just to demonstrate how to use the method
-                    // replace with your own user id in production
-                    // TMD.setUUID(s);
-                    Log.i(
-                            "XXX",
-                            "Initialization successful with id: $id"
-                    )
                     start()
                     val intent =
                             Intent(context, TmdUploadIntentService::class.java)
@@ -326,13 +290,19 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
         val notificationBuilder: NotificationCompat.Builder = NotificationCompat.Builder(context, CHANNEL_ID)
         notificationBuilder.setWhen(System.currentTimeMillis())
         notificationBuilder.setSmallIcon(android.R.drawable.ic_media_play)
-        notificationBuilder.setContentTitle("TMD demo")
+        notificationBuilder.setContentTitle("Gathing journey data")
         notificationBuilder.setContentText(notificationText)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             notificationBuilder.priority = NotificationManager.IMPORTANCE_HIGH
         }
 
-        // Build the notification.
+        notificationBuilder.setContentIntent(
+                PendingIntent.getActivity(
+                context, 999,
+                Intent(context, MainActivity::class.java),
+                PendingIntent.FLAG_UPDATE_CURRENT)
+        )
+
         return notificationBuilder.build()
     }
 
