@@ -7,7 +7,7 @@ import Helper from "../helpers/Helper"
 import DownloadService from "../services/DownloadService"
 import RNBottomActionSheet from "react-native-bottom-action-sheet"
 import ImagePicker from "react-native-image-picker"
-import Icons from "react-native-vector-icons"
+import {Icon as Icons} from "react-native-vector-icons"
 import {Container, Icon,Body, CardItem, Card, Content, H2} from "native-base"
 import Colors from "../values/Colors";
 
@@ -23,8 +23,6 @@ const Profile = ({navigation}) => {
     const [image, setImage] = useState(null)
     const [uri, setUri] = useState(null)
     const [current, setCurrent] = useState(null)
-    const cameraIcon = <Icons family={'FontAwesome'} name={'camera'} color={'#000000'} size={30}/>
-    const libraryIcon = <Icons family={'FontAwesome'} name={'photo'} color={'#000000'} size={30}/>
     
     useEffect(() => {
         getProfile(id)
@@ -103,8 +101,8 @@ const Profile = ({navigation}) => {
         sheetView.Show({
             title: "Choose format",
             items: [
-                {title: "Image", value: "image", subTitle: "Image description", icon: cameraIcon},
-                {title: "Gallery", value: "image", subTitle: "Gallery description", icon: libraryIcon},
+                {title: "Image", value: "image", subTitle: "Image description", icon: <Icons family={'FontAwesome'} name={'camera'} color={'#000000'} size={30}/>},
+                {title: "Gallery", value: "image", subTitle: "Gallery description", icon: <Icons family={'FontAwesome'} name={'photo'} color={'#000000'} size={30}/>},
             ],
             theme: "light",
             selection: 3,
