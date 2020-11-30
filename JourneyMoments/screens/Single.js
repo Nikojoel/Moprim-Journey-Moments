@@ -6,8 +6,8 @@ import CommentField from "../components/CommentField";
 import {Icon, Text, Right, Body, CardItem, Card} from "native-base"
 import DatabaseService from "../services/DatabaseService"
 import {ProgressBar} from "@react-native-community/progress-bar-android"
-import {BackHandler, StyleSheet, View, ScrollView, SafeAreaView, Image} from "react-native"
-import {H3, H2} from "native-base"
+import {BackHandler, StyleSheet, View, ScrollView, SafeAreaView, Image, Keyboard} from "react-native"
+import {H3} from "native-base"
 import LoginService from "../services/LoginService"
 import Stars from "../components/StarRating"
 import CommentItem from "../components/CommentItem"
@@ -75,6 +75,7 @@ const Single = ({route, navigation}) => {
                 userId: id
             }
             try {
+                Keyboard.dismiss()
                 await DatabaseService.dbCommentINSERT(json)
                 await DatabaseService.dbUserUPDATE(id)
                 await getComments(userId + moprimId)

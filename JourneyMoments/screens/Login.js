@@ -18,7 +18,7 @@ import DownloadService from "../services/DownloadService"
 import RNBottomActionSheet from "react-native-bottom-action-sheet"
 import ImagePicker from "react-native-image-picker"
 import {ProgressBar} from "@react-native-community/progress-bar-android"
-import Icon from "react-native-vector-icons"
+import {Icon} from "native-base"
 
 const Login = ({navigation}) => {
     const [email, setEmail] = useState('')
@@ -119,10 +119,8 @@ const Login = ({navigation}) => {
     }
 
     const imageOptions = {
-        storageOptions: {
-            skipBackup: true,
-            path: "images"
-        }
+        mediaType: 'image',
+        isImage: true,
     }
 
     const showAlert = () => {
@@ -171,6 +169,7 @@ const Login = ({navigation}) => {
             if (response.didCancel) {
                 console.log('cancel')
             } else if (response.error) {
+                console.log(response.error)
                 console.log('error')
             } else {
                 console.log('success, uri:', response.uri)
