@@ -7,7 +7,7 @@ import Helper from "../helpers/Helper"
 import DownloadService from "../services/DownloadService"
 import RNBottomActionSheet from "react-native-bottom-action-sheet"
 import ImagePicker from "react-native-image-picker"
-import {Icon as Icons} from "react-native-vector-icons"
+import {Icon as Icons} from "react-native-vector-icons/FontAwesome"
 import {Container, Icon,Body, CardItem, Card, Content, H2} from "native-base"
 import Colors from "../values/Colors";
 
@@ -101,8 +101,8 @@ const Profile = ({navigation}) => {
         sheetView.Show({
             title: "Choose format",
             items: [
-                {title: "Image", value: "image", subTitle: "Image description", icon: <Icons family={'FontAwesome'} name={'camera'} color={'#000000'} size={30}/>},
-                {title: "Gallery", value: "image", subTitle: "Gallery description", icon: <Icons family={'FontAwesome'} name={'photo'} color={'#000000'} size={30}/>},
+                {title: "Image", value: "image", subTitle: "Image description", icon: <Icon family={'FontAwesome'} name={'camera'} color={'#000000'} size={30} />},
+                {title: "Gallery", value: "image", subTitle: "Gallery description", icon: <Icon family={'FontAwesome'} name={'photo'} color={'#000000'} size={30} />},
             ],
             theme: "light",
             selection: 3,
