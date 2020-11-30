@@ -5,16 +5,13 @@ import DownloadService from "../services/DownloadService"
 import DatabaseService from "../services/DatabaseService"
 import LoginService from "../services/LoginService"
 import RNBottomActionSheet from 'react-native-bottom-action-sheet'
-import Icon from 'react-native-vector-icons'
+import {Icon} from "native-base"
 import {ProgressBar} from '@react-native-community/progress-bar-android'
-import Colors from "../values/Colors";
-
-
+import Colors from "../values/Colors"
 
 const Upload = ({moprimId, handleUpload}) => {
     const [uploading, setUploading] = useState(false)
     const userId = LoginService.getCurrentUser().uid
-    
 
     const videoOptions = {
         mediaType: 'video',
@@ -71,7 +68,7 @@ const Upload = ({moprimId, handleUpload}) => {
         })
     }
 
-    const launchCamera = async (options) => {
+    const launchCamera = (options) => {
         ImagePicker.launchCamera(options, (response => {
             if (response.didCancel) {
                 console.log('cancel')
@@ -84,7 +81,7 @@ const Upload = ({moprimId, handleUpload}) => {
         }))
     }
 
-    const launchFiles = async (options) => {
+    const launchFiles = (options) => {
         ImagePicker.launchImageLibrary(options, (response => {
             if (response.didCancel) {
                 console.log('cancel')

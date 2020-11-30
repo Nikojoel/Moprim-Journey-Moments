@@ -14,10 +14,12 @@ const CommentField = ({handleSend, error, className}) => {
                 onChangeText={(text) => {
                     setText(text)
                 }}
+                value={text}
             />
             <TouchableOpacity
                 onPress={() => {
                     handleSend(text)
+                    setText('')
                 }}>
                 <Icon name='send'/>
             </TouchableOpacity>

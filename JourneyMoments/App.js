@@ -7,13 +7,16 @@ import TabNavigator from './navigation/TabNavigator'
 import Login from './screens/Login'
 import Profile from './screens/Profile'
 import Single from "./screens/Single"
-import MoprimBridge from './modules/Moprim'
 import ChainList from "./components/ChainList"
 
 requestMultiple([
   PERMISSIONS.ANDROID.ACTIVITY_RECOGNITION,
   PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
   PERMISSIONS.ANDROID.ACCESS_BACKGROUND_LOCATION,
+  PERMISSIONS.ANDROID.CAMERA,
+  PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+  PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
+  PERMISSIONS.ANDROID.RECORD_AUDIO,
 ]).then((statuses) => {
   console.log(
     'Location',
