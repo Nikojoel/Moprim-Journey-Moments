@@ -50,6 +50,7 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
     private val decodePolylineSubject = PublishSubject.create<TmdActivity>()
     private val apolloGraphQlSubject = PublishSubject.create<Pair<TmdActivity, GetTransportTypeQuery>>()
     private var lastEntryTimestamp: Long = 0
+    private var firstEntryTimestamp: Long = 0
     val apolloClient = ApolloClient.builder()
             .serverUrl("https://api.digitransit.fi/routing/v1/routers/hsl/index/graphql")
             .build()
@@ -102,9 +103,10 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                         result.plan?.itineraries?.forEach { plan ->
                             plan?.legs?.forEach { leg ->
                                 if (leg?.mode != Mode.WALK) {
+                                    val id = TMD.getUUID() + it.first.timestampStart + it.first.id.toString()
                                     db.child("DigiTransit")
-                                            .child(TMD.getUUID() + it.first.timestampStart + it.first.id.toString())
-                                            .setValue(Digitransit(leg?.from.toString(), leg?.to.toString(), leg?.trip?.routeShortName.toString()))
+                                            .child(id)
+                                            .setValue(Digitransit(leg?.from?.name.toString(), leg?.to?.name.toString(), leg?.trip?.routeShortName.toString(), id))
                                 }
                             }
                         }
@@ -152,8 +154,9 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                 }
                 .subscribe { set ->
                     if (set.isNotEmpty()) {
-                        if (set.last().activities.last().timestampEnd != lastEntryTimestamp) {
+                        if (set.last().activities.last().timestampEnd != lastEntryTimestamp && set.first().activities.first().timestampStart != firstEntryTimestamp) {
                             lastEntryTimestamp = set.last().activities.last().timestampEnd
+                            firstEntryTimestamp = set.first().activities.first().timestampStart
                             set.forEach { chain ->
                                 var totalCo2 = 0.0
                                 var totalDistance = 0.0
