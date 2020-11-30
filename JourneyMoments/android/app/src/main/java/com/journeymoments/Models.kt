@@ -33,5 +33,6 @@ data class Chain(
 data class Digitransit(
         val from: String,
         val to: String,
+        val transportId: String,
         val id: String
 )
