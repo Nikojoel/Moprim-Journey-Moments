@@ -59,10 +59,12 @@ const ChainList = ({route, navigation}) => {
 
     return (
         <SafeAreaView style={{flex: 1}}>
-            <View style={{width:'100%', height: 300}}>
+            <View style={{width:'100%', height: '40%'}}>
                 <ChainMap data={polyline} trips={trips} />
             </View>
+            <View style={{flex: 1}}>
             <HomeFeed data={trips} extra={trips} navigation={navigation}/>
+            </View>
         </SafeAreaView>
         
     )

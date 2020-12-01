@@ -7,6 +7,7 @@ import { ProgressBar } from "@react-native-community/progress-bar-android"
 import LoginService from '../services/LoginService'
 import { View, Text, H2 } from 'native-base'
 import { TouchableOpacity } from 'react-native-gesture-handler'
+import Helper from "../helpers/Helper";
 
 
 const Home = ({ navigation }) => {
@@ -14,6 +15,7 @@ const Home = ({ navigation }) => {
     const [loading, setLoading] = useState(true)
     const [latest, setLatest] = useState([])
     const [refreshing, setRefreshing] = useState(false)
+    const [method, setMethod] = useState(null)
 
     const userId = LoginService.getCurrentUser().uid
 
@@ -61,6 +63,8 @@ const Home = ({ navigation }) => {
             const data = await DatabaseService.dbGetLatestTrip(userId)
             const it = iterateData(data)
             setLatest(it[0])
+            const transport = Helper.transportMethod(it[0].activity)
+            setMethod(transport)
         } catch (e) {
             console.log(e)
         }
@@ -90,12 +94,14 @@ const Home = ({ navigation }) => {
 
     return (
         <View style={{ flex: 1 }}>
-            {latest != undefined &&
-                <TouchableOpacity style={{ padding: 20, backgroundColor: 'black', margin: 5 }} onPress={() => navigation.navigate("Single", { latest })}>
-                    <H2 style={{ color: 'white' }}>Rate your latest trip</H2>
-                    <Text style={{ color: 'white' }}>{latest.activity}</Text>
-                </TouchableOpacity>
-            }
+            {method && <>
+                {method.rateable && <>
+                    <TouchableOpacity style={{ padding: 20, backgroundColor: 'black', margin: 5 }} onPress={() => navigation.navigate("Single", { latest })}>
+                        <H2 style={{ color: 'white' }}>Rate your latest trip</H2>
+                        <Text style={{ color: 'white' }}>{method.method}</Text>
+                    </TouchableOpacity>
+                    </>}
+            </>}
             <SafeAreaView style={{ flex: 1 }}>
                 <HomeFeed data={commentedTrips} extra={commentedTrips} navigation={navigation} refresh={refreshing} onRefresh={onRefresh} />
             </SafeAreaView>

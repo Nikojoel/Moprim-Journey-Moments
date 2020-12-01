@@ -1,17 +1,27 @@
 import React from 'react'
 import {Text, StyleSheet, Image} from 'react-native'
-import {Content, Card, CardItem, Body} from 'native-base'
+import {Content, Card, CardItem, Body, Icon} from 'native-base'
+import Colors from "../values/Colors"
 
 const UserItem = ({data}) => {
     return (
         <Content style={styles.content}>
-            <Card style={styles.card}>
-                <CardItem>
+            <Card>
+                <CardItem style={styles.card}>
                     <Image source={{uri: data.photoURL}} style={styles.image}/>
-                    <Body style={{margin: 20}}>
-                        <Text style={styles.text}>{data.username}</Text>
-                        <Text style={styles.text}>{data.email}</Text>
-                        <Text style={styles.text}>{data.rating} annotations</Text>
+                    <Body>
+                        <CardItem style={styles.card}>
+                            <Icon family={'FontAwesome'} name={'ios-person'} color={'#000000'} size={30}/>
+                            <Text style={styles.text}>{data.username}</Text>
+                        </CardItem>
+                        <CardItem style={styles.card}>
+                            <Icon family={'FontAwesome'} name={'mail'} color={'#000000'} size={30}/>
+                            <Text style={styles.text}>{data.email}</Text>
+                        </CardItem>
+                        <CardItem style={styles.card}>
+                            <Icon family={'FontAwesome'} name={'star'} color={'#000000'} size={30}/>
+                            <Text style={styles.text}>{data.rating} annotations</Text>
+                        </CardItem>
                     </Body>
                 </CardItem>
             </Card>
@@ -20,15 +30,20 @@ const UserItem = ({data}) => {
 }
 const styles = StyleSheet.create({
     content: {
-        margin: 10,
-        display: "flex"
+        margin: 5,
+        marginLeft: 15,
+        marginRight: 15,
+        display: "flex",
     },
     image: {
-        width: 100,
-        height: 100
+        width: 130,
+        height: 130
     },
     text: {
         fontSize: 16,
+    },
+    card: {
+        backgroundColor: Colors.commonBackground
     }
 })
 export default UserItem
