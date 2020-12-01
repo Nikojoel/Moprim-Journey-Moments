@@ -8,11 +8,14 @@ const Stars = ({ handleStars, rating, owner }) => {
     const [speed, setSpeed] = useState(0)
     const [cleanness, setCleanness] = useState(0)
     const [comfort, setComfort] = useState(0)
+    const [disabled, setDisabled] = useState(owner)
 
     useEffect(()=> {
         setSpeed(rating.speed)
         setCleanness(rating.cleanness)
         setComfort(rating.comfort)
+        if (!owner) setDisabled(true)
+        if (owner) setDisabled(false)
     },[rating])
 
     return (
@@ -20,7 +23,7 @@ const Stars = ({ handleStars, rating, owner }) => {
             <View style={styles.row}>
                 <Text style={styles.text}>Speed</Text>
                 <StarRating
-                    disabled={false}
+                    disabled={disabled}
                     maxStars={5}
                     rating={speed}
                     selectedStar={(rating) => setSpeed(rating)}
@@ -31,7 +34,7 @@ const Stars = ({ handleStars, rating, owner }) => {
             <View style={styles.row}>
                 <Text style={styles.text}>Comfort</Text>
                 <StarRating
-                    disabled={false}
+                    disabled={disabled}
                     maxStars={5}
                     rating={comfort}
                     selectedStar={(rating) => setComfort(rating)}
@@ -42,7 +45,7 @@ const Stars = ({ handleStars, rating, owner }) => {
             <View style={styles.row}>
                 <Text style={styles.text}>Cleanness</Text>
                 <StarRating
-                    disabled={false}
+                    disabled={disabled}
                     maxStars={5}
                     rating={cleanness}
                     selectedStar={(rating) => setCleanness(rating)}
