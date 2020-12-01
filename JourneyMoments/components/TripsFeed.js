@@ -1,10 +1,11 @@
 import React from "react"
-import {FlatList, RefreshControl} from "react-native"
+import {FlatList, RefreshControl, SafeAreaView} from "react-native"
 import InnerChainItem from "../components/InnerChainItem"
 
 const TripsFeed = ({data, extra, navigation, refresh, onRefresh}) => {
 
     return (
+        <SafeAreaView>
         <FlatList
             data={data}
             renderItem={({item}) =>
@@ -16,6 +17,7 @@ const TripsFeed = ({data, extra, navigation, refresh, onRefresh}) => {
                 <RefreshControl refreshing={refresh} onRefresh={onRefresh}/>
             }
         />
+        </SafeAreaView>
     )
 }
 

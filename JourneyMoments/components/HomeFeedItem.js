@@ -26,13 +26,19 @@ const HomeFeedItem = ({ item, navigation }) => {
         })
         return array[0]
     }
+
+    const getTransportNumber = async (id) => {
+        try {
+            const result = await DatabaseService.dbDigiTransitGET(id)
+            const iterate = iterateData(result)
+            setDigiTransit(iterate)
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
     useEffect(() => {
         if (fetch) {
-            const getTransportNumber = async (id) => {
-                const result = await DatabaseService.dbDigiTransitGET(id)
-                const iterate = iterateData(result)
-                setDigiTransit(iterate)
-            }
             getTransportNumber(transitId)
         }
     }, [])

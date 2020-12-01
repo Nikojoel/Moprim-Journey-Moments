@@ -48,6 +48,27 @@ const transportIcon = (type) => {
     }
 }
 
+const transportMethod = (type) => {
+    switch (type) {
+        case 'null': return {method: 'null', rateable: false}
+        case 'unknown': return {method: 'null', rateable: false}
+        case 'stationary': return {method: 'Stationary', rateable: false}
+        case 'non-motorized': return {method: 'Non motorized', rateable: false}
+        case 'non-motorized/bicycle': return {method: 'Bicycle', rateable: false}
+        case 'non-motorized/pedestrian/walk': return {method: 'Walk', rateable: false}
+        case 'non-motorized/pedestrian/run': return {method: 'Run', rateable: false}
+        case 'motorized': return {method: 'Motorized', rateable: false}
+        case 'motorized/road': return {method: 'Motorized', rateable: false}
+        case 'motorized/road/car': return {method: 'Car', rateable: false}
+        case 'motorized/road/bus': return {method: 'Bus', rateable: true}
+        case 'motorized/rail': return {method: 'Rail', rateable: true}
+        case 'motorized/rail/tram': return {method: 'Tram', rateable: true}
+        case 'motorized/rail/train': return {method: 'Train', rateable: true}
+        case 'motorized/rail/metro': return {method: 'Metro', rateable: true}
+        case 'motorized/air/plane': return {method: 'Plane', rateable: true}
+    }
+}
+
 const ratingColor = (rating) => {
     let rate
     if (rating <= 15) {
@@ -119,5 +140,6 @@ export default {
     iterateData,
     dummy,
     ratingColor,
+    transportMethod,
 }
 

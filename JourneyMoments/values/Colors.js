@@ -16,7 +16,10 @@ const Colors = {
   regPic: 'rgba(96,125,119,0.95)',
   backgroundGrayOp: '#ffe8d8',
   placeHolderColor: '#fefffd',
-  note: '#ffffff'
+  note: '#ffffff',
+  commonBackground: 'rgb(255,252,236)',
+  headerText: '#ffffff',
+  headerBackground: '#ffffff',
 }
 
 module.exports = Colors
