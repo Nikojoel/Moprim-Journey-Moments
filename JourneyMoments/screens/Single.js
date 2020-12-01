@@ -32,6 +32,7 @@ const Single = ({route, navigation}) => {
     const [comments, setComments] = useState([])
     const [media, setMedia] = useState([])
     const data = Object.values(route.params)[0]
+    const digiTransit = Object.values(route.params)[1]
     const moprimId = data.timestampStart.toString() + data.id.toString()
     const userId = data.userId
     const {icon, color} = Helper.transportIcon(data.activity)
@@ -247,6 +248,11 @@ const Single = ({route, navigation}) => {
                         <Text>Avg speed: {Math.round(data.speed * 1000 * 3.6)} km/h</Text>
                         <Text>Distance: {data.distance}m</Text>
                         <Text>Emissions: {Math.round(data.co2)}g</Text>
+                        {digiTransit && <>
+                            <Text>Number: {digiTransit.transportId}</Text>
+                            <Text>From: {digiTransit.from}</Text>
+                            <Text>To: {digiTransit.to}</Text>
+                        </>}
                     </Right>
                 </Body>
                 <View style={{flex: 1, paddingTop: 20,}}>

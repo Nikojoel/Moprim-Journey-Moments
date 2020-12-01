@@ -29,22 +29,22 @@ const generateRandom = () => {
 
 const transportIcon = (type) => {
     switch (type) {
-        case 'null': return {icon: 'alert', color: Colors.motor}
-        case 'unknown': return {icon:'help', color:Colors.motor}
-        case 'stationary': return {icon:'bed', color:Colors.nonMotor}
-        case 'non-motorized': return {icon:'walk',color:Colors.nonMotor}
-        case 'non-motorized/bicycle': return {icon:'bicycle', color:Colors.nonMotor}
-        case 'non-motorized/pedestrian/walk': return {icon:'walk', color:Colors.nonMotor}
-        case 'non-motorized/pedestrian/run': return {icon:'walk', color:Colors.nonMotor}
-        case 'motorized': return {icon:'car', color:Colors.motor}
-        case 'motorized/road': return {icon:'car', color:Colors.motor}
-        case 'motorized/road/car': return {icon:'car', color:Colors.motor}
-        case 'motorized/road/bus': return {icon:'bus', color:Colors.motor}
-        case 'motorized/rail': return {icon:'train', color:Colors.rail}
-        case 'motorized/rail/tram': return {icon:'train', color:Colors.rail}
-        case 'motorized/rail/train': return {icon:'train', color:Colors.rail}
-        case 'motorized/rail/metro': return {icon:'train', color:Colors.rail}
-        case 'motorized/air/plane': return {icon:'plane', color:Colors.plane}
+        case 'null': return {icon: 'alert', color: Colors.motor, fetch: false}
+        case 'unknown': return {icon:'help', color:Colors.motor, fetch: false}
+        case 'stationary': return {icon:'bed', color:Colors.nonMotor, fetch: false}
+        case 'non-motorized': return {icon:'walk',color:Colors.nonMotor, fetch: false}
+        case 'non-motorized/bicycle': return {icon:'bicycle', color:Colors.nonMotor, fetch: false}
+        case 'non-motorized/pedestrian/walk': return {icon:'walk', color:Colors.nonMotor, fetch: false}
+        case 'non-motorized/pedestrian/run': return {icon:'walk', color:Colors.nonMotor, fetch: false}
+        case 'motorized': return {icon:'car', color:Colors.motor, fetch: false}
+        case 'motorized/road': return {icon:'car', color:Colors.motor, fetch: false}
+        case 'motorized/road/car': return {icon:'car', color:Colors.motor, fetch: false}
+        case 'motorized/road/bus': return {icon:'bus', color:Colors.motor, fetch: true}
+        case 'motorized/rail': return {icon:'train', color:Colors.rail, fetch: false}
+        case 'motorized/rail/tram': return {icon:'train', color:Colors.rail,fetch: true}
+        case 'motorized/rail/train': return {icon:'train', color:Colors.rail, fetch: false}
+        case 'motorized/rail/metro': return {icon:'train', color:Colors.rail, fetch: true}
+        case 'motorized/air/plane': return {icon:'plane', color:Colors.plane, fetch: false}
     }
 }
 

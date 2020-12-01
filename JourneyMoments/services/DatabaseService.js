@@ -12,6 +12,7 @@ const COMMENT_ROUTE = "/Comment/"
 const TRAVEL_CHAIN_ID_ROUTE = "/Travelchain"
 const TRAVEL_CHAIN_ROUTE = "/Travelchain/"
 const RATE_ROUTE = "/Rating/"
+const TRANSPORT_ROUTE = "/DigiTransit/"
 
 // Get all = "/"
 // Get single = "/id"
@@ -217,6 +218,15 @@ const dbTravelChainDateGET = async (start, end) => {
         .once("value")
 }
 
+// Get transport number with origin and destination
+const dbDigiTransitGET = async (id) => {
+    return await database()
+        .ref(TRANSPORT_ROUTE)
+        .orderByChild("id")
+        .equalTo(id)
+        .once("value")
+}
+
 export default {
     dbUserGET,
     dbUserINSERT,
@@ -241,4 +251,5 @@ export default {
     dbUserTravelChainGET,
     dbTravelChainDateGET,
     dbGetLatestTrip,
+    dbDigiTransitGET,
 }

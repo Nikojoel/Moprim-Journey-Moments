@@ -1,22 +1,49 @@
-import React from "react";
-import { FlatList, StyleSheet, Image } from "react-native";
-import { Container, View, ListItem, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right } from 'native-base';
+import React, {useEffect, useState} from "react";
+import {StyleSheet, Image} from "react-native";
+import {View, Text, Icon} from 'native-base';
 import Helper from "../helpers/Helper";
 import Colors from "../values/Colors";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import {TouchableOpacity} from "react-native-gesture-handler";
+import DatabaseService from "../services/DatabaseService";
 
 const HomeFeedItem = ({ item, navigation }) => {
-    
-    const { icon, color } = Helper.transportIcon(item.activity)
+    const transitId = item.userId.toString() + item.timestampStart.toString() + item.id.toString()
+    const { icon, color, fetch} = Helper.transportIcon(item.activity)
     const time = Helper.unixToTime(parseInt(item.timestampStart))
     const endTime = Helper.unixToTime(parseInt(item.timestampEnd))
     const arr = Helper.unixToSimpleDate(item.timestampStart).split("/")
     const date = `${arr[1]}.${arr[0]}.${arr[2]}`
+    const co2 = Math.round(parseInt(item.co2))
+    const [digiTransit, setDigiTransit] = useState(null)
+
+    const iterateData = (obj) => {
+        if (obj === undefined) return undefined
+        if (obj === null) return null
+        const array = []
+        const keys = Object.values(obj)[0].childKeys
+        keys.forEach(key => {
+            array.push(Object.values(obj)[0].value[key])
+        })
+        return array[0]
+    }
+    useEffect(() => {
+        if (fetch) {
+            const getTransportNumber = async (id) => {
+                const result = await DatabaseService.dbDigiTransitGET(id)
+                const iterate = iterateData(result)
+                setDigiTransit(iterate)
+            }
+            getTransportNumber(transitId)
+        }
+    }, [])
 
     return (
         <View noBorder style={container(color)}>
-            <TouchableOpacity onPress={() => navigation.navigate("Single", { item })}>
+            <TouchableOpacity onPress={() => navigation.navigate("Single", {item, digiTransit})}>
                 <View style={{ flexDirection: 'row' }}>
+                    {digiTransit && <>
+                        <Text style={{marginTop: 15}}>{digiTransit.transportId}</Text>
+                    </>}
                     <Icon name={icon} style={styles.mainIcon} />
                     <View style={{ flexDirection: 'column', marginRight: 10, justifyContent: 'center'}}>
                     {item.user.photoURL !== undefined ?
@@ -26,12 +53,15 @@ const HomeFeedItem = ({ item, navigation }) => {
                 </View>
                 <Text>{date}</Text>
                 <Text>{time} - {endTime}</Text>
-                <Text note>{item.distance}m</Text>
-                {item.co2 !== 0 && <>
-                    <Text note>{Math.round(item.co2)} grams of CO2</Text>
+                {digiTransit && <>
+                    <Text>{digiTransit.from} - {digiTransit.to}</Text>
+                </>}
+                <Text style={styles.noteText}>{item.distance}m</Text>
+                {co2 !== 0 && <>
+                    <Text style={styles.noteText}>{co2} grams of CO2</Text>
                 </>}
                 {item.co2 === 0 && <>
-                    <Text note>-</Text>
+                    <Text style={styles.noteText}>-</Text>
                 </>}
             </TouchableOpacity>
         </View>
@@ -49,6 +79,10 @@ const container = (color) => {
 }
 
 const styles = StyleSheet.create({
+    noteText: {
+        fontSize: 14,
+        color: Colors.note
+    },
     container: {
         backgroundColor: Colors.plane,
         flexDirection: 'column',
@@ -77,7 +111,6 @@ const styles = StyleSheet.create({
         
     }
 
-});
-
+})
 
 export default HomeFeedItem

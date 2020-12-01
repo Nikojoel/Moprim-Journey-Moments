@@ -6,7 +6,7 @@ const Colors = {
   white: '#ffffff',
   nonMotor: '#90EE90',
   motor: '#ffcccb',
-  rail: '#b19cd9',
+  rail: '#53d5ae',
   plane: '#add8e6',
   polyline: '#add8e6',
   greenRating: '#70ff70',
@@ -16,6 +16,7 @@ const Colors = {
   regPic: 'rgba(96,125,119,0.95)',
   backgroundGrayOp: '#ffe8d8',
   placeHolderColor: '#fefffd',
+  note: '#ffffff'
 }
 
 module.exports = Colors
