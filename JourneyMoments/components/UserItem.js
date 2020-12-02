@@ -15,10 +15,6 @@ const UserItem = ({data}) => {
                             <Text style={styles.text}>{data.username}</Text>
                         </CardItem>
                         <CardItem style={styles.card}>
-                            <Icon family={'FontAwesome'} name={'mail'} color={'#000000'} size={30}/>
-                            <Text style={styles.text}>{data.email}</Text>
-                        </CardItem>
-                        <CardItem style={styles.card}>
                             <Icon family={'FontAwesome'} name={'star'} color={'#000000'} size={30}/>
                             <Text style={styles.text}>{data.rating} annotations</Text>
                         </CardItem>
@@ -36,8 +32,8 @@ const styles = StyleSheet.create({
         display: "flex",
     },
     image: {
-        width: 130,
-        height: 130
+        width: 100,
+        height: 100
     },
     text: {
         fontSize: 16,

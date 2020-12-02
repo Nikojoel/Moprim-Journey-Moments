@@ -14,6 +14,7 @@ const HomeFeedItem = ({ item, navigation }) => {
     const arr = Helper.unixToSimpleDate(item.timestampStart).split("/")
     const date = `${arr[1]}.${arr[0]}.${arr[2]}`
     const co2 = Math.round(parseInt(item.co2))
+    const rating = Helper.ratingColor(item.user.rating)
     const [digiTransit, setDigiTransit] = useState(null)
 
     const iterateData = (obj) => {
@@ -52,8 +53,14 @@ const HomeFeedItem = ({ item, navigation }) => {
                     </>}
                     <Icon name={icon} style={styles.mainIcon} />
                     <View style={{ flexDirection: 'column', marginRight: 10, justifyContent: 'center'}}>
-                    {item.user.photoURL !== undefined ?
-                        <Image source={{ uri: item.user.photoURL }} style={styles.profile} /> : <Icon name="person-outline" style={styles.profile} />}
+                        <Image source={{ uri: item.user.photoURL }} style={{
+                            width: 50,
+                            height: 50,
+                            alignSelf: 'flex-end',
+                            borderRadius: 25,
+                            borderWidth: 2,
+                            borderColor: rating
+                        }} />
                     <Text style={{fontSize: 12, alignSelf: 'center', marginTop: 5}}>{item.user.username}</Text>
                     </View>
                 </View>
@@ -114,7 +121,6 @@ const styles = StyleSheet.create({
         height: 50,
         alignSelf: 'flex-end',
         borderRadius: 25
-        
     }
 
 })

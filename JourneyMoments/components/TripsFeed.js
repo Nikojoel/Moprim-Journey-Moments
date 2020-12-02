@@ -13,6 +13,7 @@ const TripsFeed = ({data, extra, navigation, refresh, onRefresh}) => {
             }
             keyExtractor={data.key}
             extraData={extra}
+            numColumns={2}
             refreshControl={
                 <RefreshControl refreshing={refresh} onRefresh={onRefresh}/>
             }

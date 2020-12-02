@@ -89,7 +89,7 @@ const Trips = ({navigation}) => {
     }, [refreshing]);
 
     return (
-        <SafeAreaView style={{flex: 1}}>
+        <View style={{flex: 1}}>
             {listLoading &&
             <ProgressBar/>
             }
@@ -98,8 +98,10 @@ const Trips = ({navigation}) => {
                     <Image style={styles.image} source={require('../images/noTrips.png')}/>
                 </View>
             </>}
+            <SafeAreaView style={{flex: 1}}>
             <TripsFeed data={data} extra={data} navigation={navigation} refresh={refreshing} onRefresh={onRefresh} />
-        </SafeAreaView>
+            </SafeAreaView>
+        </View>
     )
 }
 

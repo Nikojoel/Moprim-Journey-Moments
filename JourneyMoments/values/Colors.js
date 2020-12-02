@@ -15,9 +15,9 @@ const Colors = {
   loginButtons: 'rgba(251,253,255,0.88)',
   regPic: 'rgba(96,125,119,0.95)',
   backgroundGrayOp: '#ffe8d8',
-  placeHolderColor: '#fefffd',
+  placeHolderColor: '#091843',
   note: '#ffffff',
-  commonBackground: 'rgb(255,252,236)',
+  commonBackground: '#ffe5d9',
   headerText: '#ffffff',
   headerBackground: '#ffffff',
 }

@@ -9,9 +9,8 @@ const InnerChainItem = ({data, navigation}) => {
     const ids = data.moprim
 
     return (
-        <Content>
+        <View style={styles.kebab}>
             <Body style={styles.container}>
-                <Card style={styles.container2}>
                     <TouchableOpacity onPress={() => navigation.navigate("ChainList", {ids})}>
                         <CardItem style={styles.card}>
                             <Icon family={'FontAwesome'} name={'calendar'} color={'#000000'} size={30}/>
@@ -19,42 +18,37 @@ const InnerChainItem = ({data, navigation}) => {
                         </CardItem>
                         <CardItem style={styles.card}>
                             <Icon family={'FontAwesome'} name={'location'} color={'#000000'} size={30}/>
-                            <H2 style={styles.textCenter}>Total
-                                distance: {(data.totalDistance / 1000).toFixed(1) + "km"}</H2>
+                            <H2 style={styles.textCenter}>Distance: {(data.totalDistance / 1000).toFixed(1) + "km"}</H2>
                         </CardItem>
                         <CardItem style={styles.card}>
                             <Icon family={'FontAwesome'} name={'cloud'} color={'#000000'} size={30}/>
-                            <H2 style={styles.textCenter}>{Math.round(data.totalCo2) + " grams of CO2"}</H2>
+                            <H2 style={styles.textCenter}>{Math.round(data.totalCo2) + "g of CO2"}</H2>
                         </CardItem>
                     </TouchableOpacity>
-                </Card>
             </Body>
-        </Content>
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        width: '95%',
-        height: '100%',
-        justifyContent: 'center',
-        marginTop: 10,
-        marginBottom: 10,
-
-    },
-    container2: {
-        width: '95%',
-        height: '100%',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: Colors.commonBackground
+        flexDirection: 'row',
+        flex: 1,
+        justifyContent: 'center'
     },
     textCenter: {
         textAlign: 'center',
-        fontSize: 18
+        fontSize: 16
     },
     card: {
-        backgroundColor: Colors.commonBackground
+        backgroundColor: Colors.commonBackground,
+        flex: 1,
+    },
+    kebab: {
+        flexDirection: 'column',
+        margin: 3,
+        flex: 1,
+        backgroundColor: Colors.commonBackground,
     }
 })
 
