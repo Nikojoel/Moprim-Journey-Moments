@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {Text,BackHandler, Image, TextInput, StyleSheet, Alert, Dimensions, TouchableOpacity} from 'react-native'
+import {Text,BackHandler, Image, TextInput, StyleSheet, Alert, Dimensions, TouchableOpacity, View} from 'react-native'
 import LoginService from "../services/LoginService"
 import DatabaseService from "../services/DatabaseService"
 import {ProgressBar} from '@react-native-community/progress-bar-android'
@@ -7,7 +7,6 @@ import Helper from "../helpers/Helper"
 import DownloadService from "../services/DownloadService"
 import RNBottomActionSheet from "react-native-bottom-action-sheet"
 import ImagePicker from "react-native-image-picker"
-import {Icon as Icons} from "react-native-vector-icons/FontAwesome"
 import {Container, Icon,Body, CardItem, Card, Content, H2} from "native-base"
 import Colors from "../values/Colors";
 
@@ -154,7 +153,7 @@ const Profile = ({navigation}) => {
         return (
             <Container>
                 <Content>
-                    <Card>
+                    <View style={styles.card}>
                         <TextInput
                             maxLength={15}
                             placeholder="New username"
@@ -167,7 +166,6 @@ const Profile = ({navigation}) => {
                         </TouchableOpacity>
                         <Body>
                             {image && <>
-                                <H2>Selected image</H2>
                                 <CardItem>
                                     <Image style={styles.selectedPic} source={{uri: image}}/>
                                 </CardItem>
@@ -179,7 +177,7 @@ const Profile = ({navigation}) => {
                         <TouchableOpacity style={styles.btnAccent} onPress={() => setToggle(false)}>
                             <Text style={styles.text}>BACK</Text>
                         </TouchableOpacity>
-                    </Card>
+                    </View>
                 </Content>
             </Container>
         )
@@ -188,25 +186,25 @@ const Profile = ({navigation}) => {
     return (
         <Container>
             <Content>
-                <Card>
-                    <CardItem bordered>
+                <View style={styles.card}>
+                    <CardItem>
+                        <Body>
+                            <Image source={{uri: data.photoURL}}
+                                style={styles.picture}
+                            />
+                        </Body>
+                    </CardItem>
+                    <CardItem>
                         <Icon name='ios-person' style={styles.profileIcon}/>
                         <Text style={styles.info}>Username: {data.username}</Text>
                     </CardItem>
                     <CardItem>
-                        <Body>
-                            <Image
-                                style={styles.profilePic}
-                                source={{uri: data.photoURL}}
-                            />
-                        </Body>
-                    </CardItem>
-                    <CardItem bordered>
-                        <Icon name='ios-document' style={styles.profileIcon}/>
-                        <Body>
+                        <Icon family={'FontAwesome'} name={'mail'} color={'#000000'} size={30}/>
                             <Text style={styles.info}>Email: {data.email}</Text>
-                            <Text style={styles.info}>Rating: {data.rating}</Text>
-                        </Body>
+                    </CardItem>
+                    <CardItem>
+                        <Icon family={'FontAwesome'} name={'star'} color={'#000000'} size={30}/>
+                        <Text style={styles.info}>Annotations: {data.rating}</Text>
                     </CardItem>
                     <TouchableOpacity style={styles.btn} onPress={() => setToggle(true)}>
                         <Text style={styles.text}>SETTINGS</Text>
@@ -217,12 +215,22 @@ const Profile = ({navigation}) => {
                     }}>
                         <Text style={styles.text}>LOGOUT</Text>
                     </TouchableOpacity>
-                </Card>
+            </View>
             </Content>
         </Container>
     )
 }
 const styles = StyleSheet.create({
+    picture: {
+        width: windowWidth * 0.8,
+        borderRadius: 180,
+        height: windowHeight * 0.4,
+        alignSelf: 'center',
+    },
+    card: {
+        alignItems: 'center',
+        height: '100%'
+    },
     btn: {
         width: '80%',
         backgroundColor: Colors.primaryColor,
@@ -232,7 +240,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginTop: 20,
         marginBottom: 10,
-        marginLeft: windowWidth * 0.1
     },
     btnAction: {
         width: '80%',
@@ -243,7 +250,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginTop: 20,
         marginBottom: 10,
-        marginLeft: windowWidth * 0.1
     },
     btnAccent: {
         width: '80%',
@@ -254,18 +260,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginTop: 20,
         marginBottom: 10,
-        marginLeft: windowWidth * 0.1
     },
     text: {
         color: Colors.white,
     },
-    profilePic: {
-        width: '100%',
-        height: windowHeight * 0.5,
-    },
     selectedPic: {
         width: "80%",
-        height: windowHeight * 0.5,
+        height: windowHeight * 0.4,
+        borderRadius: 10
     },
     submitBtn: {
         backgroundColor: "rgba(32,222,36,0.76)"
@@ -274,7 +276,7 @@ const styles = StyleSheet.create({
         fontSize: 30,
     },
     info: {
-        fontSize: 16,
+        fontSize: 18,
     },
     myPostsIcon: {
         marginRight: 10,
@@ -292,10 +294,11 @@ const styles = StyleSheet.create({
         fontSize: 30,
     },
     input: {
-        width: "100%",
+        width: "80%",
         borderRadius: 25,
         borderStyle: "solid",
         borderWidth: 1,
+        marginTop: 20,
     },
     slider: {
         width: 300,
