@@ -3,7 +3,7 @@ import {SafeAreaView} from "react-native-safe-area-context"
 import {ProgressBar} from "@react-native-community/progress-bar-android"
 import LoginService from "../services/LoginService"
 import DatabaseService from "../services/DatabaseService"
-import {BackHandler, Image, StyleSheet, View} from "react-native"
+import {BackHandler, Image, StyleSheet, View, TouchableOpacity} from "react-native"
 import TripsFeed from "../components/TripsFeed"
 import Colors from "../values/Colors";
 
@@ -80,11 +80,11 @@ const Trips = ({navigation}) => {
 
     const loadMytrips = async () => {
         const month = selectDays(30)
-                await getTravelChain(currentDateWithId, month)
+        await getTravelChain(currentDateWithId, month)
     }
 
     const onRefresh = React.useCallback(async () => {
-        setRefreshing(true);
+        setRefreshing(true)
         loadMytrips()
         setRefreshing(false) 
     }, [refreshing]);
@@ -103,8 +103,10 @@ const Trips = ({navigation}) => {
             }}/>
             }
             {data.length === 0 && listLoading === false && <>
-                <View style={styles.imageContainer}>
-                    <Image style={styles.image} source={require('../images/noTrips.png')}/>
+                <View style={styles.img}>
+                    <TouchableOpacity onPress={() => onRefresh()}>
+                        <Image style={styles.image} source={require('../images/noTrips2.png')}/>
+                    </TouchableOpacity>
                 </View>
             </>}
             <SafeAreaView style={{flex: 1}}>
@@ -115,16 +117,16 @@ const Trips = ({navigation}) => {
 }
 
 const styles = StyleSheet.create({
-    imageContainer: {
-        width: '57%',
-        height: '30%',
-        marginLeft: 'auto',
-        marginRight: 'auto',
-        marginTop: '45%'
+    img: {
+        flex: 1,
+        marginTop: 150,
+        alignItems: 'center',
+        justifyContent: 'center',
+        alignSelf: 'center',
     },
     image: {
-        width: '100%',
-        height: '100%'
+        width: 260,
+        height: 250
     }
 })
 

@@ -1,6 +1,5 @@
 import React from "react"
-import { FlatList, SafeAreaView, StatusBar, TouchableOpacity, RefreshControl } from "react-native"
-import { Text, ListItem, Left, Body, Icon, Right, Title } from "native-base"
+import { FlatList, SafeAreaView, RefreshControl } from "react-native"
 import HomeFeedItem from "./HomeFeedItem"
 import Helper from "../helpers/Helper";
 
@@ -8,7 +7,11 @@ const HomeFeed = ({data, extra, navigation, refresh, onRefresh}) => {
     return (
         <SafeAreaView>
             <FlatList
-                data={data}
+                data={data.sort((a, b) => {
+                    if (a && b) {
+                        return a.timestampStart < b.timestampStart ? 1 : -1
+                    }
+                })}
                 renderItem={({item}) =>
                     <HomeFeedItem item={item} navigation={navigation}/>
                 }
