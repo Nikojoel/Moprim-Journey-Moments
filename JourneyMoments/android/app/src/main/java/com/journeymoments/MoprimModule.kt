@@ -293,7 +293,7 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
         val notificationBuilder: NotificationCompat.Builder = NotificationCompat.Builder(context, CHANNEL_ID)
         notificationBuilder.setWhen(System.currentTimeMillis())
         notificationBuilder.setSmallIcon(android.R.drawable.ic_media_play)
-        notificationBuilder.setContentTitle("Gathing journey data")
+        notificationBuilder.setContentTitle("Gathering journey data")
         notificationBuilder.setContentText(notificationText)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             notificationBuilder.priority = NotificationManager.IMPORTANCE_HIGH

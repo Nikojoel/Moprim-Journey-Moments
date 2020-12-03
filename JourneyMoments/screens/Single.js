@@ -292,7 +292,8 @@ const styles = StyleSheet.create({
     map: {
         width: '100%',
         height: 300,
-        marginBottom: 40,
+        marginBottom: 10,
+        marginTop: 20,
     },
     btnFull: {
         width: '80%',

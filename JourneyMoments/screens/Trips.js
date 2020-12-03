@@ -5,6 +5,7 @@ import LoginService from "../services/LoginService"
 import DatabaseService from "../services/DatabaseService"
 import {BackHandler, Image, StyleSheet, View} from "react-native"
 import TripsFeed from "../components/TripsFeed"
+import Colors from "../values/Colors";
 
 const Trips = ({navigation}) => {
     const [listLoading, setList] = useState(false)
@@ -91,7 +92,15 @@ const Trips = ({navigation}) => {
     return (
         <View style={{flex: 1}}>
             {listLoading &&
-            <ProgressBar/>
+            <ProgressBar style={{
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+                alignSelf: 'center',
+                width: 100,
+                height: 100,
+                color: Colors.primaryColor,
+            }}/>
             }
             {data.length === 0 && listLoading === false && <>
                 <View style={styles.imageContainer}>
