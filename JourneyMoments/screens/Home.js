@@ -8,6 +8,7 @@ import LoginService from '../services/LoginService'
 import { View, Text, H2 } from 'native-base'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Helper from "../helpers/Helper";
+import Colors from "../values/Colors";
 
 
 const Home = ({ navigation }) => {
@@ -90,7 +91,17 @@ const Home = ({ navigation }) => {
             })
     }, [])
 
-    if (loading) return <ProgressBar />
+    if (loading) {
+        return <ProgressBar style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            alignSelf: 'center',
+            width: 100,
+            height: 100,
+            color: Colors.primaryColor,
+        }}/>
+    }
 
     return (
         <View style={{ flex: 1 }}>

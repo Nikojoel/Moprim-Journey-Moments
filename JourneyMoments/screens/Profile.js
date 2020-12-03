@@ -57,6 +57,7 @@ const Profile = ({navigation}) => {
         await DatabaseService.dbUserProfileUPDATE(id, data)
         setToggle(false)
         setImage(null)
+        setLoading(true)
         getProfile(id)
     }
 
@@ -146,7 +147,15 @@ const Profile = ({navigation}) => {
     }
 
     if (loading) {
-        return <ProgressBar/>
+        return <ProgressBar style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            alignSelf: 'center',
+            width: 100,
+            height: 100,
+            color: Colors.primaryColor,
+        }}/>
     }
 
     if (toggle) {

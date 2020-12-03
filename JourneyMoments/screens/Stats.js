@@ -3,6 +3,7 @@ import {ScrollView} from 'react-native'
 import UserItem from "../components/UserItem"
 import DatabaseService from "../services/DatabaseService"
 import {ProgressBar} from '@react-native-community/progress-bar-android'
+import Colors from "../values/Colors";
 
 const Stats = () => {
     const [data, setData] = useState([])
@@ -30,7 +31,17 @@ const Stats = () => {
         getusers()
     }, [])
 
-    if (loading) return <ProgressBar/>
+    if (loading) {
+        return <ProgressBar style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            alignSelf: 'center',
+            width: 100,
+            height: 100,
+            color: Colors.primaryColor,
+        }}/>
+    }
 
     return (
         <ScrollView style={{flex: 1}}>

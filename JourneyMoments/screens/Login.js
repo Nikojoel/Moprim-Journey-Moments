@@ -205,7 +205,17 @@ const Login = ({navigation}) => {
         return email.length !== 0 && pwd.length !== 0
     }
 
-    if (loading) return <ProgressBar/>
+    if (loading) {
+        return <ProgressBar style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            alignSelf: 'center',
+            width: 100,
+            height: 100,
+            color: Colors.primaryColor,
+        }}/>
+    }
 
     return (
         <View style={styles.loginScreen}>
@@ -256,7 +266,9 @@ const Login = ({navigation}) => {
                     <Text style={styles.logo2}>Register</Text>
                     <Notification message={errorMessage}/>
                     {validEmailReg ? true :
-                        <Text style={styles.regWarn}>Email must be valid</Text>
+                        <View style={styles.errorContainer}>
+                            <Text style={styles.regWarn}>Email must be valid</Text>
+                        </View>
                     }
                     <View style={styles.inputView}>
                         <TextInput
@@ -276,7 +288,9 @@ const Login = ({navigation}) => {
                         />
                     </View>
                     {validUsername ? true :
-                        <Text style={styles.regWarn}>Username must be 4 characters long.</Text>
+                        <View style={styles.errorContainer}>
+                            <Text style={styles.regWarn}>Username must be 4-10 characters long</Text>
+                        </View>
                     }
                     <View style={styles.inputView}>
                         <TextInput
@@ -297,7 +311,9 @@ const Login = ({navigation}) => {
                         />
                     </View>
                     {validPassword ? true :
-                        <Text style={styles.regWarn}>Password must be 6 characters long.</Text>
+                        <View style={styles.errorContainer}>
+                            <Text style={styles.regWarn}>Password must be 6-15 characters long</Text>
+                        </View>
                     }
                     <View style={styles.inputView}>
                         <TextInput
@@ -362,6 +378,13 @@ const Login = ({navigation}) => {
 }
 
 const styles = StyleSheet.create({
+    errorContainer: {
+        borderColor: "red",
+        backgroundColor: "red",
+        borderRadius: 15,
+        borderWidth: 1,
+        marginBottom: 5
+    },
     container: {
         width: '100%',
         height: '100%',
@@ -414,7 +437,9 @@ const styles = StyleSheet.create({
         color: 'black',
     },
     regWarn: {
-        color: 'red',
+        color: 'white',
+        fontSize: 16,
+        margin: 5,
     },
     pictureBtn: {
         width: '60%',
