@@ -19,7 +19,7 @@ const Stars = ({ handleStars, rating, owner }) => {
     },[rating])
 
     return (
-        <Content>
+        <Content style={styles.kebab}>
             <View style={styles.row}>
                 <Text style={styles.text}>Speed</Text>
                 <StarRating
@@ -64,6 +64,10 @@ const Stars = ({ handleStars, rating, owner }) => {
 }
 
 const styles = StyleSheet.create({
+    kebab:{
+        marginLeft: 10,
+        marginBottom: 10,
+    },
     row: {
         flex: 1,
         flexDirection: 'column',

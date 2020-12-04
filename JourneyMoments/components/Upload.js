@@ -138,12 +138,14 @@ const Upload = ({moprimId, handleUpload}) => {
 
 const styles = StyleSheet.create({
     btn: {
-        width: '100%',
+        width: '80%',
         backgroundColor: Colors.secondaryColor,
         borderRadius: 25,
         height: 50,
         alignItems: 'center',
         justifyContent: 'center',
+        alignSelf: 'center',
+        marginTop: 10
     },
 })
 
