@@ -1,6 +1,7 @@
 import React from "react"
 import {FlatList, RefreshControl, SafeAreaView} from "react-native"
 import InnerChainItem from "../components/InnerChainItem"
+import Helper from "../helpers/Helper"
 
 const TripsFeed = ({data, extra, navigation, refresh, onRefresh}) => {
 
@@ -11,7 +12,7 @@ const TripsFeed = ({data, extra, navigation, refresh, onRefresh}) => {
             renderItem={({item}) =>
                 <InnerChainItem data={item} navigation={navigation}/>
             }
-            keyExtractor={data.key}
+            keyExtractor={item => Helper.generateUUID()}
             extraData={extra}
             numColumns={2}
             refreshControl={

@@ -3,8 +3,8 @@ import MapboxGL from "@react-native-mapbox-gl/maps"
 import {View, StyleSheet} from "react-native"
 import API_KEY from '../Keys'
 import Helper from "../helpers/Helper"
-import {ProgressBar} from "@react-native-community/progress-bar-android";
-import Colors from "../values/Colors";
+import {ProgressBar} from "@react-native-community/progress-bar-android"
+import Colors from "../values/Colors"
 
 MapboxGL.setAccessToken(API_KEY)
 MapboxGL.setConnected(true)
@@ -46,7 +46,7 @@ const ChainMap = ({ data, trips }) => {
     trips.forEach(it => {
         tripStyles.push(Helper.transportIcon(it.activity))
     })
-    console.log(initial)
+
     return (
         <View style={styles.page}>
             <View style={styles.container}>

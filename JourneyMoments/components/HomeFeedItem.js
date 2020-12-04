@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from "react";
-import {StyleSheet, Image} from "react-native";
-import {View, Text, Icon} from 'native-base';
-import Helper from "../helpers/Helper";
-import Colors from "../values/Colors";
-import {TouchableOpacity} from "react-native-gesture-handler";
-import DatabaseService from "../services/DatabaseService";
+import React, {useEffect, useState} from "react"
+import {StyleSheet, Image} from "react-native"
+import {View, Text, Icon} from 'native-base'
+import Helper from "../helpers/Helper"
+import Colors from "../values/Colors"
+import {TouchableOpacity} from "react-native-gesture-handler"
+import DatabaseService from "../services/DatabaseService"
 
 const HomeFeedItem = ({ item, navigation }) => {
     const transitId = item.userId.toString() + item.timestampStart.toString() + item.id.toString()
