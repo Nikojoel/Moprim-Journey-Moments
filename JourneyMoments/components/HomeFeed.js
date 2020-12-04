@@ -7,15 +7,10 @@ const HomeFeed = ({data, extra, navigation, refresh, onRefresh}) => {
     return (
         <SafeAreaView>
             <FlatList
-                data={data.sort((a, b) => {
-                    if (a && b) {
-                        return a.timestampStart < b.timestampStart ? 1 : -1
-                    }
-                })}
+                data={data.sort((a, b) => a.timestampStart < b.timestampStart ? 1 : -1)}
                 renderItem={({item}) =>
                     <HomeFeedItem item={item} navigation={navigation}/>
                 }
-
                 keyExtractor={item => Helper.generateUUID()}
                 extraData={extra}
                 numColumns={2}

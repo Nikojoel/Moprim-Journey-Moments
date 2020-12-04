@@ -7,9 +7,8 @@ import { ProgressBar } from "@react-native-community/progress-bar-android"
 import LoginService from '../services/LoginService'
 import { View, Text, H2 } from 'native-base'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import Helper from "../helpers/Helper";
-import Colors from "../values/Colors";
-
+import Helper from "../helpers/Helper"
+import Colors from "../values/Colors"
 
 const Home = ({ navigation }) => {
     const [commentedTrips, setCommentedTrips] = useState([])
@@ -28,7 +27,8 @@ const Home = ({ navigation }) => {
             commentsArray.forEach(it => {
                 morpimID.add(it.moprimId)
             })
-            Promise.all([...morpimID].map((id) => { return getMorprimData(id) })).then((values) => {
+            Promise.all([...morpimID].map((id) => { return getMorprimData(id)})).then((values) => {
+                values.pop()
                 setCommentedTrips(values)
             })
             setLoading(false)

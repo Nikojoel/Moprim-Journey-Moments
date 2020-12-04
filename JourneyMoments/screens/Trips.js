@@ -5,7 +5,7 @@ import LoginService from "../services/LoginService"
 import DatabaseService from "../services/DatabaseService"
 import {BackHandler, Image, StyleSheet, View, TouchableOpacity} from "react-native"
 import TripsFeed from "../components/TripsFeed"
-import Colors from "../values/Colors";
+import Colors from "../values/Colors"
 
 const Trips = ({navigation}) => {
     const [listLoading, setList] = useState(false)
