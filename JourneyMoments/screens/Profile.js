@@ -231,9 +231,9 @@ const Profile = ({navigation}) => {
 }
 const styles = StyleSheet.create({
     picture: {
-        width: windowWidth * 0.8,
-        borderRadius: 180,
-        height: windowHeight * 0.4,
+        width: windowWidth * 0.7,
+        borderRadius: 140,
+        height: windowHeight * 0.35,
         alignSelf: 'center',
     },
     card: {
@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: 20,
-        marginBottom: 10,
+        marginBottom: 10
     },
     text: {
         color: Colors.white,

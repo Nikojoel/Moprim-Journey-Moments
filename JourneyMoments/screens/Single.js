@@ -192,13 +192,15 @@ const Single = ({route, navigation}) => {
                             borderColor: userRating,
                             borderWidth: 2,
                         }}/>
-                        <View style={{flexDirection: 'column', marginTop: 20}}>
-                            <CardItem>
-                                <H3 style={styles.user}>{user.username}</H3>
-                            </CardItem>
-                        </View>
+                        <CardItem>
+                            <H3>{user.username}</H3>
+                        </CardItem>
+                        <Right>
+                            <Icon name={icon} style={{fontSize: 60, color: color, marginRight: 20}}/>
+                        </Right>
                     </Card>
                 </View>
+                <Card>
                 {userId === id && <>
                     <Upload moprimId={userId + moprimId} handleUpload={handleUpload}/>
                 </>}
@@ -239,9 +241,9 @@ const Single = ({route, navigation}) => {
                 </>}
                 <Body style={{flexDirection: 'row', flex: 1, marginTop: 20}}>
                     <Stars handleStars={handleStars} rating={rating} owner={userId === id}/>
-                    <Right>
+                    <Right style={{marginRight: 10}}>
                         <View style={{flexDirection: 'row'}}>
-                            <Icon name={icon} style={{marginLeft: 20, fontSize: 80, color: color}}/>
+
                         </View>
                         <Text>Time: {startTime} - {endTime}</Text>
                         <Text>Total time: {timeSpent}</Text>
@@ -249,14 +251,15 @@ const Single = ({route, navigation}) => {
                         <Text>Distance: {data.distance}m</Text>
                         <Text>Emissions: {Math.round(data.co2)}g</Text>
                         {digiTransit && <>
-                            <Text>Number: {digiTransit.transportId}</Text>
                             <Text>From: {digiTransit.from}</Text>
                             <Text>To: {digiTransit.to}</Text>
+                            <Text>Line: {digiTransit.transportId}</Text>
                         </>}
                     </Right>
                 </Body>
+                </Card>
                 <View style={{flex: 1, paddingTop: 20,}}>
-                    <View style={{height: 1, backgroundColor: 'gray', marginBottom: 10}}/>
+                    <View style={{height: 0, backgroundColor: 'gray', marginBottom: 10}}/>
                     {comments
                         .map((it) => <CommentItem data={it} key={Helper.generateUUID()}/>)
                     }
@@ -306,13 +309,14 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     btn: {
-        width: '100%',
+        width: '80%',
         backgroundColor: Colors.primaryColor,
         borderRadius: 25,
         height: 50,
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: 20,
+        alignSelf: 'center'
     },
     btnText: {
         fontSize: 14
