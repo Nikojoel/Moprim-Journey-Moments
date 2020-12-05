@@ -16,6 +16,8 @@ const HomeFeedItem = ({ item, navigation }) => {
     const co2 = Math.round(parseInt(item.co2))
     const rating = Helper.ratingColor(item.user.rating)
     const [digiTransit, setDigiTransit] = useState(null)
+    const [loading, setLoading] = useState(true)
+    const [mounted, setMounted] = useState(false)
 
     const iterateData = (obj) => {
         if (obj === undefined) return undefined
@@ -33,16 +35,21 @@ const HomeFeedItem = ({ item, navigation }) => {
             const result = await DatabaseService.dbDigiTransitGET(id)
             const iterate = iterateData(result)
             setDigiTransit(iterate)
+            setLoading(false)
         } catch (e) {
             console.log(e)
         }
     }
 
     useEffect(() => {
-        if (fetch) {
-            getTransportNumber(transitId)
+        setMounted(true)
+        if (fetch && mounted) {
+           getTransportNumber(transitId)
         }
-    }, [])
+        setMounted(false)
+    }, [digiTransit])
+
+    
 
     return (
         <View noBorder style={container(color)}>
