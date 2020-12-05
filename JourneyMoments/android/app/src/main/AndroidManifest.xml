@@ -11,7 +11,7 @@
     <uses-permission-sdk-23 android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <uses-permission android:name="com.google.android.apps.photos.permission.GOOGLE_PHOTOS"/>
+    <uses-permission-sdk-23 android:name="com.google.android.apps.photos.permission.GOOGLE_PHOTOS"/>
 
     <application
       android:name=".MainApplication"
