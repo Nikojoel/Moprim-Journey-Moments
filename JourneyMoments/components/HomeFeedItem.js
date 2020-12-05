@@ -16,7 +16,6 @@ const HomeFeedItem = ({ item, navigation }) => {
     const co2 = Math.round(parseInt(item.co2))
     const rating = Helper.ratingColor(item.user.rating)
     const [digiTransit, setDigiTransit] = useState(null)
-    const [loading, setLoading] = useState(true)
     const [mounted, setMounted] = useState(false)
 
     const iterateData = (obj) => {
