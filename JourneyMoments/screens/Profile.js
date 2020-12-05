@@ -71,6 +71,9 @@ const Profile = ({navigation}) => {
     }
 
     const imageOptions = {
+        maxHeight: 500,
+        maxWidth: 500,
+        quality: 0.8,
         storageOptions: {
             skipBackup: true,
             path: "images"

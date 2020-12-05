@@ -21,6 +21,9 @@ const Upload = ({moprimId, handleUpload}) => {
     }
     const imageOptions = {
         mediaType: 'image',
+        maxHeight: 500,
+        maxWidth: 500,
+        quality: 0.8,
         isImage: true,
     }
 
