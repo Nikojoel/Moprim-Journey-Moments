@@ -39,7 +39,6 @@ import java.time.ZoneId
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-
 class MoprimModule(private val context: ReactApplicationContext) : ReactContextBaseJavaModule() {
     private val CHANNEL_ID = "moprim.channel"
     private var notificationManager: NotificationManager? = null
@@ -67,6 +66,10 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
     }
 
     init {
+
+        /**
+         *  Decode polyline from tmd activity and push it for digistransit api subject for line number
+         * */
         decodePolylineSubject
                 .observeOn(io())
                 .map {
@@ -83,6 +86,9 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                 }
                 .subscribe()
 
+        /**
+         *  Line number from digitransit and push to database if !walk
+         * */
         apolloGraphQlSubject
                 .map {
                     GlobalScope.launch {
@@ -115,16 +121,20 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                 .subscribe()
     }
 
-    @ReactMethod
-    fun show(message: String?) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
-    }
-
+    /**
+     *  React native function for starting moprim sdk.
+     *  Polling with interval for upload and push to database.
+     *
+     * */
     @ReactMethod
     fun start() {
         notificationManager = createNotificationChannel()
         val notification = buildNotification("JourneyMoments is running.")
         TMD.startForeground(context, 112, notification)
+
+        /**
+         * Observable polling with interval
+         * */
         Observable
                 .interval(60, TimeUnit.SECONDS)
                 .observeOn(io())
@@ -136,6 +146,9 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                 }
                 .addTo(unsubOnStop)
 
+        /**
+         * Result from moprim cloud to push for DB
+         * */
         uploadToDbSubject
                 .observeOn(io())
                 .map {
@@ -197,6 +210,9 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                 .addTo(unsubOnStop)
     }
 
+    /**
+     * Stop tmd service
+     * */
     @ReactMethod
     fun stop() {
         TMD.stop(context)
@@ -204,6 +220,10 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
         unsubOnStop.clear()
     }
 
+
+    /**
+     * React function to fetch user stats. Returns promise.
+     * */
     @ReactMethod
     fun getUserStats(day: Int, promise: Promise) {
         Observable
@@ -218,6 +238,11 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                 .addTo(unsubOnStop)
     }
 
+    /**
+     *  Get results from moprim sdk
+     *  @param day Offset of day from current date
+     *  @param promise resolves promise from react side
+     * */
     @ReactMethod
     fun getResults(day: Int, promise: Promise) {
         if (TMD.isInitialized()) {
@@ -232,7 +257,6 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                         if (it != null) {
                             if (it.hasResult()) {
                                 val json = gson.toJson(it.result)
-                                Log.i("XXX", json.isNullOrBlank().toString())
                                 promise.resolve(json)
                             }
                             if (it.hasError()) {
@@ -244,6 +268,9 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
         }
     }
 
+    /**
+     * Manual upload to tmd cloud
+     * */
     @ReactMethod
     fun uploadMoprim() {
         Observable
@@ -255,6 +282,10 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                 .addTo(unsubOnStop)
     }
 
+    /**
+     * Init moprim sdk if not already running
+     * @param id userId
+     * */
     @ReactMethod
     fun initMoprim(id: String) {
         if (!TMD.isInitialized()) {
