@@ -105,17 +105,7 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
                             // handle application errors
                             return@launch
                         }
-
-                        result.plan?.itineraries?.forEach { plan ->
-                            plan?.legs?.forEach { leg ->
-                                if (leg?.mode != Mode.WALK) {
-                                    val id = TMD.getUUID() + it.first.timestampStart + it.first.id.toString()
-                                    db.child("DigiTransit")
-                                            .child(id)
-                                            .setValue(Digitransit(leg?.from?.name.toString(), leg?.to?.name.toString(), leg?.trip?.routeShortName.toString(), id))
-                                }
-                            }
-                        }
+                        uploadLineNumberToDb(result, it.first)
                     }
                 }
                 .subscribe()
@@ -152,18 +142,7 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
         uploadToDbSubject
                 .observeOn(io())
                 .map {
-                    val set = mutableSetOf<Chain>()
-                    for (index in 0..7) {
-                        val convertedDate = convertToDate(LocalDateTime.now().minusDays(index.toLong()))
-                        val data = convertedDate?.let { date -> TmdCloudApi.fetchData(context, date) }
-                        if (data != null && data.result.isNotEmpty()) {
-                            val filtered = data.result.filter { it.activity != "stationary" && it.activity != "null" && it.activity != "unknown" }
-                            if (filtered.isNotEmpty()) {
-                                set.add(Chain(filtered, convertedDate))
-                            }
-                        }
-                    }
-                    set
+                   fetchFromMoprimToChain(3)
                 }
                 .subscribe { set ->
                     if (set.isNotEmpty()) {
@@ -359,5 +338,42 @@ class MoprimModule(private val context: ReactApplicationContext) : ReactContextB
 
     override fun getName(): String {
         return "MoprimBridge"
+    }
+
+    /**
+     * Upload line number to db if exists
+     * @param data result from digitransit
+     * @param activity current tmd activity
+     * */
+    private fun uploadLineNumberToDb(data: GetTransportTypeQuery.Data, activity: TmdActivity) {
+        data.plan?.itineraries?.forEach { plan ->
+            plan?.legs?.forEach { leg ->
+                if (leg?.mode != Mode.WALK) {
+                    val id = TMD.getUUID() + activity.timestampStart + activity.id.toString()
+                    db.child("DigiTransit")
+                            .child(id)
+                            .setValue(Digitransit(leg?.from?.name.toString(), leg?.to?.name.toString(), leg?.trip?.routeShortName.toString(), id))
+                }
+            }
+        }
+    }
+
+    /**
+     *  Fetch data from moprim and converts into set of Chain objects
+     *  @param days number of days to fetch from moprim cloud
+     * */
+    private fun fetchFromMoprimToChain(days: Int) : MutableSet<Chain> {
+        val set = mutableSetOf<Chain>()
+        for (index in 0..days) {
+            val convertedDate = convertToDate(LocalDateTime.now().minusDays(index.toLong()))
+            val data = convertedDate?.let { date -> TmdCloudApi.fetchData(context, date) }
+            if (data != null && data.result.isNotEmpty()) {
+                val filtered = data.result.filter { it.activity != "stationary" && it.activity != "null" && it.activity != "unknown" }
+                if (filtered.isNotEmpty()) {
+                    set.add(Chain(filtered, convertedDate))
+                }
+            }
+        }
+        return set
     }
 }
