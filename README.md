@@ -4,7 +4,7 @@
 
 ### Idea & Description
 
-The idea is to create an application that can be used to annotate public transport methods with pictures, videos and text. Annotations could be related to traveling experience inside the vehicle or feelings based outside the vehicle. The transport methods are identified with Moprim transport mode detection [TMD SDK](https://www.moprim.com/products/). The SDK AI data engine locally discovers the transport mode from raw sensor data and sends it to the cloud for fusion and processing. 
+The idea is to create a React-Native application that can be used to annotate public transport methods with pictures, videos and text. Annotations could be related to traveling experience inside the vehicle or feelings based outside the vehicle. The transport methods are identified with Moprim transport mode detection [(TMD SDK)](https://www.moprim.com/products/). The SDK AI data engine locally discovers the transport mode from raw smartphone sensor data and sends it to the cloud for fusion and processing. After the processing is done within the cloud, the data is ready to be queried.
 #### The discovered data contains
 * CO2
 * Transport mode
@@ -18,11 +18,13 @@ The idea is to create an application that can be used to annotate public transpo
 ### Feature specification
 * [Firebase](https://firebase.google.com/)
   * [Realtime Database](https://firebase.google.com/docs/database)
-  * [Cloud storage](https://firebase.google.com/docs/storage)
+  * [Cloud Storage](https://firebase.google.com/docs/storage)
   * [Authentication](https://firebase.google.com/docs/auth)
+  * [App Distribution](https://firebase.google.com/docs/app-distribution)
 * [React-Native](https://reactnative.dev/)
 * [Node](https://nodejs.org/en/)
 * [Digitransit](https://digitransit.fi/)
 
 
 
+#### This project is done in collaboration with [Moprim](https://www.moprim.com/).
