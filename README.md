@@ -1,7 +1,7 @@
 # Moprim-Journey-Moments - React-Native application
 
 
-![1](https://user-images.githubusercontent.com/45162563/100731908-af2d5880-33d4-11eb-8e36-8e7585243a75.png)
+![1](https://user-images.githubusercontent.com/45162563/101350811-51978100-3898-11eb-9a97-8fa9117c67f8.png)
 
 ### Idea & Description
 
