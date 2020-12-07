@@ -242,17 +242,16 @@ const Single = ({route, navigation}) => {
                 <Body style={{flexDirection: 'row', flex: 1, marginTop: 20}}>
                     <Stars handleStars={handleStars} rating={rating} owner={userId === id}/>
                     <Right style={{marginRight: 10}}>
-                        <View style={{flexDirection: 'row'}}>
-
-                        </View>
                         <Text>Time: {startTime} - {endTime}</Text>
                         <Text>Total time: {timeSpent}</Text>
                         <Text>Avg speed: {Math.round(data.speed * 1000 * 3.6)} km/h</Text>
                         <Text>Distance: {data.distance}m</Text>
                         <Text>Emissions: {Math.round(data.co2)}g</Text>
                         {digiTransit && <>
-                            <Text>From: {digiTransit.from}</Text>
-                            <Text>To: {digiTransit.to}</Text>
+                            <Text>From:</Text>
+                            <Text>{digiTransit.from}</Text>
+                            <Text>To:</Text>
+                            <Text>{digiTransit.to}</Text>
                             <Text>Line: {digiTransit.transportId}</Text>
                         </>}
                     </Right>
