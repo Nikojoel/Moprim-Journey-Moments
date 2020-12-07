@@ -4,11 +4,10 @@ import InnerChainItem from "../components/InnerChainItem"
 import Helper from "../helpers/Helper"
 
 const TripsFeed = ({data, extra, navigation, refresh, onRefresh}) => {
-
     return (
         <SafeAreaView>
         <FlatList
-            data={data}
+            data={data.sort((a, b) => a.key < b.key ? 1 : -1)}
             renderItem={({item}) =>
                 <InnerChainItem data={item} navigation={navigation}/>
             }
