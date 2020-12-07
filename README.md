@@ -25,6 +25,6 @@ The idea is to create a React-Native application that can be used to annotate pu
 * [Node](https://nodejs.org/en/)
 * [Digitransit](https://digitransit.fi/)
 
-
+---
 
 #### This project is done in collaboration with [Moprim](https://www.moprim.com/).
