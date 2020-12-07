@@ -32,7 +32,9 @@ const HomeFeedItem = ({ item, navigation }) => {
         try {
             const result = await DatabaseService.dbDigiTransitGET(id)
             const iterate = iterateData(result)
-            setDigiTransit(iterate)
+            if (result != null) {
+                setDigiTransit(iterate)
+            }
         } catch (e) {
             console.log(e)
         }
@@ -42,7 +44,7 @@ const HomeFeedItem = ({ item, navigation }) => {
         if (fetch) {
            getTransportNumber(transitId)
         }
-    }, [digiTransit])
+    }, [])
 
     
 
