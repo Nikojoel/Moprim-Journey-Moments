@@ -234,9 +234,9 @@ const Profile = ({navigation}) => {
 }
 const styles = StyleSheet.create({
     picture: {
-        width: windowWidth * 0.7,
-        borderRadius: 140,
-        height: windowHeight * 0.35,
+        width: 250,
+        borderRadius: 250,
+        height: 250,
         alignSelf: 'center',
     },
     card: {
