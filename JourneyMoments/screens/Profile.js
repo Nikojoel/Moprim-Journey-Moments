@@ -7,8 +7,9 @@ import Helper from "../helpers/Helper"
 import DownloadService from "../services/DownloadService"
 import RNBottomActionSheet from "react-native-bottom-action-sheet"
 import ImagePicker from "react-native-image-picker"
-import {Container, Icon,Body, CardItem, Card, Content, H2} from "native-base"
-import Colors from "../values/Colors";
+import {Container, Icon,Body, CardItem, Content} from "native-base"
+import Colors from "../values/Colors"
+import MoprimBridge from '../modules/Moprim'
 
 const windowHeight = Dimensions.get('window').height
 const windowWidth = Dimensions.get('window').width
@@ -222,6 +223,7 @@ const Profile = ({navigation}) => {
                         <Text style={styles.text}>SETTINGS</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.btnAccent} onPress={async () => {
+                        MoprimBridge.stop()
                         await LoginService.logoutUser()
                         navigation.navigate("Login")
                     }}>
