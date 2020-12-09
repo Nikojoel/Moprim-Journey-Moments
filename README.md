@@ -27,4 +27,7 @@ The idea is to create a React-Native application that can be used to annotate pu
 
 ---
 
+### Screenshots of the app
+
+
 #### This project is done in collaboration with [Moprim](https://www.moprim.com/).
