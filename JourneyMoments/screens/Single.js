@@ -53,8 +53,8 @@ const Single = ({route, navigation}) => {
     useEffect(() => {
         navigation.setOptions({title: date})
         getUser(userId)
-        getRating(userId + moprimId)
-        getComments(userId + moprimId)
+        getRating(userId.toString() + moprimId.toString())
+        getComments(userId.toString() + moprimId.toString())
         BackHandler.addEventListener('hardwareBackPress', () => {
             navigation.navigate("Home")
         })
@@ -71,7 +71,7 @@ const Single = ({route, navigation}) => {
         } else {
             const json = {
                 id: Helper.generateUUID(),
-                moprimId: userId + moprimId,
+                moprimId: userId.toString() + moprimId.toString(),
                 text: text,
                 userId: id
             }
@@ -114,7 +114,6 @@ const Single = ({route, navigation}) => {
             const result = await DatabaseService.dbMoprimRatingGET(id)
             if (result !== null && result !== undefined) {
                 const parse = Helper.parseJSON(result)
-                console.log
                 setRating(parse.rating)
             } else {
                 setRating({speed: 0, comfort: 0, cleanness: 0})
