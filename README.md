@@ -28,6 +28,8 @@ The idea is to create a React-Native application that can be used to annotate pu
 ---
 
 ### Screenshots of the app
-
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/45162563/101624623-da422880-3a22-11eb-9fbe-c900f960eca3.jpg"/>
+</p>
 
 #### This project is done in collaboration with [Moprim](https://www.moprim.com/).
