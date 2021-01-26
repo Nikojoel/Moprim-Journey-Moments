@@ -5,6 +5,8 @@
 #### Created in collaboration with [Moprim](https://www.moprim.com/about-us/)
 <i> Moprim is a software company developing data solutions for smart mobility based on patented methods for using accelometers</i>
 
+---
+
 ### Idea & Description
 
 The idea is to create a React-Native application that can be used to annotate public transport methods with pictures, videos and text. Annotations could be related to traveling experience inside the vehicle or feelings based outside the vehicle. The transport methods are identified with Moprim transport mode detection [(TMD SDK)](https://www.moprim.com/products/). The SDK AI data engine locally discovers the transport mode from raw smartphone sensor data and sends it to the cloud for fusion and processing. After the processing is done within the cloud, the data is ready to be queried.
