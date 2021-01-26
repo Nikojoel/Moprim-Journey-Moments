@@ -3,7 +3,7 @@
 </p>
 
 #### Created in collaboration with [Moprim](https://www.moprim.com/about-us/)
-<i> Moprim is a software company developing data solutions for smart mobility based on patented methods for using accelometers</i>
+<i> Moprim is a software company developing data solutions for smart mobility based on patented methods for using accelometers.</i>
 
 ---
 
